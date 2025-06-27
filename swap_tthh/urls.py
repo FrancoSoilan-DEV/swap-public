@@ -22,7 +22,6 @@ urlpatterns = [
     path('porteria/visitas/exportar/', views.exportar_visitas_excel, name='exportar_visitas_excel'),
     path("funcionarios/", views.funcionarios, name="tthhfunc"),
     path("excel-nomina/", views.exportar_nomina, name="exp-nom"),
-    path('admin/', admin.site.urls),
     path("funcionarios/telefonos", views.telefonos, name="telefonos"),
     path('exportar-pdf/', views.exportar_pdf, name='exp-tel'),
     path("funcionarios/ExFuncionarios", views.ex_funcionarios, name="ex_funcionarios"),

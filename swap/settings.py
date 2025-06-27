@@ -30,7 +30,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "clave-insegura-por-defecto")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 #ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['serpy.herokuapp.com', 'sertecti.com', 'localhost', '127.0.0.1']
+#ALLOWED_HOSTS = ['serpy.herokuapp.com', 'sertecti.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['sertecti.com', 'www.sertecti.com', 'serpy-17288fafdad2.herokuapp.com']
 
 
 # Application definition
