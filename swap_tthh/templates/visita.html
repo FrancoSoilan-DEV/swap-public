@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Entrada | Visitas</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/visita.css' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="{% url 'exportar_visitas_excel' %}?{{ request.GET.urlencode }}">
+                    <h1><span>Exportar</span></h1>
+                </a>
+                </a>
+                <a href="{% url 'registro_entrada' %}">
+                    <h1><span>Volver</span></h1>
+                </a>
+            </div>
+        </aside> 
+        <section>
+            <div class="container">
+                <div class="title">
+                    <h2>Registro Visitas</h2>
+                </div>
+                <div class="search">
+                    <form method="get" class="filtros">
+                        <label>Fecha exacta:</label>
+                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                        
+                        <label>Desde:</label>
+                        <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                        
+                        <label>Hasta:</label>
+                        <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                        
+                        <div class="button-group">
+                            <button type="submit">Filtrar</button>
+                            <a href="{% url 'visitas' %}">Limpiar filtros</a>
+                        </div>
+                    </form>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Visita</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Estado</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% for visita in visitas %}
+                        <tr>
+                            <td data-label="Fecha">{{ visita.e_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="Visita">{{ visita.e_visita|default_if_none:"-" }}</td>
+                            <td data-label="Entrada">{{ visita.e_entrada|time:"H:i"|default:"-" }}</td>
+                            <td data-label="Salida">{{ visita.e_salida|time:"H:i"|default:"-" }}</td>
+                            <td data-label="Estado">{{ visita.e_ee }}</td>
+                            <td data-label="Comentario">
+                                {% if visita.e_comentario == "None" or not visita.e_comentario %}
+                                  -
+                                {% else %}
+                                  {{ visita.e_comentario }}
+                                {% endif %}
+                              </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No hay visitas registradas</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

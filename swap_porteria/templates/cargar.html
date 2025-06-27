@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Porteria | Entrada</title>
+    <link rel="stylesheet" href="{% static 'css/cargar.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Porteria</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="#funcionarios">
+                   <h1><span>Funcionario</span></h1>
+                </a>
+                <a href="#cobrador">
+                    <h1><span>Cobrador</span></h1>
+                </a>
+                <a href="#proveedor">
+                    <h1><span>Proveedor</span></h1>
+                </a>
+                <a href="#visita">
+                    <h1><span>Visita</span></h1>
+                </a>
+                <a href="{% url 'porteria' %}">
+                    <h1><span>Volver</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>
+            <article>
+                <div class="container">
+                    <div class="title" id="funcionarios">
+                        
+                        <h3>
+                            Funcionarios
+                        </h3>
+                        
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>
+                            {{ form_funcionario.e_fecha.label_tag }} {{ form_funcionario.e_fecha }}
+                        </p>
+                        <p>
+                            {{ form_funcionario.e_entrada.label_tag }} {{ form_funcionario.e_entrada }}
+                        </p>
+                        <p>
+                            {{ form_funcionario.e_fun.label_tag }} {{ form_funcionario.e_fun }}
+                        </p>
+                        <p>
+                            {{ form_funcionario.e_comentario.label_tag }} {{ form_funcionario.e_comentario }}
+                        </p>
+                        
+                        <button type="submit" name="submit_funcionario">Guardar</button>
+                        <div class="curva"></div>
+                    </form>
+                </div>
+            </article>
+
+            <article>
+                <div class="container">
+                    <div class="title" id="cobrador">
+                        <div class="del">
+                            <a href="{% url 'formularios' %}?accion=eliminar_cobrador">❌</a>
+                        </div>
+                        <h3>Cobrador</h3>
+                        <div class="add">
+                            <a href="{% url 'formularios' %}?accion=agregar_cobrador">➕</a>
+                        </div>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>
+                            {{ form_cobrador.e_fecha.label_tag }} {{ form_cobrador.e_fecha }}
+                        </p>
+                        <p>
+                            {{ form_cobrador.e_entrada.label_tag }} {{ form_cobrador.e_entrada }}
+                        </p>
+                        <p>
+                            {{ form_cobrador.e_cob.label_tag }} {{ form_cobrador.e_cob }}
+                        </p>
+                        <p>
+                            {{ form_cobrador.e_comentario.label_tag }} {{ form_cobrador.e_comentario }}
+                        </p>
+            
+                        <button type="submit" name="submit_cobrador">Guardar</button>
+                        <div class="curva"></div>
+                    </form>
+                </div>
+            </article>
+
+            <article>
+                <div class="container" id="proveedor">
+                    <div class="title">
+                        <div class="del">
+                            <a href="{% url 'formularios' %}?accion=eliminar_proveedor">❌</a>
+                        </div>
+                        <h3>Proveedor</h3>
+                        <div class="add">
+                            <a href="{% url 'formularios' %}?accion=agregar_proveedor">➕</a>
+                        </div>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>
+                            {{ form_proveedor.e_fecha.label_tag }} {{ form_proveedor.e_fecha }}
+                        </p>
+                        <p>
+                            {{ form_proveedor.e_entrada.label_tag }} {{ form_proveedor.e_entrada }}
+                        </p>
+                        <p>
+                            {{ form_proveedor.e_prov.label_tag }} {{ form_proveedor.e_prov }}
+                        </p>
+                        <p>
+                            {{ form_proveedor.e_comentario.label_tag }} {{ form_proveedor.e_comentario }}
+                        </p>
+            
+                        <button type="submit" name="submit_proveedor">Guardar</button>
+                        <div class="curva"></div>
+                    </form>
+                </div>
+            </article>
+            
+            <article>
+                <div class="container" id="visita">
+                    <div class="title">
+                        <h3>Visita</h3>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>
+                            {{ form_visita.e_fecha.label_tag }} {{ form_visita.e_fecha }}
+                        </p>
+                        <p>
+                            {{ form_visita.e_entrada.label_tag }} {{ form_visita.e_entrada }}
+                        </p>
+                        <p>
+                            {{ form_visita.e_visita.label_tag }} {{ form_visita.e_visita }}
+                        </p>
+                        <p>
+                            {{ form_visita.e_comentario.label_tag }} {{ form_visita.e_comentario }}
+                        </p>
+            
+                        <button type="submit" name="submit_visita">Guardar</button>
+                        <div class="curva"></div>
+                    </form>
+                </div>
+            </article>
+            
+
+        </section>
+    </main>
+    
+        
+</body>
+</html>

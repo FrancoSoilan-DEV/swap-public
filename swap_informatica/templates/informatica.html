@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Informatica</title>
+    <link rel="stylesheet" href="{% static 'css/informatica.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=home" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de informatica</h2>
+        </div>
+        <div class="fun-container">
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside>
+            <div class="container">
+                <a href="{% url 'backups' %}">
+                  <h1><span>BACKUPS</span></h1>
+                </a>
+              
+                <a href="{% url 'inventario' %}">
+                  <h1><span>Inventario</span></h1>
+                </a>
+              
+                <a href="{% url 'mantenimiento' %}">
+                  <h1><span>Mantenimiento</span></h1>
+                </a>
+              
+                <a href="{% url 'logout' %}">
+                  <h1><span>Cerrar sesión</span></h1>
+                </a>
+              </div>
+        </aside>
+        <section>
+            <div class="container-tasks" id="task">
+                <div class="tasks-containers">
+                    {% for dia in dia %}
+                        <div class="task">
+                            <div class="task-title">
+                                <h2>{{ dia }}</h2>
+                            </div>
+                            <div class="tasks-container">
+                                {% for tarea in tarea %}
+    
+                                    {% if tarea.tarea_td == dia %}
+                                        <div class="task-container">
+                                            <h3>• {{ tarea.tarea_titulo }}</h3> 
+                                                                                
+                                            <!-- Formulario para actualizar estado -->
+                                            {% if tarea.tarea_td.td_dia != "General" %}
+                                                <form method="POST" action="{% url 'actualizar_estado' tarea.tarea_id %}">
+                                                    {% csrf_token %}
+                                                    <select name="estado" onchange="this.form.submit()">
+                                                        {% for e in estado %}
+                                                            <option value="{{ e.te_estado }}" {% if e.te_estado == tarea.tarea_te.te_estado %} selected {% endif %}>
+                                                                {{ e.te_estado }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                        <div class="textContainer">
+                                            <p>&emsp;&emsp;{{ tarea.tarea_descripcion }}</p>
+                                        </div> 
+                                    {% endif %}
+                                {% endfor %}
+    
+     
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+    
+            <div class="control">
+                <div class="añadir" id="addtask">
+                    <form method="post">
+                        <h2>Agregar Tarea</h2> 
+                        {% csrf_token %}
+                        {{ agregar_form.as_p }}
+                        <button type="submit" name="agregar_tarea">Agregar Tarea</button>
+                    </form>
+                </div>
+                
+                <div class="eliminar-tarea" id="deletetask">
+                    <h2>Eliminar Tarea</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ eliminar_form.as_p }}
+                        <button type="submit" name="eliminar_tarea">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+</body>
+</html>

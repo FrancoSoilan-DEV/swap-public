@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+  html {
+        scroll-behavior: smooth;
+    }
+body{
+  position: relative;
+  min-width: 100%;
+  background: #fefefe;
+  header{
+    position: relative;
+    min-width: 100%;
+    min-height: 80px;
+    background-image: radial-gradient( circle 382px at 50% 50.2%,  rgba(73,76,212,1) 0.1%, rgb(5, 0, 139) 100.2% );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    box-shadow: 0 4px 6px rgba(41, 23, 143,0.3);
+        .dpto-container{
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            h2{
+                letter-spacing: 0.5px;
+            }
+            h4{
+                letter-spacing: 0.5px;
+            }
+        }
+    }
+    main{
+        position: relative;
+        min-width: 100%;
+        display: flex;
+        align-items: flex-start; // ¡IMPORTANTE! Evita centrado no deseado
+        justify-content: flex-start; // Alinea hijos desde el inicio
+        padding: 0; // Elimina cualquier padding/margin por defecto
+        margin: 0;
+        aside{
+            background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(90,92,106,1) 0%, rgba(32,45,58,1) 81.3% );
+            width: 20%;
+            min-height: 100vh; // Ajusta según el header
+            height: auto; // Permite crecer si el contenido es mayor
+            position: sticky;
+            top: 0; // Se pega al borde superior después del header
+            box-shadow: 3px 6px 8px rgba(41, 23, 143,0.3);
+            .a-c{
+                margin-top: 50px;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 25px;
+                a{
+                    text-decoration: none;
+                    cursor: pointer;
+                    border-radius: 40px;
+                    h1 {
+                        letter-spacing: 1px;
+                        padding: 10px;
+                        transition: 0.3s ease-in-out;
+                        font-weight: bold;
+                        font-size: 20px;
+                        color: white;
+                    }
+                    transition: 0.3s ease-in-out;
+                    &:hover{
+                        transform: scale(1.03);
+                    }
+                    &:nth-child(1):hover h1 {
+                        background: linear-gradient(45deg, #fafafab7, #c71585); /* Índigo a fucsia */
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        padding: 12px;
+                        text-shadow: 2px 2px 10px rgba(199, 21, 133, 0.6);
+                        //background-color: rgba(199, 21, 133, 0.1); /* Fondo de color fucsia claro */
+                        span {
+                            text-shadow: 2px 2px 10px rgba(199, 21, 133, 0.6); /* Box shadow en las letras */
+                        }
+                    }
+                
+                    /* Segundo hijo */
+                    &:nth-child(2):hover h1 {
+                        background: linear-gradient(45deg, #32cd32, #228b22); /* Verde */
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        padding: 12px;
+                        text-shadow: 2px 2px 10px rgba(34, 139, 34, 0.6); /* Sombra verde */
+                        //background-color: rgba(34, 139, 34, 0.1); /* Fondo de color verde claro */
+                        span {
+                            text-shadow: 2px 2px 10px rgba(34, 139, 34, 0.6); /* Sombra verde */
+                        }
+                    }
+                
+                    /* Tercer hijo */
+                    &:nth-child(3):hover h1 {
+                        background: linear-gradient(45deg, #ffa500, #ff1493); /* Naranja a rosa */
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        padding: 12px;
+                        text-shadow: 2px 2px 10px rgba(255, 20, 147, 0.6); /* Sombra rosa */
+                        //background-color: rgba(255, 20, 147, 0.1); /* Fondo de color rosa claro */
+                        span {
+                            text-shadow: 2px 2px 10px rgba(255, 20, 147, 0.6); /* Sombra rosa */
+                        }
+                    }
+                    /* Cuarto hijo */
+                    &:nth-child(4):hover h1 {
+                        background: linear-gradient(45deg, #ffd700, #ff8c00); /* Dorado a naranja oscuro */
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        padding: 12px;
+                        text-shadow: 2px 2px 10px rgba(255, 140, 0, 0.6); /* Sombra naranja */
+                        //background-color: rgba(255, 140, 0, 0.1); /* Fondo de color dorado claro */
+                        span {
+                        text-shadow: 2px 2px 10px rgba(255, 140, 0, 0.6); /* Sombra naranja */
+                        }
+                    }
+                    /* Quinto hijo */
+                    &:nth-child(5):hover h1 {
+                        background-image: linear-gradient( 109.6deg,  rgba(0,0,102,1) 11.2%, rgba(13,214,230,1) 91.1% );
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        padding: 12px;
+                        text-shadow: 2px 2px 10px rgba(13,214,230,0.6); /* Sombra naranja */
+                        //background-color: rgba(255, 140, 0, 0.1); /* Fondo de color dorado claro */
+                        span {
+                            text-shadow: 2px 2px 10px rgba(13,214,230,0.6); /* Sombra naranja */
+                        }
+                    }
+                }
+            }
+        }
+        // Definir variables globales
+        $border-radius: 8px;
+        $shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
+        $primary-gradient: linear-gradient(to right, #667eea, #764ba2);  // Color del header
+        $secondary-gradient: linear-gradient(to right, #da1b60, #ff8a00);
+        $input-background: rgba(245, 247, 250, 0.9);  // Color para inputs
+        $form-background: #ffffff;  // Fondo del formulario
+
+        // Diseño de la sección y el formulario
+        section {
+            position: relative;
+            width: 80%;
+            padding: 2rem;
+            background: #f8f9ff;
+            min-height: calc(100vh - 80px);
+            article {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem 0;
+                .container {
+                border: 1px solid #d3d2d2b9;
+                width: 100%;
+                max-width: 600px;
+                padding: 2.5rem;
+                border-radius: $border-radius;
+                box-shadow: $shadow-soft;
+                background: $form-background; // Color del formulario
+                position: relative;
+                overflow: hidden;
+                z-index: 1;
+                .title{
+                    padding: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: row;
+                    color: #333;
+                    letter-spacing: 0.5px;
+                    gap: 20px;
+                    .del{
+                        a{
+                            text-decoration: none;
+                        }
+                    }
+                    .add{
+                        a{
+                            text-decoration: none;
+                        }
+                    }
+
+                }
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: $primary-gradient;
+                    z-index: -2;
+                    animation: rotate 15s linear infinite;
+                    opacity: 0.08;        
+                }
+                form {
+                    margin-top: 30px;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    p {
+                    position: relative;
+                    margin: 0;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    label {
+                        font-weight: 600;
+                        color: #2c3e50;
+                        font-size: 0.95rem;
+                        transition: all 0.3s ease;
+                    }
+                    // Modificación de la apariencia de los inputs
+                    input[type="date"],
+                    input[type="time"],
+                    input[type="text"],
+                    select,
+                    textarea {
+                        width: 100%;
+                        padding: 1rem;
+                        border: 1px solid #dcdfe6;
+                        border-radius: $border-radius;
+                        background: $input-background; // Nuevo color para inputs
+                        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+                        font-size: 0.95rem;
+                        transition: all 0.3s ease;
+                        &:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+                        background: white;
+                        }
+                    }
+                    .time-wrapper {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        input[type="time"] {
+                        width: calc(100% - 80px);  // Deja espacio para el botón OK
+                        }
+                        button[type="button"] {
+                        position: absolute;
+                        left: 0;
+                        padding: 0.5rem 1rem;
+                        background: $primary-gradient;
+                        color: white;
+                        border: none;
+                        border-radius: $border-radius;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        &:hover {
+                            background: #5760a1; // Un color un poco más oscuro al hacer hover
+                        }
+                        }
+                    }
+                    }
+                    button[type="submit"] {
+                    margin-top: 1rem;
+                    padding: 1rem;
+                    background: $primary-gradient;
+                    color: white;
+                    border: none;
+                    border-radius: $border-radius;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    &:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+                    }
+                    }
+                }
+            }
+        }
+        }
+        // Animación para el fondo
+        @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+        }
+    }
+}

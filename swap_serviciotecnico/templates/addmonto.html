@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Nuevo Monto</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/addmonto.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Fondo dinámico con elementos decorativos -->
+    <div class="background">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+        <div class="bubble bubble-3"></div>
+        <div class="bubble bubble-4"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+    
+    <div class="comeback">
+        <a href="{% url 'veregistro' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+    
+    <main>
+        <article>
+            <div class="container">
+                <div class="form-header">
+                    <i class="fas fa-coins icon"></i>
+                    <h2>Registrar Monto</h2>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>
+                        <label for="monto_input">Monto:</label>
+                        <input type="text" id="monto_input" name="tm_monto" required>
+                    </p>
+                    <button type="submit">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </form>
+            </div>
+        </article>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const montoInput = document.getElementById('monto_input');
+            
+            montoInput.addEventListener('input', function(e) {
+                // Remover todos los caracteres que no sean números
+                let value = this.value.replace(/[^0-9]/g, '');
+                
+                // Formatear con puntos separadores de miles
+                if (value.length > 3) {
+                    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                }
+                
+                this.value = value;
+            });
+            
+            // Para enviar el valor sin puntos al servidor
+            document.querySelector('form').addEventListener('submit', function(e) {
+                montoInput.value = montoInput.value.replace(/\./g, '');
+            });
+        });
+    </script>
+</body>
+</html>

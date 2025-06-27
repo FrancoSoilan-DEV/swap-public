@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | TTHH</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/tthh.css' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> {% comment %}20% de espacio {% endcomment %}
+            <div class="a-c">
+ {% comment %} <a href="{% url 'backups' %}">
+                    <h1><span>BACKUPS</span></h1>
+                </a>                                    {% endcomment %}
+                <a href="{% url 'registro_entrada' %}">
+                    <h1><span>Porteria</span></h1>
+                </a>
+                <a href="{% url 'vistast' %}">
+                   <h1><span>S. Tecnico</span></h1>
+                </a>
+                <a href="{% url 'tthhfunc' %}">
+                   <h1><span>Funcionarios</span></h1>
+                </a>
+                <a href="{% url 'logout' %}">
+                    <h1><span>Salir</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>{% comment %} 80% disponible {% endcomment %}
+            {% comment %} 80% {% endcomment %}
+            <div class="container-tasks" id="task">
+                <div class="tasks-containers">
+                    {% for dia in dia %}
+                        <div class="task">
+                            <div class="task-title">
+                                <h2>{{ dia }}</h2>
+                            </div>
+                            <div class="tasks-container">
+                                {% for tarea in tarea %}
+    
+                                    {% if tarea.tarea_td == dia %}
+                                        <div class="task-container">
+                                            <h3>• {{ tarea.tarea_titulo }}</h3> 
+                                                                                
+                                            <!-- Formulario para actualizar estado -->
+                                            {% if tarea.tarea_td.td_dia != "General" %}
+                                                <form method="POST" action="{% url 'actualizar_estatus' tarea.tarea_id %}">
+                                                    {% csrf_token %}
+                                                    <select name="estado" onchange="this.form.submit()">
+                                                        {% for e in estado %}
+                                                            <option value="{{ e.te_estado }}" {% if e.te_estado == tarea.tarea_te.te_estado %} selected {% endif %}>
+                                                                {{ e.te_estado }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                        <div class="textContainer">
+                                            <p>&emsp;&emsp;{{ tarea.tarea_descripcion }}</p>
+                                        </div> 
+                                    {% endif %}
+                                {% endfor %}
+    
+     
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% comment %} 20% {% endcomment %}
+            <div class="control">
+
+                <div class="añadir" id="addtask">
+                    <form method="post">
+                        <h2>Agregar Tarea</h2> 
+                        {% csrf_token %}
+                        {{ agregar_form.as_p }}
+                        <button type="submit" name="agregar_tarea">Agregar Tarea</button>
+                    </form>
+            
+                </div>
+
+                <div class="eliminar-tarea" id="deletetask">
+                    <h2>Eliminar Tarea</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ eliminar_form.as_p }}
+                        <button type="submit" name="eliminar_tarea">Eliminar</button>
+                    </form>
+                </div>
+
+        </section>
+    </main>
+</body>
+</html>

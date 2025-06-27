@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Entrada | Proveedores</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/proveedores.css' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="{% url 'exportar_proveedores' %}?proveedor={{ request.GET.proveedor }}&fecha_exacta={{ request.GET.fecha_exacta }}&fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}">
+                    <h1><span>Exportar</span></h1>
+                </a>
+                <a href="{% url 'registro_entrada' %}">
+                <h1><span>Volver</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>
+            <div class="container">
+                <div class="title">
+                    <h2>Registro Proveedores</h2>
+                </div>
+                <div class="search">
+                    <form method="get" class="filtros">
+                        <label>Proveedor:</label>
+                        <select name="proveedor">
+                            <option value="">Todos</option>
+                            {% for prov in lista_proveedores %}
+                                <option value="{{ prov.prov_id }}" {% if request.GET.proveedor == prov.prov_id|stringformat:"s" %}selected{% endif %}>
+                                    {{ prov.prov_nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    
+                        <label>Fecha exacta:</label>
+                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                    
+                        <label>Desde:</label>
+                        <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    
+                        <label>Hasta:</label>
+                        <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                    
+                        <button type="submit">Filtrar</button>
+                        <a href="{% url 'proveedores' %}"><button type="button">Limpiar filtros</button></a>
+                    </form>
+                                      
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Proveedor</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Estado</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                        {% for proveedor in proveedores %}
+                        <tr>
+                            <td data-label="Fecha">{{ proveedor.e_fecha }}</td>
+                            <td data-label="Funcionario">{{ proveedor.e_prov|default_if_none:"-" }}</td>
+                            <td data-label="Entrada">{{ proveedor.e_entrada }}</td>
+                            <td data-label="Salida">{{ proveedor.e_salida }}</td>
+                            <td data-label="Estado">{{ proveedor.e_ee }}</td>
+                            <td data-label="Comentario">
+                                {% if proveedor.e_comentario == "None" or not proveedor.e_comentario %}
+                                  -
+                                {% else %}
+                                  {{ proveedor.e_comentario }}
+                                {% endif %}
+                              </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,408 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  background: #fff9f6;
+}
+body header {
+  position: relative;
+  min-width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  background-image: radial-gradient(circle farthest-corner at 10% 20%, rgb(3, 0, 97) 2.2%, rgb(79, 8, 225) 90%);
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+  z-index: 1;
+}
+body header nav ul li {
+  list-style: none;
+  transition: 0.5s ease-in-out;
+}
+body header nav ul li:hover {
+  transform: scale(1.1);
+}
+body header nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  position: relative; /* Para el subrayado animado */
+  transition: all 0.5s ease-in-out;
+  /* Efecto hover: Subrayado con gradiente + brillo */
+}
+body header nav ul li a:hover {
+  color: #FFD700; /* Dorado al pasar el mouse (opcional) */
+}
+body header nav ul li a:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #FFD700, #FF6B6B); /* Degradado dorado a coral */
+  transform: scaleX(1); /* Animación de "entrada" */
+  transform-origin: left;
+  animation: underline-grow 0.3s ease-out;
+}
+body main {
+  position: relative;
+  min-width: 100%;
+}
+body main .comeback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85px;
+  height: 40px;
+  margin: 15px 15px;
+  background: rgb(79, 8, 225);
+  border-radius: 20px;
+  transition: 0.5s ease-in-out;
+}
+body main .comeback:hover {
+  transform: scale(1.1);
+}
+body main .comeback a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
+body main .mantenimientos-programados {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100%;
+  padding: 10px 30px;
+}
+body main .mantenimientos-programados .calendario {
+  min-width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+body main .mantenimientos-programados .calendario .enero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1B1464, #3128C7);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .enero:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .febrero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1B1464, #3128C7);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .febrero:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .marzo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #1B1464, #3128C7);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .marzo:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .abril {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #261FB3, #392BCA);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .abril:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .mayo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #261FB3, #392BCA);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .mayo:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .junio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #261FB3, #392BCA);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .junio:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .julio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #1B1464, #3128C7, #5F52D1, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .julio:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .agosto {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #1B1464, #3128C7, #5F52D1, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .agosto:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .septiembre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #1B1464, #3128C7, #5F52D1, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .septiembre:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .octubre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #4A3DE0, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .octubre:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .noviembre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #4A3DE0, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .noviembre:hover {
+  transform: scale(1.02);
+}
+body main .mantenimientos-programados .calendario .diciembre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: white;
+  background: linear-gradient(135deg, #4A3DE0, #2A21D4);
+  transition: 0.6s ease-in-out;
+}
+body main .mantenimientos-programados .calendario .diciembre:hover {
+  transform: scale(1.02);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+}
+.container .tc {
+  text-align: center;
+}
+.container .tc h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #FFD93D;
+}
+.container .content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.container .content .cc {
+  background: #3128C7;
+  border-radius: 15px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+.container .content .cc:hover {
+  transform: scale(1.02);
+}
+.container .content .cc .c1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.container .content .cc .c1 h3 {
+  margin: 0;
+  color: #FFD93D;
+  font-size: 1.2rem;
+}
+.container .content .cc .c1 form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.container .content .cc .c1 form select {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  background: #FFD93D;
+  color: #1E1E1E;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.container .content .cc .c1 form select:hover {
+  background: #FFC300;
+}
+.container .content .cc .c1 form select:disabled {
+  background: #ccc;
+  color: #555;
+  cursor: not-allowed;
+}
+.container .content .cc .c1 form .responsable-input {
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: none;
+  background: #333;
+  color: #fff;
+  transition: box-shadow 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.container .content .cc .c1 form .responsable-input:focus {
+  box-shadow: 0 0 5px #333;
+  outline: none;
+}
+.container .content .cc .c1 form .guardar-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background-image: radial-gradient(circle 439px at 47.1% 47.8%, rgb(8, 208, 115) 0%, rgb(0, 0, 0) 91.3%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.4s ease-in-out;
+}
+.container .content .cc .c1 form .guardar-btn:hover {
+  transform: scale(1.1);
+}
+.container .content .cc .c1 form .guardar-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+.container .content .cc .c2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #FFF;
+}
+.container .content .cc .c2 h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #F6F6F6;
+}
+
+/* Animación del subrayado */
+@keyframes underline-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}/*# sourceMappingURL=mantenimiento.css.map */

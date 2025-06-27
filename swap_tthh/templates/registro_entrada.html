@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Entrada | Funcionarios</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (necesario para Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="{% url 'exportar_excel_funcionarios' %}?{{ request.GET.urlencode }}">
+                    <h1><span>Exportar</span></h1>
+                </a>
+                <a href="{% url 'proveedores' %}">
+                   <h1><span>Proveedores</span></h1>
+                </a>
+                <a href="{% url 'cobradores' %}">
+                    <h1><span>Cobradores</span></h1>
+                </a>
+                <a href="{% url 'visitas' %}">
+                    <h1><span>Visitas</span></h1>
+                </a>
+                <a href="{% url 'tthh' %}">
+                    <h1><span>Volver</span></h1>
+                </a>
+            </div>
+        </aside>  
+    
+        <section>
+            <div class="container">
+                <div class="title">
+                    <h2>Registro Funcionarios</h2>
+                </div>
+                <div class="search">
+                    <form method="get">
+                        <label for="fecha_exacta">Fecha exacta:</label>
+                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                
+                        <label for="fecha_desde">Desde:</label>
+                        <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                
+                        <label for="fecha_hasta">Hasta:</label>
+                        <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                
+                        <label for="funcionario">Funcionario:</label>
+                        <select name="funcionario" id="funcionario-select">
+                            <option value="">Todos</option>
+                            {% for f in lista_funcionarios %}
+                                <option value="{{ f.fun_id }}" {% if request.GET.funcionario == f.fun_id|stringformat:"s" %}selected{% endif %}>{{ f }}</option>
+                            {% endfor %}
+                        </select>
+
+                
+                        <label>
+                            <input type="checkbox" name="solo_tarde" value="1" {% if request.GET.solo_tarde == "1" %}checked{% endif %}>
+                            Solo llegadas tarde
+                        </label>
+                
+                        <button type="submit">Filtrar</button>
+                        <a href="{% url 'registro_entrada' %}">Limpiar</a>
+                    </form>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Funcionario</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Estado</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                        {% for funcionario in funcionarios %}
+                        <tr{% if funcionario.e_entrada|stringformat:"H:i" > "07:35" %} class="llegada-tarde"{% endif %}>
+                            <td data-label="Fecha">{{ funcionario.e_fecha }}</td>
+                            <td data-label="Funcionario">{{ funcionario.e_fun|default_if_none:"-" }}</td>
+                            <td data-label="Entrada">{{ funcionario.e_entrada }}</td>
+                            <td data-label="Salida">{{ funcionario.e_salida }}</td>
+                            <td data-label="Estado">{{ funcionario.e_ee }}</td>
+                            <td data-label="Comentario">
+                                {% if funcionario.e_comentario == "None" or not funcionario.e_comentario %}
+                                  -
+                                {% else %}
+                                  {{ funcionario.e_comentario }}
+                                {% endif %}
+                              </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        $(document).ready(function() {
+            $('#funcionario-select').select2({
+                placeholder: "Seleccione un funcionario",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script>
+    
+</body>
+</html>

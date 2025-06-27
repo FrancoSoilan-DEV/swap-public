@@ -1,0 +1,205 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+/* Variables */
+/* Mixins */
+/* Estilos generales */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  color: #333;
+}
+
+/* Fondo dinámico */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  z-index: -1;
+  overflow: hidden;
+}
+.background .gradient-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(79, 8, 225, 0.08) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.08) 0%, transparent 40%);
+}
+
+/* Botón de volver */
+.comeback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 40px;
+  margin: 20px;
+  background: linear-gradient(135deg, #4f08e1 0%, #6a25f7 100%);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(79, 8, 225, 0.2);
+  position: relative;
+  z-index: 1;
+}
+.comeback:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(79, 8, 225, 0.3);
+}
+.comeback a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Contenedor principal */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+main article {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  z-index: 1;
+}
+main article .container {
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 139, 0.1);
+  overflow: hidden;
+  padding: 40px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+main article .container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #4f08e1 0%, #8a2be2 100%);
+}
+main article .container .form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+main article .container .form-header .icon {
+  font-size: 2.5rem;
+  color: #4f08e1;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #4f08e1 0%, #8a2be2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+main article .container .form-header h2 {
+  color: #333;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+main article .container form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+main article .container form p {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+main article .container form p label {
+  font-weight: 500;
+  color: #0d0d0d;
+  font-size: 0.95rem;
+  margin-left: 5px;
+}
+main article .container form p input {
+  padding: 15px;
+  border: 2px solid rgba(79, 8, 225, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(248, 249, 250, 0.3);
+}
+main article .container form p input:focus {
+  border-color: #4f08e1;
+  box-shadow: 0 0 0 3px rgba(79, 8, 225, 0.1);
+  outline: none;
+  background: white;
+}
+main article .container form button {
+  background: linear-gradient(135deg, #4f08e1 0%, #8a2be2 100%);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(79, 8, 225, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+main article .container form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(79, 8, 225, 0.3);
+}
+main article .container form button:active {
+  transform: translateY(0);
+}
+
+/* Estilo especial para el input de monto */
+/* Reemplaza el estilo actual del input[type="number"] por: */
+#monto_input {
+  font-weight: 600;
+  color: #4f08e1;
+  text-align: center;
+  font-size: 1.3rem !important;
+  letter-spacing: 1px;
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  main {
+    padding: 15px;
+  }
+  main article .container {
+    padding: 30px 20px;
+  }
+  main article .container .form-header {
+    margin-bottom: 20px;
+  }
+  main article .container .form-header .icon {
+    font-size: 2rem;
+  }
+  main article .container form {
+    gap: 20px;
+  }
+}/*# sourceMappingURL=addmonto.css.map */

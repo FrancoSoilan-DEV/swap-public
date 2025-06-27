@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* Variables */
+$primary-color: #4f08e1;
+$secondary-color: #030061;
+$text-color: #333;
+$light-bg: #f8f9fa;
+$shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+$border-radius: 12px;
+
+/* Mixins */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+/* Base Styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: $light-bg;
+  color: $text-color;
+  line-height: 1.6;
+  
+  header {
+    width: 100%;
+    min-height: 80px;
+    background-image: radial-gradient(circle 382px at 50% 50.2%, rgba(73,76,212,1) 0.1%, $secondary-color 100.2%);
+    @include flex-center;
+    z-index: 1;
+    box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+    
+    .dpto-container {
+      @include flex-center;
+      flex-direction: column;
+      color: #fff;
+      padding: 1rem;
+      
+      h2 {
+        letter-spacing: 0.5px;
+        font-size: 1.5rem;
+      }
+      
+      h4 {
+        letter-spacing: 0.5px;
+        font-weight: 300;
+      }
+    }
+  }
+  
+  .comeback {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 85px;
+        height: 40px;
+        margin: 15px 15px;
+        background: rgba(79,8,225,1);
+        //background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgb(3, 0, 97) 2.2%, rgba(79,8,225,1) 90% );
+        border-radius: 20px;
+        transition: 0.5s ease-in-out;
+        &:hover{
+          transform: scale(1.05);
+        }
+        a{
+          text-decoration: none;
+          color: #fff;
+          font-weight: 500;
+        
+        }
+        
+    
+  }
+}
+
+/* Form Container */
+.form-container {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  
+  .form-card {
+    background: white;
+    border-radius: $border-radius;
+    padding: 2rem;
+    box-shadow: $shadow;
+    margin-bottom: 2rem;
+    
+    .form-title {
+      color: $primary-color;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+}
+
+/* Form Elements */
+.tech-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    label {
+      font-weight: 500;
+      color: darken($text-color, 10%);
+    }
+    
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+  
+  .form-date-time {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+    
+    .time-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      
+      @include mobile {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  
+  /* Input Styles */
+  .form-select,
+  .form-input,
+  .form-textarea,
+  .form-date,
+  .form-time {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  /* Submit Button */
+  .submit-btn {
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    
+    &:hover {
+      background: darken($primary-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@include mobile {
+  .form-container {
+    padding: 0.5rem;
+  }
+  
+  .form-card {
+    padding: 1.5rem !important;
+  }
+  
+  .form-title {
+    font-size: 1.3rem !important;
+  }
+}

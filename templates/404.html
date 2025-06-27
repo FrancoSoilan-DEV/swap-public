@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Página no encontrada | SWAP_CENIN</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            text-align: center;
+            padding: 50px;
+        }
+        .error-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .emoji { font-size: 4rem; }
+        h1 { color: #6c757d; }
+        .btn {
+            background: #4D6BFE;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <div class="emoji">🔍</div>
+        <h1>404 - Página no encontrada</h1>
+        <p>La URL que buscas no existe en nuestro sistema.</p>
+        <a href="{% url 'swap_home:home' %}" class="btn">Volver al Inicio</a>
+    </div>
+</body>
+</html>

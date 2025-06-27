@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Mantenimiento</title>
+    <link rel="stylesheet" href="{% static 'css/mantenimiento.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stat_3" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="h-title">
+            <h2>Mantenimiento</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'addmantenimiento' %}">Añadir Mantenimiento</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="comeback">
+            <a href="{% url 'informatica' %}">Atras</a>
+        </div>
+        <section class="mantenimientos-programados">
+            <div class="calendario">
+
+                <div class="enero">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Enero</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_enero %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="febrero">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Febrero</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_febrero %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="marzo">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Marzo</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_marzo %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="abril">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Abril</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_abril %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mayo">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Mayo</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_mayo %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="junio">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Junio</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_junio %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="julio">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Julio</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_julio %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agosto">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Agosto</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_agosto %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="septiembre">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Septiembre</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_septiembre %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="octubre">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Octubre</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_octubre %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="noviembre">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Noviembre</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_noviembre %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diciembre">
+                    <div class="container">
+                        <div class="tc">
+                            <h2>Diciembre</h2>
+                        </div>
+                        <div class="content">
+                            {% for mp in mantenimientos_diciembre %}
+                            <div class="cc">
+                                <div class="c1">
+                                    <h3>{{ mp.mc_fecha }}</h3>
+                                    <form method="post" action="{% url 'cambiar_estado_mantenimiento' mp.mc_id %}">
+                                        {% csrf_token %}
+                                        <select name="estado"
+                                                onchange="handleEstadoChange(this)"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        <option value="Pendiente⚠️" {% if mp.mc_me.me_estado == 'Pendiente⚠️' %}selected{% endif %}>Pendiente⚠️</option>
+                                        <option value="Finalizado✅" {% if mp.mc_me.me_estado == 'Finalizado✅' %}selected{% endif %}>Finalizado✅</option>
+                                        </select>
+                        
+                                        <input type="text" name="responsable" placeholder="Responsable"
+                                            class="responsable-input"
+                                            style="display: none;"
+                                            {% if ya_creado %}disabled{% endif %}>
+                        
+                                        <button type="submit" class="guardar-btn"
+                                                style="display: none;"
+                                                {% if ya_creado %}disabled{% endif %}>
+                                        Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="c2">
+                                    <h3>{{ mp.mc_eq }}</h3> | <h3>{{ mp.mc_mt }}</h3>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+ 
+        <script>
+            function handleEstadoChange(select) {
+              const form = select.closest("form");
+              const input = form.querySelector(".responsable-input");
+              const btn = form.querySelector(".guardar-btn");
+            
+              if (select.value === "Finalizado✅") {
+                input.style.display = "inline-block";
+                input.required = true;
+                btn.style.display = "inline-block";
+              } else {
+                input.style.display = "none";
+                input.required = false;
+                btn.style.display = "none";
+                form.submit();
+              }
+            }
+            </script>
+</body>
+</html>

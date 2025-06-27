@@ -1,0 +1,195 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+/* Variables */
+/* Mixins */
+/* Base Styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+body header {
+  width: 100%;
+  min-height: 80px;
+  background-image: radial-gradient(circle 382px at 50% 50.2%, rgb(73, 76, 212) 0.1%, #030061 100.2%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+}
+body header .dpto-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  padding: 1rem;
+}
+body header .dpto-container h2 {
+  letter-spacing: 0.5px;
+  font-size: 1.5rem;
+}
+body header .dpto-container h4 {
+  letter-spacing: 0.5px;
+  font-weight: 300;
+}
+body .comeback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85px;
+  height: 40px;
+  margin: 15px 15px;
+  background: rgb(79, 8, 225);
+  border-radius: 20px;
+  transition: 0.5s ease-in-out;
+}
+body .comeback:hover {
+  transform: scale(1.05);
+}
+body .comeback a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Form Container */
+.form-container {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.form-container .form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+.form-container .form-card .form-title {
+  color: #4f08e1;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Form Elements */
+.tech-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  /* Input Styles */
+  /* Submit Button */
+}
+.tech-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .tech-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.tech-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tech-form .form-group label {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+.tech-form .form-group.full-width {
+  grid-column: 1/-1;
+}
+.tech-form .form-date-time {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .tech-form .form-date-time {
+    grid-template-columns: 1fr;
+  }
+}
+.tech-form .form-date-time .time-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .tech-form .form-date-time .time-group {
+    grid-template-columns: 1fr;
+  }
+}
+.tech-form .form-select,
+.tech-form .form-input,
+.tech-form .form-textarea,
+.tech-form .form-date,
+.tech-form .form-time {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+.tech-form .form-select:focus,
+.tech-form .form-input:focus,
+.tech-form .form-textarea:focus,
+.tech-form .form-date:focus,
+.tech-form .form-time:focus {
+  outline: none;
+  border-color: #4f08e1;
+  box-shadow: 0 0 0 2px rgba(79, 8, 225, 0.2);
+}
+.tech-form .form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.tech-form .submit-btn {
+  background: #4f08e1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.tech-form .submit-btn:hover {
+  background: #3e06b0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(79, 8, 225, 0.3);
+}
+.tech-form .submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 0.5rem;
+  }
+  .form-card {
+    padding: 1.5rem !important;
+  }
+  .form-title {
+    font-size: 1.3rem !important;
+  }
+}/*# sourceMappingURL=forms.css.map */

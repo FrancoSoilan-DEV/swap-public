@@ -1,0 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    position: relative;
+    min-width: 100%;
+    background: #f8f9fa;
+    color: #333;
+    
+    header {
+        position: relative;
+        min-width: 100%;
+        min-height: 80px;
+        background-image: radial-gradient(circle 382px at 50% 50.2%, rgba(73,76,212,1) 0.1%, rgb(5, 0, 139) 100.2%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+        
+        .dpto-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            text-align: center;
+            padding: 0 15px;
+            
+            h2 {
+                letter-spacing: 0.5px;
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            h4 {
+                letter-spacing: 0.5px;
+                font-size: 1rem;
+                font-weight: 300;
+            }
+        }
+    }
+    
+    .comeback {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 85px;
+        height: 40px;
+        margin: 15px;
+        background: linear-gradient(135deg, rgba(79,8,225,1) 0%, rgba(103, 30, 230, 1) 100%);
+        border-radius: 20px;
+        transition: 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+    }
+
+    main {
+        padding: 0 15px;
+        margin-bottom: 30px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-x: auto;
+
+            .filtros-form {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+                margin-bottom: 20px;
+
+                label {
+                    display: flex;
+                    flex-direction: column;
+                    font-size: 0.9rem;
+                    color: rgb(5, 0, 139);
+                    font-weight: 500;
+
+                    input, select {
+                        padding: 8px 12px;
+                        margin-top: 5px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        font-size: 0.9rem;
+                        transition: border 0.3s;
+
+                        &:focus {
+                            border-color: #5a30e0;
+                            outline: none;
+                            box-shadow: 0 0 0 2px rgba(90, 48, 224, 0.2);
+                        }
+                    }
+                }
+
+                button {
+                    padding: 8px 15px;
+                    background: linear-gradient(135deg, #5a30e0 0%, #7b4aff 100%);
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    transition: 0.3s;
+                    align-self: flex-end;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(90, 48, 224, 0.3);
+                    }
+                }
+
+                a button {
+                    background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+                    &:hover {
+                        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+                    }
+                }
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                font-size: 0.9rem;
+
+                thead {
+                    background: linear-gradient(135deg, #5a30e0 0%, #7b4aff 100%);
+                    color: white;
+
+                    th {
+                        padding: 12px 15px;
+                        text-align: left;
+                        font-weight: 500;
+                    }
+                }
+
+                tbody {
+                    tr {
+                        border-bottom: 1px solid #eee;
+                        transition: 0.2s;
+
+                        &:nth-child(even) {
+                            background: #f9f9f9;
+                        }
+
+                        &:hover {
+                            background: #f1f1f1;
+                        }
+
+                        td {
+                            padding: 12px 15px;
+                            color: #555;
+
+                            &:first-child {
+                                font-weight: 500;
+                                color: #333;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Responsive para pantallas <= 800px */
+/* ... (todo el código anterior se mantiene igual hasta el media query) ... */
+
+/* Responsive para pantallas <= 900px (con tu estilo de grid) */
+// @media (max-width: 900px) {
+//     body {
+
+
+//         main {
+//             padding: 0 10px;
+
+//             .container {
+//                 padding: 15px;
+//                 box-shadow: none;
+//                 border-radius: 0;
+
+//                 .filtros-form {
+//                     grid-template-columns: 1fr;
+//                     gap: 10px;
+
+//                     button, a button {
+//                         width: 100%;
+//                         margin-top: 5px;
+//                     }
+//                 }
+
+//                 table {
+//                     thead {
+//                         display: none;
+//                     }
+
+//                     tbody {
+//                         tr {
+//                             display: grid;
+//                             grid-template-columns: 1fr 1fr;
+//                             gap: 0;
+//                             margin-bottom: 15px;
+//                             border-radius: 8px;
+//                             box-shadow: 0 3px 10px rgba(41, 23, 143, 0.1);
+//                             overflow: hidden;
+//                             background: white;
+
+//                             td {
+//                                 padding: 12px 15px;
+//                                 border-bottom: 1px solid #f0f0ff;
+//                                 display: flex;
+//                                 flex-direction: column;
+
+//                                 &:before {
+//                                     content: attr(data-label);
+//                                     font-weight: 600;
+//                                     color: rgba(73, 76, 212, 1);
+//                                     font-size: 0.8rem;
+//                                     margin-bottom: 5px;
+//                                 }
+
+//                                 &:nth-child(odd) {
+//                                     border-right: 1px solid #f0f0ff;
+//                                 }
+
+//                                 &:nth-last-child(-n+2) {
+//                                     border-bottom: none;
+//                                 }
+//                             }
+
+//                             /* Asegurar que las celdas de estado/acciones ocupen ancho completo */
+//                             td:last-child {
+//                                 grid-column: span 2;
+//                                 text-align: center;
+//                                 background: #f9f9ff;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+@media (max-width: 900px) {
+    body main .container {
+        table {
+            thead {
+                display: none; /* Ocultamos la cabecera en móvil */
+            }
+            
+            tbody {
+                
+                tr {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0;
+                    margin-bottom: 15px;
+                    border-radius: 8px;
+                    box-shadow: 0 3px 10px rgba(41, 23, 143, 0.1);
+                    overflow: hidden;
+                    background: white;
+                    border: 1px solid #555;
+                    
+                    td {
+                        padding: 12px 15px;
+                        border-bottom: 1px solid #f0f0ff;
+                        display: flex;
+                        flex-direction: column;
+                        
+                        /* Estilos para las etiquetas (data-label) */
+                        &:before {
+                            content: attr(data-label);
+                            display: block;
+                            font-weight: 600;
+                            font-size: 0.75rem;
+                            color: #5a30e0; /* Morado corporativo */
+                            margin-bottom: 4px;
+                            background: rgba(90, 48, 224, 0.08);
+                            padding: 3px 6px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        }
+
+                        /* Estilo para los datos (valores) */
+                        &:not(:before) {
+                            font-size: 0.9rem;
+                            color: #333;
+                        }
+                        
+                        /* Bordes y columnas */
+                        &:nth-child(odd) {
+                            border-right: 1px solid #f0f0ff;
+                        }
+                        
+                        &:nth-last-child(-n+2) {
+                            border-bottom: none;
+                        }
+                        
+                        /* Celda de "Estado" ocupa ancho completo */
+                        &:nth-child(8) {
+                            grid-column: span 2;
+                            text-align: center;
+                            background: #f9f9ff;
+                            
+                            &:before {
+                                margin: 0 auto; /* Centrar etiqueta */
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

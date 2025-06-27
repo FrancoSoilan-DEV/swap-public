@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    position: relative;
+    min-width: 100%;
+    background: #fefefe;
+    header{
+      position: relative;
+      min-width: 100%;
+      min-height: 80px;
+      background-image: radial-gradient( circle 382px at 50% 50.2%,  rgba(73,76,212,1) 0.1%, rgb(5, 0, 139) 100.2% );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      box-shadow: 0 4px 6px rgba(41, 23, 143,0.3);
+          .dpto-container{
+              position: relative;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+              color: #fff;
+              h2{
+                letter-spacing: 0.5px;
+              }
+              h4{
+                  letter-spacing: 0.5px;
+              }
+        }
+    }
+    .comeback{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 85px;
+        height: 40px;
+        margin: 15px 15px;
+        background: rgba(79,8,225,1);
+        //background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgb(3, 0, 97) 2.2%, rgba(79,8,225,1) 90% );
+        border-radius: 20px;
+        transition: 0.5s ease-in-out;
+        &:hover{
+          transform: scale(1.05);
+        }
+        a{
+          text-decoration: none;
+          color: #fff;
+          font-weight: 500;
+        }
+    }
+    // Variables
+    $primary-color: #4f08e1;
+    $secondary-color: #1a0a6e;
+    $accent-color: #6c4df6;
+    $light-bg: #f5f7fa;
+    $border-radius: 12px;
+    $transition: all 0.3s ease-in-out;
+
+    
+    // Mixins
+    @mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    @mixin card-shadow {
+    box-shadow: 0 12px 24px rgba($secondary-color, 0.08);
+    }
+
+    @mixin input-focus-effect {
+    border-color: $accent-color;
+    box-shadow: 0 0 0 3px rgba($accent-color, 0.2);
+    outline: none;
+    }
+
+    // Estilos principales
+    main {
+    @include flex-center;
+    min-height: calc(100vh - 180px);
+    padding: 2rem;
+    background: linear-gradient(135deg, $light-bg 0%, darken($light-bg, 5%) 100%);
+    
+    article {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: $border-radius;
+        padding: 2.5rem;
+        transform: translateY(-20px);
+        animation: fadeInUp 0.6s ease-out forwards;
+        border: 1px solid rgba($primary-color, 0.1);
+        @include card-shadow;
+        
+        h1 {
+        color: $secondary-color;
+        font-size: 2rem;
+        margin-bottom: 1.8rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 0.8rem;
+        font-weight: 600;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, $primary-color, $accent-color);
+            border-radius: 2px;
+        }
+        }
+    }
+    }
+
+    // Estilos del formulario
+    form {
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: $primary-color !important; // Azul vibrante
+            font-weight: 600 !important;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            transition: $transition;
+            position: relative;
+            padding-left: 0.5rem;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              left: 0;
+              top: 50%;
+              transform: translateY(-50%);
+              height: 60%;
+              width: 3px;
+              background: linear-gradient(to bottom, $accent-color, $primary-color);
+              border-radius: 3px;
+            }
+          }
+          
+          // Inputs/Selects SUPER ESTÉTICOS (con bordes modernos)
+          input[type="text"],
+          select {
+            width: 100%;
+            padding: 1rem 1.3rem;
+            border: 2px solid rgba($primary-color, 0.15) !important;
+            border-radius: 10px !important; // Bordes más redondeados
+            font-size: 1rem;
+            transition: $transition;
+            background-color: rgba(white, 0.9);
+            color: darken($secondary-color, 15%);
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 2px 8px rgba($primary-color, 0.05);
+            
+            // Efecto al enfocar
+            &:focus {
+                outline: 2px solid transparent !important; // Eliminamos el outline feo
+                outline-offset: 2px !important;
+                border-color: $accent-color !important;
+                box-shadow: 0 0 0 3px rgba($accent-color, 0.2),
+                            0 2px 12px rgba($primary-color, 0.15) !important;
+                background-color: white;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            // Placeholders bonitos
+            &::placeholder {
+              color: rgba($primary-color, 0.4) !important;
+              font-weight: 400;
+            }
+          }
+          
+          // Selects con flecha personalizada (más moderna)
+          select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234f08e1' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 12px;
+            padding-right: 3rem !important;
+            cursor: pointer;
+            
+            option {
+              padding: 0.5rem !important;
+            }
+            
+            // Estilo para el placeholder del select
+            option[value=""] {
+              color: rgba($primary-color, 0.5) !important;
+            }
+          }
+          
+          // Contenedor de campos (para mejor espaciado)
+          .form-group {
+            margin-bottom: 1.8rem !important;
+            
+            &:hover {
+              label {
+                color: darken($primary-color, 5%) !important;
+                
+                &::before {
+                  height: 70%;
+                  background: linear-gradient(to bottom, lighten($accent-color, 10%), $primary-color);
+                }
+              }
+            }
+          }
+    
+    button[type="submit"] {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+        color: white;
+        border: none;
+        border-radius: $border-radius;
+        font-size: 1.1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: $transition;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        
+        &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba($primary-color, 0.2);
+        }
+        
+        &:active {
+        transform: translateY(0);
+        }
+    }
+    }
+
+    // Manejo de errores
+    .errorlist {
+    list-style: none;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    padding-left: 0;
+    
+    li {
+        position: relative;
+        padding-left: 1.2rem;
+        
+        &::before {
+        content: '!';
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+        }
+    }
+    }
+
+    // Animaciones
+    @keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+    main {
+        padding: 1rem;
+        
+        article {
+        padding: 1.5rem;
+        
+        h1 {
+            font-size: 1.6rem;
+        }
+        }
+    }
+    
+    form {
+        .form-group {
+        margin-bottom: 1.2rem;
+        }
+    }
+    }
+}

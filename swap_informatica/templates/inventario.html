@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Inventario</title>
+    <link rel="stylesheet" href="{% static 'css/inventario.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stat_3" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header id="up">
+        <div class="title-container">
+            <h2>Inventario</h2>
+        </div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#nuevo-articulo">Nuevo Articulo</a>
+                </li>
+                <li>
+                    <a href="#añadir">Item/Deposito/Estado</a>
+                </li>
+                <li>
+                    <a href="{% url 'equipos' %}">Inventario de Equipos</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main> 
+        <div class="comeback">
+            <a href="{% url 'informatica' %}">Atras</a>
+        </div>
+
+        <section class="table-section">
+            <article class="table-article">
+                <div class="inventario-title">
+                    <h1>Registro de Inventario</h1>
+                </div>
+                <div class="table-inventario">
+                    <div class="search">
+                        <form method="GET" class="filter-form">
+                            <label for="articulo">Artículo:</label>
+                            <select name="articulo" id="articulo">
+                                <option value="">Todos</option>
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria.iic_id }}" {% if articulo_filtro == categoria.iic_id|stringformat:"s" %}selected{% endif %}>
+                                        {{ categoria.iic_nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                    
+                            <label for="deposito">Depósito:</label>
+                            <select name="deposito" id="deposito">
+                                <option value="">Todos</option>
+                                {% for deposito in depositos %}
+                                    <option value="{{ deposito.iid_id }}" {% if deposito_filtro == deposito.iid_id|stringformat:"s" %}selected{% endif %}>
+                                        {{ deposito.iid_nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                    
+                            <label for="estado">Estado:</label>
+                            <select name="estado" id="estado">
+                                <option value="">Todos</option>
+                                {% for estado in estados %}
+                                    <option value="{{ estado.iie_id }}" {% if estado_filtro == estado.iie_id|stringformat:"s" %}selected{% endif %}>
+                                        {{ estado.iie_nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                    
+                           <div class="botones-container">
+                                <button type="submit">Filtrar</button>
+                                <a href="{% url 'inventario' %}?limpiar=1" class="clear-btn">Limpiar</a>
+                           </div>
+                        </form>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Artículo</th>
+                                <th>Depósito</th>
+                                <th>Cantidad</th>
+                                <th>Estado</th>
+                                <th>Descripción</th>
+                                <th>Fecha</th>
+                                <th>Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in inventario_informatica %}
+                            <tr data-id="{{ item.ii_id }}">
+                                <td>{{ item.ii_id }}</td>
+                                <td>{{ item.ii_iic }}</td>
+                                <td>{{ item.ii_iid }}</td>
+                                <td>
+                                    <span class="cantidad-text">{{ item.ii_cantidad }}</span>
+                                    <input type="text" class="cantidad-input" value="{{ item.ii_cantidad }}" style="display:none;">
+                                </td>
+                                <td>{{ item.ii_iie }}</td>
+                                <td>{{ item.ii_descripcion }}</td>
+                                <td class="fecha">{{ item.ii_fecha }}</td>
+                                <td>
+                                    <button class="edit-btn">✏️</button>
+                                    <button class="save-btn" style="display:none;">💾</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="cosas-articulo" id="nuevo-articulo">
+
+                <div class="cargar-articulo-nuevo">
+                    <h2>Nuevo Articulo&emsp;<a href="#up"><span class="material-symbols-outlined">stat_3</span></a></h2>
+                    <form method="POST" action="{% url 'add-new-article' %}">
+                        {% csrf_token %}
+                        {{ form4.as_p }}
+                        <button type="submit" class="btn add-btn">Guardar</button>
+                    </form>
+                </div>
+
+            </article>
+        </section>
+
+        <section class="add-section">
+
+            <article class="extra-add">
+                <h2>Añadir Item/Deposito/Estado&emsp;<a href="#up"><span class="material-symbols-outlined">stat_3</span></a></h2>
+                <div class="add-container" id="añadir">
+
+                    <div class="add-item">
+                        <h2>Nuevo Item</h2>
+                        <form method="POST" action="{% url 'add-item' %}">
+                            {% csrf_token %}
+                            {{ form3.as_p }}
+                            <button type="submit" class="btn add-btn">Guardar</button>
+                        </form>
+                    </div>
+
+                    <div class="add-rak">
+                        <h2>Nuevo Deposito</h2>
+                        <form method="POST" action="{% url 'add-rak' %}">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn add-btn">Guardar</button>
+                        </form>
+                    </div>
+
+                    <div class="add-estado">
+                        <h2>Nuevo Estado</h2>
+                        <form method="POST" action="{% url 'add-status' %}">
+                            {% csrf_token %}
+                            {{ form2.as_p }}
+                            <button type="submit" class="btn add-btn">Guardar</button>
+                        </form>
+                    </div>
+
+                </div>
+            </article>
+        </section>
+
+        <section class="many-tables"> 
+
+            <div class="table-item">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.iic_id }}</td>
+                            <td>{{ item.iic_nombre }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-deposito">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rak in raks %}
+                        <tr>
+                            <td>{{ rak.iid_id }}</td>
+                            <td>{{ rak.iid_nombre }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-estado">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for estadoo in status %}
+                        <tr>
+                            <td>{{ estadoo.iie_id }}</td>
+                            <td>{{ estadoo.iie_nombre }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+    </main>
+         
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let row = this.closest("tr");
+                row.querySelector(".cantidad-text").style.display = "none";
+                row.querySelector(".cantidad-input").style.display = "block";
+                this.style.display = "none";
+                row.querySelector(".save-btn").style.display = "inline";
+            });
+        });
+    
+        document.querySelectorAll(".save-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let row = this.closest("tr");
+                let itemId = row.getAttribute("data-id");
+                let newCantidad = row.querySelector(".cantidad-input").value;
+    
+                fetch("{% url 'guardar_cantidad' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        id: itemId,
+                        cantidad: newCantidad
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.status === "success") {
+                          row.querySelector(".cantidad-text").innerText = newCantidad;
+                          row.querySelector(".cantidad-text").style.display = "block";
+                          row.querySelector(".cantidad-input").style.display = "none";
+                          row.querySelector(".edit-btn").style.display = "inline";
+                          row.querySelector(".save-btn").style.display = "none";
+                      } else {
+                          alert("Error al guardar");
+                      }
+                  });
+            });
+        });
+    </script>
+</body>
+</html>

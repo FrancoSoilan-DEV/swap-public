@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | TTHH | Funcionarios</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/func.css' %}">
+</head>
+<body>
+     <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="/admin/" target="_blank">
+                    <h1><span>Editar</span></h1>
+                </a>
+                <a href="{% url 'telefonos' %}">
+                   <h1><span>Telefonos</span></h1>
+                </a>
+                <a href="{% url 'ex_funcionarios' %}">
+                   <h1><span>Ex. Funcionarios</span></h1>
+                </a>
+                <a href="{% url 'tthh' %}">
+                    <h1><span>Atras</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>
+            <div class="container">
+                <!-- Añadido el título que el SASS espera -->
+                <div class="title">
+                    <h2>Nomina de Funcionarios</h2>
+                </div>
+                
+                <!-- Movido search dentro de container -->
+                <div class="search">
+                    <form method="get">
+                        <div class="form-group">
+                            <label for="funcionario">Funcionario:</label>
+                            <select name="funcionario" id="funcionario-select">
+                                <option value="">Todos</option>
+                                {% for nombre in lista_funcionarios %}
+                                    <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
+                                        {{ nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fecha_exacta">Fecha exacta:</label>
+                            <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="fecha_desde">Desde:</label>
+                            <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="fecha_hasta">Hasta:</label>
+                            <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                        </div>
+                        
+                        <button type="submit">Filtrar</button>
+                        
+                        <a href="{% url 'tthhfunc' %}">Limpiar</a>
+                        <a href="{% url 'exp-nom' %}?{{ request.GET.urlencode }}" class="btn-exportar">
+                            <i class="fas fa-file-excel"></i> Exportar a Excel
+                        </a>
+                    </form>
+                </div>
+                
+                <!-- Movido tablecontainer dentro de container -->
+                <div class="tablecontainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cedula</th>
+                                <th>Nombre Completo</th>
+                                <th>Correo</th>
+                                <th>Sueldo</th>
+                                <th>Celular</th>
+                                <th>Departamento</th>
+                                <th>Entrada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in funcionarios %}
+                                <tr>
+                                    <td>{{ f.fun_ci }}</td>
+                                    <td>{{ f.fun_nombres_apellidos }}</td>
+                                    <td>{{ f.fun_correo }}</td>
+                                    <td>{{ f.fun_sueldo}}</td>
+                                    <td>{{ f.fun_cel }}</td>
+                                    <td>{{ f.fun_dpto }}</td>
+                                    <td data-label="Fecha">{{ f.fun_entrada|date:"d/m/Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

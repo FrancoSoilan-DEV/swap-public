@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Porteria</title>
+    <link rel="stylesheet" href="{% static 'css/porteria.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Porteria</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="{% url 'cargar' %}">
+                    <h1><span>Entrada</span></h1>
+                </a>
+                <a href="{% url 'salida' %}">
+                    <h1><span>Salida</span></h1>
+                 </a>
+                <a href="{% url 'ver' %}">
+                   <h1><span>Ver</span></h1>
+                </a>
+                <a href="{% url 'logout' %}">
+                    <h1><span>Salir</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>{% comment %} 80% disponible {% endcomment %}
+            {% comment %} 80% {% endcomment %}
+            <div class="container-tasks" id="task">
+                <div class="tasks-containers">
+                    {% for dia in dia %}
+                        <div class="task">
+                            <div class="task-title">
+                                <h2>{{ dia }}</h2>
+                            </div>
+                            <div class="tasks-container">
+                                {% for tarea in tarea %}
+    
+                                    {% if tarea.tarea_td == dia %}
+                                        <div class="task-container">
+                                            <h3>• {{ tarea.tarea_titulo }}</h3> 
+
+                                        </div>
+                                        <div class="textContainer">
+                                            <p>&emsp;&emsp;{{ tarea.tarea_descripcion }}</p>
+                                        </div> 
+                                    {% endif %}
+                                {% endfor %}
+    
+     
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

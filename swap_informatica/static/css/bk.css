@@ -1,0 +1,239 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #2b2b2b;
+  color: #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #333;
+  padding: 20px;
+  color: #fff;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+header h2 {
+  margin-left: 20px;
+  font-weight: 700;
+}
+
+main {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.comeback {
+  margin-top: 30px;
+  position: absolute;
+  top: 90px;
+  left: 15px;
+  border-radius: 15px;
+  width: 90px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  transition: 0.4s ease-in-out;
+}
+.comeback a {
+  display: inline-block; /* Para poder aplicar padding y márgenes correctamente */
+  padding: 8px 16px; /* Espaciado interno */
+  text-decoration: none; /* Quitar el subrayado del enlace */
+  color: #f8f9fa; /* Un gris muy claro, similar al texto principal */
+  background-color: rgba(99, 111, 122, 0.6980392157); /* Un gris oscuro, similar al fondo principal */
+  border: 1px solid #343a40; /* Borde del mismo color del fondo */
+  border-radius: 15px; /* Bordes ligeramente redondeados */
+  transition: 0.4s ease-in-out;
+}
+.comeback a:hover {
+  background-color: #17a2b8; /* Un tono azulado para el hover, similar al botón "Exportar a Excel" */
+  color: #fff; /* Texto blanco al hacer hover */
+  border-color: #17a2b8; /* Borde del mismo color del hover */
+  transform: scale(1.1);
+}
+
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  background: #333;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #444;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 1px solid #444;
+}
+table th, table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #5e5e5e;
+}
+table th {
+  background: #777;
+  color: #2b2b2b;
+  text-transform: uppercase;
+}
+table tr:nth-child(even) {
+  background: #262626;
+}
+table tr:hover {
+  background: #404040;
+}
+
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #262626;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+.filter-form label {
+  font-size: 14px;
+  color: #ddd;
+  font-weight: 500;
+}
+.filter-form input, .filter-form select {
+  background: #333;
+  color: #ddd;
+  border: 1px solid #444;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.filter-form button {
+  background: rgba(77, 106, 254, 0.662745098);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+.filter-form button:hover {
+  background: rgba(128, 148, 254, 0.8156862745);
+}
+.filter-form .clear-btn {
+  background: #d9534f;
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: 0.3s ease-in-out;
+}
+.filter-form .clear-btn:hover {
+  background: #e27c79;
+}
+
+input[type=checkbox] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #777;
+  border-radius: 4px;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  position: relative;
+  margin: auto;
+}
+input[type=checkbox]:checked {
+  background: #5cb85c;
+  border-color: #5cb85c;
+}
+input[type=checkbox]::after {
+  content: "✔";
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  display: none;
+  position: absolute;
+}
+input[type=checkbox]:checked::after {
+  display: block;
+}
+
+.delete-btn {
+  background: #454545;
+  color: #ddd;
+  border: 2px solid #777;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+.delete-btn:hover {
+  background: #d9534f;
+  border-color: #c9302c;
+  color: white;
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.btn-export {
+  background-color: #2c7be5;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  transition: background-color 0.3s ease;
+  text-decoration: none; /* Quitar el subrayado del enlace */
+}
+.btn-export:hover {
+  background-color: #1a5edb;
+  cursor: pointer;
+}/*# sourceMappingURL=bk.css.map */

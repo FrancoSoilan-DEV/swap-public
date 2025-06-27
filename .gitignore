@@ -1,0 +1,56 @@
+# Entorno virtual
+venv/
+ENV/
+env/
+.venv/
+
+# Archivos de entorno
+.env
+*.env
+
+# Archivos de base de datos (si llegás a hacer pruebas con sqlite)
+*.sqlite3
+
+# Archivos de log
+*.log
+
+# Archivos de compilación de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de configuración de VS Code
+.vscode/
+
+# Archivos temporales
+*.bak
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Archivos de colecta estática
+/staticfiles/
+
+# Archivos generados por collectstatic (por si se copian al proyecto)
+*.static/
+
+# Docker data volumes
+/data/postgres/*
+!/data/postgres/.gitkeep
+/data/redis/*
+!/data/redis/.gitkeep
+
+# Archivos de cobertura de pruebas
+htmlcov/
+.coverage
+*.cover
+.cache
+nosetests.xml
+coverage.xml
+*.coveragerc
+
+# Archivos de Heroku o build
+*.tar.gz
+*.egg-info/
+.Python

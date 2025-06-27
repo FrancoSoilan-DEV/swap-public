@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Ver Trabajos Cargados</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/veregistros.css' %}">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Servicio Tecnico</h2>
+        </div>
+        <div class="new">
+            <h3><a href="{% url 'addmonto' %}">Nuevo Monto</a></h3>
+        </div>
+    </header>
+    <div class="comeback">
+        <a href="{% url 'serviciotecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+    <main>
+        <section>
+            <div class="container">
+                <div class="search">
+                    <form method="get">
+                        <label for="funcionario">Funcionario:</label>
+                        <select name="funcionario" id="funcionario-select">
+                            <option value="">Todos</option>
+                            {% for nombre in lista_tecnicos %}
+                                <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
+                                    {{ nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                    
+                        <label for="fecha_exacta">Fecha exacta:</label>
+                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                    
+                        <label for="fecha_desde">Desde:</label>
+                        <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                    
+                        <label for="fecha_hasta">Hasta:</label>
+                        <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                    
+                        <button type="submit">Filtrar</button>
+                        <a href="{% url 'veregistro' %}">Limpiar</a>
+                    </form>
+                    
+                    
+                    
+                    
+                </div>
+                <div class="tablecontainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha de Carga</th>
+                                <th>Hora de Carga</th>
+                                <th>Funcionario</th>
+                                <th>Sitio</th>
+                                <th>Cliente</th>
+                                <th>Descripción</th>
+                                <th>Fecha</th>
+                                <th>H. Inicio</th>
+                                <th>H. Salida</th>
+                                <th>Estado</th>
+                                <th class="monto-column">Monto</th>
+                                <th>Guardar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trabajo in trabajos_realizados %}
+                            <form method="post" action="{% url 'editar_trabajo' trabajo.tec_id %}">
+                                {% csrf_token %}
+                                <tr>
+                                    <td data-label="F. Carga">{{ trabajo.tec_fexacta|date:"d/m/Y" }}</td>
+                                    <td data-label="H. Carga">{{ trabajo.tec_hexacta }}</td>
+                                    <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
+                                    <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
+                                    <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
+                                    <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
+                                    <td data-label="Fecha">{{ trabajo.tec_fecha|date:"d/m/Y" }}</td>
+                                    <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
+                                    <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
+                        
+                                    <!-- Estado editable -->
+                                    <td>
+                                        <select name="estado">
+                                            {% for estado in lista_estados %}
+                                                <option value="{{ estado.ee_id }}" {% if trabajo.tec_ee.ee_id == estado.ee_id %}selected{% endif %}>
+                                                    {{ estado.ee_estado }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                        
+                                    <!-- Monto editable -->
+                                    {% load humanize %}
+                                    <td>
+                                        <select name="monto">
+                                            {% for monto in lista_montos %}
+                                                <option value="{{ monto.tm_id }}" {% if trabajo.tec_tm.tm_id == monto.tm_id %}selected{% endif %}>
+                                                    {{ monto.tm_monto|intcomma }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+
+                        
+                                    <td><button type="submit" aria-label="Guardar cambios">💾</button></td>
+                                </tr>
+                            </form>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        $(document).ready(function() {
+            $('#funcionario-select').select2({
+                placeholder: "Seleccione un funcionario",
+                allowClear: true,
+                width: 'resolve'
+            });
+        });
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Ver Trabajos Cargados</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/verct.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Servicio Tecnico</h2>
+            <h4>¡Bienvenido!</h4>
+        </div>
+    </header>
+    
+    <div class="comeback">
+        <a href="{% url 'tecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+
+    <main class="form-container">
+        <div class="form-card">
+            <!-- Filtros con estilo bonito -->
+            <div class="search-form">
+                <h3 class="form-title"><i class="fas fa-filter"></i> Filtrar Trabajos</h3>
+                <form method="get" class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Funcionario:</label>
+                        <input type="text" class="form-control" value="{{ nombre_simple }}" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha"><i class="fas fa-calendar-day"></i> Fecha Exacta:</label>
+                        <input type="date" name="fecha" id="fecha" class="form-date" value="{{ fecha_actual }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_desde"><i class="fas fa-calendar-minus"></i> Fecha Desde:</label>
+                        <input type="date" name="fecha_desde" id="fecha_desde" class="form-date" value="{{ fecha_desde }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_hasta"><i class="fas fa-calendar-plus"></i> Fecha Hasta:</label>
+                        <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-date" value="{{ fecha_hasta }}">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        <a href="{% url 'verct' %}" class="clear-btn">
+                            <i class="fas fa-broom"></i> Limpiar
+                        </a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Tabla responsive -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Funcionario</th>
+                            <th>Sitio</th>
+                            <th>Cliente</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>H. Inicio</th>
+                            <th>H. Salida</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trabajo in trabajos %}
+                        <tr>
+                            <td data-label="Funcionario">{{ trabajo.tec_nombre.split|slice:":1"|first }} 
+                                                         {{ trabajo.tec_nombre.split|slice:"2:3"|first }}</td>
+                            <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
+                            <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
+                            <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
+                            <td data-label="Fecha">{{ trabajo.tec_fecha }}</td>
+                            <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
+                            <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7">No se encontraron trabajos con los filtros seleccionados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

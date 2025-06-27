@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Salida</title>
+    <link rel="stylesheet" href="{% static 'css/salida.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Porteria</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <div class="comeback">
+        <a href="{% url 'porteria' %}">Atrás</a>
+    </div>
+    <main>
+        <div class="funcionarios">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Funcionario</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Comentario</th>
+                        <th>Estado</th>
+                        <th>Guardar</th> <!-- Botón Guardar -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for funcionario in entrada_funcionarios %}
+                    {% if funcionario.e_id %}
+                    <tr>
+                        <form method="POST" action="{% url 'editar_entrada' funcionario.e_id %}">
+                            {% csrf_token %}
+                            <td data-label="Fecha">{{ funcionario.e_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="Funcionario">{{ funcionario.e_fun }}</td>
+                            <td data-label="Entrada">{{ funcionario.e_entrada }}</td>
+                            <td data-label="Salida">
+                                <input type="time" name="e_salida" value="{{ funcionario.e_salida|default:'00:00' }}" required>
+                            </td>
+                            <td>
+                                <input type="text" name="e_comentario" value="{{ funcionario.e_comentario }}" maxlength="45">
+                            </td>
+                            <td>
+                                <select name="e_ee">
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.pk }}" {% if estado.pk == funcionario.e_ee.pk %}selected{% endif %}>
+                                            {{ estado.ee_estado }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <button type="submit">Guardar</button>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="proveedores">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Comentario</th>
+                        <th>Estado</th>
+                        <th>Guardar</th> <!-- Botón Guardar -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proveedor in entrada_proveedores %}
+                    {% if proveedor.e_id %}
+                    <tr>
+                        <form method="POST" action="{% url 'editar_entrada' proveedor.e_id %}">
+                            {% csrf_token %}
+                            <td data-label="Fecha">{{ proveedor.e_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="Proveedor">{{ proveedor.e_prov }}</td>
+                            <td data-label="Entrada">{{ proveedor.e_entrada }}</td>
+                            <td data-label="Salida">
+                                <input type="time" name="e_salida" value="{{ proveedor.e_salida|default:'00:00' }}" required>
+                            </td>
+                            <td>
+                                <input type="text" name="e_comentario" value="{{ proveedor.e_comentario }}" maxlength="45">
+                            </td>
+                            <td>
+                                <select name="e_ee">
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.pk }}" {% if estado.pk == proveedor.e_ee.pk %}selected{% endif %}>
+                                            {{ estado.ee_estado }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <button type="submit">Guardar</button>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+        
+        <div class="cobradores">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cobrador</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Comentario</th>
+                        <th>Estado</th>
+                        <th>Guardar</th> <!-- Botón Guardar -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobrador in entrada_cobradores %}
+                    {% if cobrador.e_id %}
+                    <tr>
+                        <form method="POST" action="{% url 'editar_entrada' cobrador.e_id %}">
+                            {% csrf_token %}
+                            <td data-label="Fecha">{{ cobrador.e_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="Cobrador">{{ cobrador.e_cob }}</td>
+                            <td data-label="Entrada">{{ cobrador.e_entrada }}</td>
+                            <td data-label="Salida">
+                                <input type="time" name="e_salida" value="{{ cobrador.e_salida|default:'00:00' }}" required>
+                            </td>
+                            <td>
+                                <input type="text" name="e_comentario" value="{{ cobrador.e_comentario }}" maxlength="45">
+                            </td>
+                            <td>
+                                <select name="e_ee">
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.pk }}" {% if estado.pk == cobrador.e_ee.pk %}selected{% endif %}>
+                                            {{ estado.ee_estado }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <button type="submit">Guardar</button>
+                            </td>
+                        </form>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+         <div class="visitas">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Visita</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Comentario</th>
+                        <th>Estado</th>
+                        <th>Guardar</th> <!-- Botón Guardar -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visita in entrada_visitas %}
+                    {% if visita.e_id %}
+                    <tr>
+                        <form method="POST" action="{% url 'editar_entrada' visita.e_id %}">
+                            {% csrf_token %}
+                            <td data-label="Fecha">{{ visita.e_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="Visita">{{ visita.e_visita }}</td>
+                            <td data-label="Entrada">{{ visita.e_entrada }}</td>
+                            <td data-label="Salida">
+                                <input type="time" name="e_salida" value="{{ visita.e_salida|default:'00:00' }}" required>
+                            </td>
+                            <td>
+                                <input type="text" name="e_comentario" value="{{ visita.e_comentario }}" maxlength="45">
+                            </td>
+                            <td>
+                                <select name="e_ee">
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.pk }}" {% if estado.pk == visita.e_ee.pk %}selected{% endif %}>
+                                            {{ estado.ee_estado }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <button type="submit">Guardar</button>
+                            </td>
+                            
+                        </form>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+        
+        
+</main>
+</body>
+</html>

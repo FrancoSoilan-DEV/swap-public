@@ -1,0 +1,546 @@
+// =============================================
+// VARIABLES
+// =============================================
+$primary-color: #4361ee;
+$secondary-color: #3f37c9;
+$accent-color: #4cc9f0;
+$light-bg: #f8f9fa;
+$dark-text: #2b2d42;
+$light-text: #8d99ae;
+$white: #ffffff;
+$shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+$border-radius: 12px;
+$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+$font-primary: 'Segoe UI', system-ui, -apple-system, sans-serif;
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+// =============================================
+// MIXINS
+// =============================================
+@mixin card-style {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  transition: $transition;
+  border: none;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin button-style {
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  border: none;
+  color: $white;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 50px;
+  padding: 10px 24px;
+  transition: $transition;
+  box-shadow: 0 4px 15px rgba($primary-color, 0.2);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+    background: linear-gradient(135deg, lighten($primary-color, 5%), lighten($secondary-color, 5%));
+  }
+}
+
+@mixin title-decoration {
+  position: relative;
+  padding-bottom: 1rem;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, $accent-color, $primary-color);
+    border-radius: 2px;
+  }
+}
+
+// =============================================
+// ESTILOS GLOBALES
+// =============================================
+body {
+  font-family: $font-primary;
+  background-color: lighten($light-bg, 2%);
+  color: $dark-text;
+  line-height: 1.6;
+  .comeback 
+    {
+        @include flex-center;
+        width: 85px;
+        height: 40px;
+        margin: 15px;
+        background: linear-gradient(135deg, $primary-color 0%, lighten($primary-color, 10%) 100%);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        &:hover 
+        {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        a 
+        {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        @include flex-center;
+        gap: 5px;
+        }
+    }
+}
+
+
+
+
+
+// =============================================
+// LAYOUT PRINCIPAL
+// =============================================
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  h1 {
+    color: $dark-text;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    @include title-decoration;
+    font-size: 2.2rem;
+    
+  }
+}
+
+// =============================================
+// SECCIÓN DE FILTROS
+// =============================================
+.filtros {
+  @include card-style;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  background: linear-gradient(to bottom right, rgba($light-bg, 0.8), $white);
+  
+  form {
+    .row {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.filtro-group {
+  @include card-style;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid $primary-color;
+  
+  .form-check {
+    padding-left: 0;
+    margin-bottom: 1rem;
+    
+    &-input {
+      width: 1.2em;
+      height: 1.2em;
+      margin-right: 0.8rem;
+      margin-left: 0;
+      border: 2px solid $light-text;
+      
+      &:checked {
+        background-color: $primary-color;
+        border-color: $primary-color;
+      }
+    }
+    
+    &-label {
+      color: $dark-text;
+      font-weight: 500;
+      cursor: pointer;
+      transition: $transition;
+      
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+  
+  .form-label {
+    color: $light-text;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .form-select {
+    border: 1px solid rgba($light-text, 0.3);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    color: $dark-text;
+    transition: $transition;
+    width: 100%;
+    
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.1);
+      outline: none;
+    }
+  }
+}
+
+// =============================================
+// BOTONES
+// =============================================
+.btn {
+  &-primary {
+    @include button-style;
+    margin-right: 0.75rem;
+  }
+  
+  &-secondary {
+    background: $white;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 10px 24px;
+    transition: $transition;
+    
+    &:hover {
+      background: rgba($primary-color, 0.1);
+      color: darken($primary-color, 10%);
+      transform: translateY(-2px);
+      border-color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// =============================================
+// GRÁFICO
+// =============================================
+.chart-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 3rem auto;
+  @include card-style;
+  padding: 2rem;
+  background: $white;
+  
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+// =============================================
+// ALERTAS
+// =============================================
+.alert {
+  @include card-style;
+  padding: 1.5rem;
+  border-left: 4px solid $accent-color;
+  color: $dark-text;
+  text-align: center;
+}
+
+// =============================================
+// EFECTOS ESPECIALES
+// =============================================
+::selection {
+  background: rgba($primary-color, 0.2);
+  color: darken($primary-color, 10%);
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  .filtros {
+    padding: 1.5rem;
+  }
+  
+  .filtro-group {
+    padding: 1rem;
+  }
+  
+  .chart-container {
+    padding: 1rem;
+  }
+  
+  .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    
+    &-primary {
+      margin-right: 0;
+    }
+  }
+}
+
+
+// Variables
+$primary: #4361ee;
+$secondary: #3f37c9;
+$accent: #4cc9f0;
+$light: #f8f9fa;
+$dark: #212529;
+$success: #4bb543;
+$warning: #f8961e;
+$danger: #ef233c;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-500: #adb5bd;
+$gray-700: #495057;
+$border-radius: 0.5rem;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin card-style {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
+}
+
+// Estilos generales
+.supercontainer {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: $dark;
+  min-width: 100%;
+  margin: 2rem auto;
+  padding: 0 1rem;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+// Estilos para el buscador
+.search {
+  @include card-style;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: $secondary;
+      font-size: 0.9rem;
+    }
+    // BUSCADORCHI
+    select, input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid $gray-200;
+      border-radius: $border-radius;
+      font-size: 1rem;
+      transition: $transition;
+
+      &:focus {
+        outline: none;
+        border-color: $accent;
+        box-shadow: 0 0 0 2px rgba($accent, 0.2);
+      }
+    }
+
+    button {
+      background-color: $primary;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: $border-radius;
+      cursor: pointer;
+      font-weight: 600;
+      transition: $transition;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+
+      &:hover {
+        background-color: $secondary;
+        transform: translateY(-2px);
+      }
+    }
+
+    a {
+      @include flex-center;
+      background-color: $gray-200;
+      color: $gray-700;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: $border-radius;
+      font-weight: 600;
+      transition: $transition;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+
+      &:hover {
+        background-color: $gray-500;
+        color: white;
+      }
+    }
+    .btn-exportar {
+        @include flex-center;
+        background-color: #4CAF50;  // Verde éxito
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: $border-radius;
+        font-weight: 600;
+        transition: $transition;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+    
+        &:hover {
+            background-color: darken(#4CAF50, 10%);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    }
+    
+  }
+}
+
+// Estilos para la tabla
+.tablecontainer {
+  @include card-style;
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+
+    thead {
+      background-color: $primary;
+      color: white;
+
+      tr th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+
+        &:first-child {
+          border-top-left-radius: $border-radius;
+        }
+
+        &:last-child {
+          border-top-right-radius: $border-radius;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $gray-200;
+        transition: $transition;
+
+        &:hover {
+          background: #607af054;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        td {
+          padding: 1rem;
+          color: $gray-700;
+
+          &[data-label="Estado"] {
+            font-weight: 600;
+            
+            // Puedes agregar colores según el estado
+            // Ejemplo:
+            // &.completed { color: $success; }
+            // &.pending { color: $warning; }
+            // &.cancelled { color: $danger; }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .search {
+    form {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .tablecontainer {
+    table {
+      thead {
+        display: none;
+      }
+
+      tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid $gray-200;
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          text-align: right;
+
+          &::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: $secondary;
+            margin-right: auto;
+            padding-right: 1rem;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Gestor de Backups</title>
+    <link rel="stylesheet" href="{% static 'css/backup.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stat_3" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header id="up">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-database"></i>
+            </div>
+            <h1 class="app-name">Gestor de Backups</h1>
+        </div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#bk-semanal">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>BK-Semanal</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#bklist">
+                        <i class="fas fa-list"></i>
+                        <span>Listado</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#fce">
+                        <i class="fas fa-laptop"></i>
+                        <span>Equipos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'bk-hechos' %}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>BK-Hechos</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="action-buttons">
+            <a href="{% url 'informatica' %}" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver</span>
+            </a>
+            <a href="{% url 'bkdone' %}" class="btn btn-save">
+                <i class="fas fa-save"></i>
+                <span>Guardar BK</span>
+            </a>
+        </div>
+
+        <!-- Sección Backups Semanales -->
+        <section class="card-section" id="bk-semanal">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calendar-week"></i> Backups Semanales</h2>
+                </div>
+                <div class="card-body">
+                    {% for bkdia in bkdia %}
+                    <div class="day-container">
+                        <div class="day-header">
+                            <h3>{{ bkdia }}</h3>
+                            <a href="#up" class="btn-icon">
+                                <span class="material-symbols-outlined">stat_3</span>
+                            </a>
+                        </div>
+                        <div class="backup-list">
+                            {% for bkproceso in bkproceso %}
+                                {% if bkproceso.bp_bd == bkdia %}
+                                    <div class="backup-item">
+                                        <div class="backup-info">
+                                            <i class="fas fa-database"></i>
+                                            <span>{{ bkproceso.bp_b }}</span>
+                                        </div>
+                                        <form method="POST" action="{% url 'actualizar_estado_bk' bkproceso.bp_id %}" class="status-form">
+                                            {% csrf_token %}
+                                            <select name="bkestado" onchange="this.form.submit()" class="status-select">
+                                                {% for e in bkestado %}
+                                                    <option value="{{ e.be_estado }}" {% if e.be_estado == bkproceso.bp_be.be_estado %} selected {% endif %}>  
+                                                        {{ e.be_estado }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </form>
+                                    </div>                                
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Añadir Backups Semanales -->
+        <section class="card-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-plus-circle"></i> Añadir Backups Semanales</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'add_backup' %}" class="form-container">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Listado de Backups -->
+        <section class="card-section" id="bklist">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-list-ul"></i> Listado de Backups</h2>
+                    <a href="#up" class="btn-icon">
+                        <span class="material-symbols-outlined">stat_3</span>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Funcionario</th>
+                                    <th>Disco</th>
+                                    <th>Equipo</th>
+                                    <th>Nombre</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bk in bk %}
+                                <tr>
+                                    <td>{{ bk.b_id }}</td>
+                                    <td>{{ bk.b_fce }}</td>
+                                    <td>{{ bk.b_disco }}</td>
+                                    <td>{{ bk.b_equipo }}</td>
+                                    <td>{{ bk.b_nombre }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gestión de Backups -->
+        <section class="card-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-cogs"></i> Gestión de Backups</h2>
+                </div>
+                <div class="card-body grid-layout">
+                    <!-- Añadir Backup -->
+                    <div class="management-card">
+                        <div class="management-header">
+                            <h3><i class="fas fa-plus"></i> Nuevo Backup</h3>
+                            <a href="#up" class="btn-icon">
+                                <span class="material-symbols-outlined">stat_3</span>
+                            </a>
+                        </div>
+                        <form method="POST" action="{% url 'new_bk' %}" class="form-container">
+                            {% csrf_token %}
+                            {{ form2.as_p }}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Eliminar Backup -->
+                    <div class="management-card">
+                        <div class="management-header">
+                            <h3><i class="fas fa-trash-alt"></i> Eliminar Backup</h3>
+                            <a href="#up" class="btn-icon">
+                                <span class="material-symbols-outlined">stat_3</span>
+                            </a>
+                        </div>
+                        <form method="POST" action="{% url 'delete_bk' %}" class="form-container">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="bk_id">Seleccionar Backup:</label>
+                                <select name="bk_id" class="form-select">
+                                    {% for backup in bk %}
+                                        <option value="{{ backup.b_id }}">{{ backup }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Funcionarios con Equipo -->
+        <section class="card-section" id="fce">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-users"></i> Funcionarios con Equipo</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Equipo</th>
+                                    <th>Funcionario</th>
+                                    <th>Nombre Equipo</th>
+                                    <th>Nombre SATI</th>
+                                    <th>Serie SATI</th>
+                                    <th>IP</th>
+                                    <th>Observaciones</th>
+                                    <th>Imagen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for func in fce %}
+                                <tr>
+                                    <td>{{ func.fce_id }}</td>
+                                    <td>{{ func.fce_equipo }}</td>
+                                    <td>{{ func.fce_fun }}</td>
+                                    <td>{{ func.fce_nombre_equipo }}</td>
+                                    <td>{{ func.fce_nombre_sati }}</td>
+                                    <td>{{ func.fce_serie_sati }}</td>
+                                    <td>{{ func.fce_ip }}</td>
+                                    <td>{{ func.fce_observaciones }}</td>
+                                    <td>{{ func.fce_ruta_imagen }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="grid-layout">
+                        <!-- Listado de Funcionarios -->
+                        <div class="sub-card">
+                            <div class="sub-header">
+                                <h3><i class="fas fa-user-tie"></i> Funcionarios</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Funcionario</th>
+                                            <th>Departamento</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for funcionario in funcionarios %}
+                                        <tr>
+                                            <td>{{ funcionario.fun_id }}</td>
+                                            <td>{{ funcionario.fun_nombres_apellidos }}</td>
+                                            <td>{{ funcionario.fun_dpto }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Gestión de Funcionarios con Equipo -->
+                        <div class="management-container">
+                            <!-- Añadir Funcionario con Equipo -->
+                            <div class="management-card">
+                                <div class="management-header">
+                                    <h3><i class="fas fa-user-plus"></i> Nuevo Funcionario con Equipo</h3>
+                                    <a href="#up" class="btn-icon">
+                                        <span class="material-symbols-outlined">stat_3</span>
+                                    </a>
+                                </div>
+                                <form method="POST" action="{% url 'add_fce' %}" class="form-container">
+                                    {% csrf_token %}
+                                    {{ form3.as_p }}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <!-- Eliminar Funcionario con Equipo -->
+                            <div class="management-card">
+                                <div class="management-header">
+                                    <h3><i class="fas fa-user-minus"></i> Eliminar Registro</h3>
+                                </div>
+                                <form method="POST" action="{% url 'delete_fce' %}" class="form-container">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="fce_id">Seleccionar Registro:</label>
+                                        <select name="fce_id" class="form-select">
+                                            {% for func_equipo in fce %}
+                                                <option value="{{ func_equipo.fce_id }}">{{ func_equipo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>Sistema de Gestión de Backups &copy; {% now "Y" %}</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,360 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+/* Mixins */
+/* Variables principales */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  position: relative;
+  min-width: 100%;
+  background: #fefefe;
+}
+body header {
+  position: relative;
+  padding: 10px;
+  min-width: 100%;
+  min-height: 80px;
+  background-image: radial-gradient(circle 382px at 50% 50.2%, rgb(73, 76, 212) 0.1%, rgb(5, 0, 139) 100.2%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+}
+body header .dpto-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+}
+body header .dpto-container h2 {
+  letter-spacing: 0.5px;
+}
+body header .dpto-container h4 {
+  letter-spacing: 0.5px;
+}
+body header a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  position: relative; /* Para el subrayado animado */
+  transition: all 0.5s ease-in-out;
+  /* Efecto hover: Subrayado con gradiente + brillo */
+}
+body header a:hover {
+  color: #FFD700; /* Dorado al pasar el mouse (opcional) */
+}
+body header a:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #FFD700, #FF6B6B); /* Degradado dorado a coral */
+  transform: scaleX(1); /* Animación de "entrada" */
+  transform-origin: left;
+  animation: underline-grow 0.3s ease-out;
+}
+body .comeback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85px;
+  height: 40px;
+  margin: 15px;
+  background: linear-gradient(135deg, #4f08e1 0%, #6a25f7 100%);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+body .comeback:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+body .comeback a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+body main {
+  position: relative;
+  min-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+}
+body main section {
+  width: 100%;
+  padding: 20px;
+}
+body main section .container {
+  min-width: 100%;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 25px;
+}
+body main section .container .search {
+  margin-bottom: 30px;
+}
+body main section .container .search form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+body main section .container .search form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+}
+body main section .container .search form input, body main section .container .search form select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  color: #4f08e1;
+}
+body main section .container .search form input:focus, body main section .container .search form select:focus {
+  border-color: #4f08e1;
+  box-shadow: 0 0 0 2px rgba(79, 8, 225, 0.2);
+  outline: none;
+}
+body main section .container .search form .select2-container {
+  width: 100% !important;
+}
+body main section .container .search form .select2-container .select2-selection {
+  height: auto;
+  padding: 8px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+body main section .container .search form button {
+  background: linear-gradient(135deg, #4f08e1 0%, #030061 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+body main section .container .search form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(79, 8, 225, 0.3);
+}
+body main section .container .search form a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+body main section .container .search form a:hover {
+  background: #e0e0e0;
+}
+body main section .container .tablecontainer {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+body main section .container .tablecontainer table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Arial", sans-serif;
+  margin: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  table-layout: fixed;
+}
+body main section .container .tablecontainer table th, body main section .container .tablecontainer table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  word-break: break-word;
+  white-space: normal;
+  vertical-align: top;
+  font-size: 0.9rem;
+  text-align: center;
+  justify-content: center;
+}
+body main section .container .tablecontainer table td select {
+  width: 100%;
+  min-width: 120px;
+  max-width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  background-image: url("data:image/svg+xml,%3csvg fill='%234f08e1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+body main section .container .tablecontainer table td select:focus {
+  border-color: #4f08e1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 8, 225, 0.2);
+}
+body main section .container .tablecontainer table thead {
+  background: #4f08e1;
+}
+body main section .container .tablecontainer table thead th {
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+}
+body main section .container .tablecontainer table thead th:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+body main section .container .tablecontainer table tbody tr:nth-child(odd) {
+  background-color: white;
+}
+body main section .container .tablecontainer table tbody tr:nth-child(even) {
+  background-color: rgba(79, 8, 225, 0.03);
+}
+body main section .container .tablecontainer table tbody tr:hover {
+  background-color: rgba(79, 8, 225, 0.1);
+}
+body main section .container .tablecontainer table td:nth-child(1),
+body main section .container .tablecontainer table td:nth-child(2),
+body main section .container .tablecontainer table td:nth-child(4),
+body main section .container .tablecontainer table td:nth-child(5),
+body main section .container .tablecontainer table td:nth-child(7),
+body main section .container .tablecontainer table td:nth-child(8),
+body main section .container .tablecontainer table td:nth-child(9) {
+  text-align: center;
+  vertical-align: middle;
+}
+body main section .container .tablecontainer table th:nth-child(6),
+body main section .container .tablecontainer table td:nth-child(6) {
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  vertical-align: top;
+}
+body main section .container .tablecontainer table td:nth-child(10),
+body main section .container .tablecontainer table td:nth-child(11) {
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.75rem;
+  color: #4f08e1;
+}
+body main section .container .tablecontainer table td select {
+  width: 100%;
+  min-width: 80px;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 0.95rem;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%234f08e1' viewBox='0 0 24 24'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1rem;
+}
+body main section .container .tablecontainer table td select:focus {
+  border-color: #4f08e1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 8, 225, 0.2);
+}
+body main section .container .tablecontainer table td button[type=submit] {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+body main section .container .tablecontainer table td button[type=submit]::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%234f08e1' viewBox='0 0 24 24'%3e%3cpath d='M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+body main section .container .tablecontainer table td button[type=submit]:hover {
+  background-color: rgba(79, 8, 225, 0.1);
+}
+body main section .container .tablecontainer table td button[type=submit]:active {
+  transform: scale(0.9);
+}
+body main section .container .tablecontainer option {
+  padding: 0.5rem;
+}
+body main section .container .tablecontainer option:checked {
+  background-color: rgba(79, 8, 225, 0.1);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  main section {
+    padding: 10px;
+  }
+  main section .container {
+    padding: 15px;
+  }
+  main section .container .search form {
+    grid-template-columns: 1fr;
+  }
+  main section .container .tablecontainer table tbody tr td[data-label]:before {
+    display: inline-block;
+  }
+}/*# sourceMappingURL=veregistros.css.map */

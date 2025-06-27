@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Añadir Mantenimiento</title>
+    <link rel="stylesheet" href="{% static 'css/am.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <div class="comeback">
+        <a href="{% url 'mantenimiento' %}">Atras</a>
+    </div>
+    <main>
+        <article>
+            <div class="container">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Guardar</button>
+                    <div class="curva"></div>
+                </form>
+            </div>
+        </article>
+    </main>
+</body>
+</html>

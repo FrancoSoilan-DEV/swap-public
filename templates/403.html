@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Denegado | SWAP_CENIN</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            text-align: center;
+            padding: 50px;
+        }
+        .error-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .emoji { font-size: 4rem; }
+        h1 { color: #dc3545; }
+        .btn {
+            background: #4D6BFE;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <div class="emoji">🔒</div>
+        <h1>403 - Acceso Denegado</h1>
+        <p>¡Oops! Necesitas iniciar sesión para ver esta página.</p>
+        <a href="{% url 'login' %}" class="btn">Iniciar Sesión</a>
+    </div>
+</body>
+</html>

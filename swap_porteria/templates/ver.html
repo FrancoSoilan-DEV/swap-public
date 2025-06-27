@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Porteria | Ver</title>
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Porteria</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <div class="comeback">
+        <a href="{% url 'porteria' %}">Atrás</a>
+    </div>
+    <main>
+        <div class="container">
+            <form method="get" class="filtros-form" style="margin-bottom: 20px;">
+                <label>Fecha exacta: <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}"></label>
+                <label>Desde: <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}"></label>
+                <label>Hasta: <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}"></label>
+            
+                <label>Funcionario:
+                    <select name="funcionario">
+                        <option value="">---</option>
+                        {% for f in funcionarios %}
+                            <option value="{{ f.fun_id }}" {% if request.GET.funcionario == f.fun_id|stringformat:"s" %}selected{% endif %}>
+                                {{ f.fun_nombres_apellidos }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            
+                <label>Proveedor:
+                    <select name="proveedor">
+                        <option value="">---</option>
+                        {% for p in proveedores %}
+                            <option value="{{ p.prov_id }}" {% if request.GET.proveedor == p.prov_id|stringformat:"s" %}selected{% endif %}>
+                                {{ p.prov_nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            
+                <label>Cobrador:
+                    <select name="cobrador">
+                        <option value="">---</option>
+                        {% for c in cobradores %}
+                            <option value="{{ c.cob_id }}" {% if request.GET.cobrador == c.cob_id|stringformat:"s" %}selected{% endif %}>
+                                {{ c.cob_nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            
+                <label>Visita contiene:
+                    <input type="text" name="visita" value="{{ request.GET.visita }}">
+                </label>
+            
+                <button type="submit">Filtrar</button>
+                <a href="{% url 'ver' %}"><button type="button">Limpiar</button></a>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Funcionario</th>
+                        <th>Proveedor</th>
+                        <th>Cobrador</th>
+                        <th>Visita</th>
+                        <th>Entrada</th>
+                        <th>Salida</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrada in entradas %}
+                    <tr>
+                        <td data-label="Fecha">{{ entrada.e_fecha }}</td>
+                        <td data-label="Funcionario">{{ entrada.e_fun|default_if_none:"-" }}</td>
+                        <td data-label="Proveedor">{{ entrada.e_prov|default_if_none:"-" }}</td>
+                        <td data-label="Cobrador">{{ entrada.e_cob|default_if_none:"-" }}</td>
+                        <td data-label="Visita">{{ entrada.e_visita|default_if_none:"-" }}</td>
+                        <td data-label="Entrada">{{ entrada.e_entrada }}</td>
+                        <td data-label="Salida">{{ entrada.e_salida }}</td>
+                        <td data-label="Estado">{{ entrada.e_ee }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

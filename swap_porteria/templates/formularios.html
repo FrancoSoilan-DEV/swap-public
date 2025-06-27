@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Entrada | Configuracion</title>
+    <link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Porteria</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <div class="comeback">
+        <a href="{% url 'cargar' %}">Atrás</a>
+    </div>
+    <main>
+        <article>
+            <h1>{{ titulo }}</h1>
+        
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">{{ texto_boton }}</button>
+            </form>            
+        </article>
+        
+    </main>
+    
+</body>
+</html>

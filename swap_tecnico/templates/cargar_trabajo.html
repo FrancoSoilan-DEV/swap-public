@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Cargar Trabajo</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Servicio Tecnico</h2>
+            <h4>¡Bienvenido!</h4>
+        </div>
+    </header>
+    
+    <div class="comeback">
+        <a href="{% url 'tecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+
+    <main class="form-container">
+        <article class="form-card">
+            <h2 class="form-title"><i class="fas fa-tools"></i> Nuevo Trabajo Técnico</h2>
+            <form method="post" class="tech-form">
+                {% csrf_token %}
+                
+                <div class="form-grid">
+                    <!-- Primera columna -->
+                    
+                    <div class="form-group">
+                        <label for="{{ form.tec_sitios.id_for_label }}">{{ form.tec_sitios.label }}</label>
+                        {{ form.tec_sitios }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.tec_cliente.id_for_label }}">{{ form.tec_cliente.label }}</label>
+                        {{ form.tec_cliente }}
+                    </div>
+                </div>
+                
+                <!-- Descripción (ancho completo) -->
+                <div class="form-group full-width">
+                    <label for="{{ form.tec_descripcion.id_for_label }}">{{ form.tec_descripcion.label }}</label>
+                    {{ form.tec_descripcion }}
+                </div>
+                
+                <!-- Fecha y horas -->
+                <div class="form-date-time">
+                    <div class="form-group">
+                        <label for="{{ form.tec_fecha.id_for_label }}">{{ form.tec_fecha.label }}</label>
+                        {{ form.tec_fecha }}
+                    </div>
+                    
+                    <div class="time-group">
+                        <div class="form-group">
+                            <label for="{{ form.tec_hinicio.id_for_label }}">{{ form.tec_hinicio.label }}</label>
+                            {{ form.tec_hinicio }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.tec_hfinal.id_for_label }}">{{ form.tec_hfinal.label }}</label>
+                            {{ form.tec_hfinal }}
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+            </form>
+        </article>
+    </main>
+</body>
+</html>

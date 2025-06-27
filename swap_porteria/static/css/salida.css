@@ -1,0 +1,200 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  position: relative;
+  min-width: 100%;
+  background: #fefefe;
+}
+body header {
+  position: relative;
+  min-width: 100%;
+  min-height: 80px;
+  background-image: radial-gradient(circle 382px at 50% 50.2%, rgb(73, 76, 212) 0.1%, rgb(5, 0, 139) 100.2%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+}
+body header .dpto-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+}
+body header .dpto-container h2 {
+  letter-spacing: 0.5px;
+}
+body header .dpto-container h4 {
+  letter-spacing: 0.5px;
+}
+body .comeback {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85px;
+  height: 40px;
+  margin: 15px 15px;
+  background: rgb(79, 8, 225);
+  border-radius: 20px;
+  transition: 0.5s ease-in-out;
+}
+body .comeback:hover {
+  transform: scale(1.05);
+}
+body .comeback a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
+body main {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+body main > div {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  box-shadow: 0 10px 20px rgba(41, 23, 143, 0.1);
+  border-radius: 12px;
+  background: white;
+}
+body main > div h3 {
+  padding: 15px 20px;
+  background: linear-gradient(135deg, rgba(73, 76, 212, 0.1) 0%, rgba(5, 0, 139, 0.1) 100%);
+  color: #333;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+body main > div table {
+  width: 100%;
+  border-collapse: collapse;
+}
+body main > div table thead {
+  background: linear-gradient(135deg, rgb(73, 76, 212) 0%, rgb(5, 0, 139) 100%);
+  color: white;
+}
+body main > div table thead tr th {
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+body main > div table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+body main > div table tbody tr:nth-child(even) {
+  background-color: #f9f9ff;
+}
+body main > div table tbody tr:hover {
+  background-color: rgba(73, 76, 212, 0.05);
+}
+body main > div table tbody tr td {
+  padding: 12px;
+  font-size: 0.9rem;
+}
+body main > div table tbody tr td input[type=time],
+body main > div table tbody tr td input[type=text],
+body main > div table tbody tr td select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+body main > div table tbody tr td input[type=time]:focus,
+body main > div table tbody tr td input[type=text]:focus,
+body main > div table tbody tr td select:focus {
+  outline: none;
+  border-color: rgba(73, 76, 212, 0.5);
+  box-shadow: 0 0 0 3px rgba(73, 76, 212, 0.1);
+}
+body main > div table tbody tr td select {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+}
+body main > div table tbody tr td button {
+  background: linear-gradient(135deg, rgb(73, 76, 212) 0%, rgb(5, 0, 139) 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+body main > div table tbody tr td button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(41, 23, 143, 0.3);
+}
+
+/* Versión optimizada para 800px-700px */
+/* Versión ultra optimizada para 800px-700px */
+/* Ajustes ultra compactos para filas */
+/* 🔥 ESTILOS PERFECTOS PARA 800PX 🔥 */
+/* 🔥 ESTILOS PERFECTOS PARA 800PX - VERSIÓN FINAL 🔥 */
+/* Versión mobile (tabla → cards) solo bajo 600px */
+@media (max-width: 900px) {
+  body main > div table thead {
+    display: none;
+  }
+  body main > div table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(41, 23, 143, 0.1);
+    overflow: hidden;
+    background: white;
+  }
+  body main > div table tbody tr td {
+    padding: 12px 15px;
+    border-right: none;
+    border-bottom: 1px solid #f0f0ff;
+  }
+  body main > div table tbody tr td:before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    color: rgb(73, 76, 212);
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
+  body main > div table tbody tr td:nth-child(odd) {
+    border-right: 1px solid #f0f0ff;
+  }
+  body main > div table tbody tr td:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+  body main > div table tbody tr td input, body main > div table tbody tr td select {
+    width: 100%;
+    padding: 10px 12px;
+  }
+  body main > div table tbody tr td button {
+    width: 100%;
+    grid-column: span 2;
+  }
+}/*# sourceMappingURL=salida.css.map */

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Entrada | Cobradores</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/cobradores.css' %}">
+</head>
+<body>
+    <header>
+        <div class="dpto-container">
+            <h2>Departamento de Talento Humano</h2>
+            <h4>¡ Bienvenido !</h4>
+        </div>
+    </header>
+    <main>
+        <aside> 
+            <div class="a-c">
+                <a href="{% url 'exportar_excel_cobradores' %}?{{ request.GET.urlencode }}">
+                    <h1><span>Exportar</span></h1>
+                </a>
+                <a href="{% url 'registro_entrada' %}">
+                <h1><span>Volver</span></h1>
+                </a>
+            </div>
+        </aside>
+        <section>
+            <div class="container">
+                <div class="title">
+                    <h2>Registro Cobradores</h2>
+                </div>
+                <div class="search">
+                    <form method="get" class="filtros">
+                        <label>Cobrador:</label>
+                        <select name="cobrador">
+                            <option value="">Todos</option>
+                            {% for cob in lista_cobradores %}
+                                <option value="{{ cob.cob_id }}" {% if request.GET.cobrador == cob.cob_id|stringformat:"s" %}selected{% endif %}>
+                                    {{ cob }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    
+                        <label>Fecha exacta:</label>
+                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                    
+                        <label>Desde:</label>
+                        <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+                    
+                        <label>Hasta:</label>
+                        <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}">
+                    
+                        <button type="submit">Filtrar</button>
+                        <a href="{% url 'cobradores' %}"><button type="button">Limpiar filtros</button></a>
+                    </form>             
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cobrador</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Estado</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                        {% for cobrador in cobradores %}
+                        <tr>
+                            <td data-label="Fecha">{{ cobrador.e_fecha }}</td>
+                            <td data-label="Funcionario">{{ cobrador.e_cob|default_if_none:"-" }}</td>
+                            <td data-label="Entrada">{{ cobrador.e_entrada }}</td>
+                            <td data-label="Salida">{{ cobrador.e_salida }}</td>
+                            <td data-label="Estado">{{ cobrador.e_ee }}</td>
+                            <td data-label="Comentario">
+                                {% if cobrador.e_comentario == "None" or not cobrador.e_comentario %}
+                                  -
+                                {% else %}
+                                  {{ cobrador.e_comentario }}
+                                {% endif %}
+                              </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

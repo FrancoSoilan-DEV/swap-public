@@ -1,0 +1,192 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css");
+/*=============== VARIABLES ===============*/
+/*=============== BASE ===============*/
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: url("../img/login-bg.png") no-repeat center/cover; /* Ruta relativa desde CSS */
+}
+body main {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  color: hsl(0, 0%, 100%);
+}
+
+/*=============== LOGIN CONTAINER ===============*/
+.container {
+  position: relative;
+  min-width: 400px;
+  padding: 2.5rem 2rem;
+  background: hsla(0, 0%, 10%, 0.4);
+  border: 2px solid hsl(0, 0%, 100%);
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  /* Mensajes de error */
+}
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px); /* Difumina solo el fondo detrás del container */
+  z-index: -1; /* Lo enviamos atrás para no afectar a .d1 */
+  border-radius: inherit; /* Hereda el border-radius del padre */
+}
+.container .d1 {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 225, 255, 0.2);
+  position: absolute;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  left: -80px;
+  top: -50px;
+  animation: caer 9s ease-in-out infinite;
+  -webkit-backdrop-filter: blur(4.5px);
+          backdrop-filter: blur(4.5px);
+  z-index: 1;
+}
+.container .d2 {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 225, 255, 0.2);
+  position: absolute;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  left: -50px;
+  top: -60px;
+  animation: caer 10s ease-in-out infinite;
+  -webkit-backdrop-filter: blur(4.5px);
+          backdrop-filter: blur(4.5px);
+  z-index: -1;
+  animation: costado 10s ease-in-out infinite;
+}
+.container .d3 {
+  width: 85px;
+  height: 100px;
+  background: rgba(255, 225, 255, 0.2);
+  position: absolute;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  right: -70px;
+  top: -70px;
+  animation: caer 12s ease-in-out infinite;
+  -webkit-backdrop-filter: blur(4.5px);
+          backdrop-filter: blur(4.5px);
+  z-index: 1;
+}
+.container h1 {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+.container form {
+  display: grid;
+  gap: 1.75rem;
+}
+.container form label {
+  display: none;
+}
+.container form .input-group {
+  position: relative;
+  border-bottom: 2px solid hsl(0, 0%, 100%);
+  padding-bottom: 0.8rem;
+}
+.container form .input-group input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: hsl(0, 0%, 100%);
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  padding-right: 1.8rem;
+}
+.container form .input-group input::-moz-placeholder {
+  color: transparent;
+}
+.container form .input-group input::placeholder {
+  color: transparent;
+}
+.container form .input-group input:not(:-moz-placeholder-shown) + .floating-label {
+  top: -15px;
+  font-size: 0.813rem;
+}
+.container form .input-group input:focus + .floating-label, .container form .input-group input:not(:placeholder-shown) + .floating-label {
+  top: -15px;
+  font-size: 0.813rem;
+}
+.container form .input-group .floating-label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+.container form .input-group .password-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: hsl(0, 0%, 100%);
+}
+.container form button[type=submit] {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 0%);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s ease;
+}
+.container form button[type=submit]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.container p[style*="color: red"] {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.813rem;
+}
+
+/*=============== KEYFRAMES ===============*/
+@keyframes caer {
+  0% {
+    top: -50px; /* Comienza desde arriba */
+  }
+  50% {
+    top: 400px; /* Baja a la mitad del contenedor */
+  }
+  100% {
+    top: -50px; /* Vuelve a subir arriba */
+  }
+}
+@keyframes costado {
+  0% {
+    left: 30px;
+  }
+  50% {
+    left: 380px;
+  }
+  100% {
+    left: 30px;
+  }
+}/*# sourceMappingURL=log.css.map */

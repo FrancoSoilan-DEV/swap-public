@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | Backups</title>
+    <link rel="stylesheet" href="{% static 'css/bk.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stat_3" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <header id="up">
+        <div class="h-container">
+            <h2>Backups</h2>
+        </div>
+        <nav>
+            <form method="GET" class="filter-form">
+                <label for="fecha">Fecha exacta:</label>
+                <input type="date" name="fecha" id="fecha" value="{{ fecha_filtro }}">
+            
+                <label for="fecha_desde">Desde:</label>
+                <input type="date" name="fecha_desde" id="fecha_desde" value="{{ fecha_desde }}">
+            
+                <label for="fecha_hasta">Hasta:</label>
+                <input type="date" name="fecha_hasta" id="fecha_hasta" value="{{ fecha_hasta }}">
+            
+                <label for="backup">Backup:</label>
+                <select name="backup" id="backup">
+                    <option value="">Todos</option>
+                    {% for backup in backups %}
+                    <option value="{{ backup.b_id }}" {% if backup_filtro == backup.b_id|stringformat:"s" %}selected{% endif %}>
+                        {{ backup }}
+                    </option>
+                    {% endfor %}
+                </select>
+            
+                <button type="submit">Filtrar</button>
+                <a href="{% url 'bk-hechos' %}?limpiar=1" class="clear-btn">Limpiar</a>
+                <a href="{% url 'exportar-excel-backups' %}?fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}" class="btn-export">
+                    Exportar a Excel
+                </a>
+
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div class="comeback">
+            <a href="{% url 'backups' %}">Atras</a>
+        </div>
+        <section>
+            <form method="POST" action="{% url 'eliminar-backups' %}">
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Backup</th>
+                                <th>{% csrf_token %}
+                                    <button type="submit" class="delete-btn">Eliminar</button></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in bkdone %}
+                            <tr>
+                                <td>{{ b.bh_id }}</td>
+                                <td>{{ b.bh_fecha }}</td>
+                                <td>{{ b.bh_bp }}</td>
+                                <td><input type="checkbox" name="delete_ids" value="{{ b.bh_id }}"></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </section>
+    </main>
+    <script>
+        document.getElementById("select-all").addEventListener("click", function() {
+            let checkboxes = document.querySelectorAll("input[name='delete_ids']");
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    </script>
+</body>
+</html>

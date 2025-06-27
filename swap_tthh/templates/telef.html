@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | TTHH | Telefonos</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/telef.css' %}">
+</head>
+<body>
+    <div class="comeback">
+        <a href="{% url 'tthhfunc' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+    <main>
+        <section>
+            <div class="container">
+                <!-- Añadido el título que el SASS espera -->
+                <div class="title">
+                    <h2>Nomina de Telefonos Internos</h2>
+                </div>
+                
+                <!-- Movido search dentro de container -->
+                <div class="search">
+                    <form method="get">
+                        <div class="form-group">
+                            <label for="funcionario">Funcionario:</label>
+                            <select name="funcionario" id="funcionario-select">
+                                <option value="">Todos</option>
+                                {% for nombre in lista_funcionarios %}
+                                    <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
+                                        {{ nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit">Filtrar</button>
+                        
+                        <a href="{% url 'telefonos' %}">Limpiar</a>
+                        <a href="{% url 'exp-tel' %}?{{ request.GET.urlencode }}" class="btn-exportar">
+                            <i class="fas fa-file-pdf"></i> Exportar a PDF
+                        </a>
+                    </form>
+                </div>
+                
+                <!-- Movido tablecontainer dentro de container -->
+                <div class="tablecontainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Numero</th>
+                                <th>Funcionario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in telefonos %}
+                                <tr>
+                                    <td>{{ t.ti_numero }}</td>
+                                    <td>{{ t.ti_fun }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

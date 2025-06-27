@@ -1,0 +1,880 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.add-c {
+  background: red;
+  transition: 0.5s ease-in-out;
+}
+.add-c:hover {
+  transform: scale(1.1);
+}
+
+/* Suaviza el desplazamiento al hacer clic en anclas */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+  min-width: 100%;
+  background: #f8f9fa;
+}
+body header {
+  min-width: 100%;
+  height: 80px;
+  background: linear-gradient(145deg, #29178f, #0065d1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(41, 23, 143, 0.3);
+}
+body header .hc {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body header .hc h2 {
+  letter-spacing: 1px;
+  color: #fff;
+}
+body header nav {
+  position: relative;
+  width: 650px;
+}
+body header nav ul {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  list-style: none;
+}
+body header nav ul li {
+  cursor: pointer;
+  color: #fff;
+  font-size: bolder;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+body header nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 550;
+  position: relative;
+  padding: 0.2rem 0;
+  transition: all 0.4s cubic-bezier(0.2, 0.6, 0.3, 1);
+  display: inline-block;
+}
+body header nav ul li a:hover {
+  color: #ff2e63;
+  transform: scale(1.05);
+  font-size: 1.1rem;
+  font-weight: 750;
+  text-shadow: 0 0 8px rgba(255, 46, 99, 0.3);
+}
+body header nav ul li a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff7eb9, #7afcff);
+  transition: width 0.4s cubic-bezier(0.2, 0.6, 0.3, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+body header nav ul li a:hover::after {
+  width: 100%;
+  opacity: 1;
+}
+body main {
+  margin-top: 5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+}
+body main .comeback {
+  position: relative;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+body main .comeback a {
+  background: linear-gradient(145deg, #29178f, #3a7bd5);
+  height: 35px;
+  width: 75px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* Quita el subrayado */
+  letter-spacing: 1px;
+  border-radius: 15px;
+  transition: 0.5s ease-in-out;
+}
+body main .comeback a:hover {
+  transform: scale(1.1);
+}
+body main .s1 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s1 .equipos {
+  padding: 1rem;
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+}
+body main .s1 .equipos h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #1e2a78;
+}
+body main .s1 .equipos h2 a {
+  text-decoration: none;
+  color: #1e2a78;
+}
+body main .s1 .equipos h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #1e2a78;
+  font-size: 1.5rem;
+}
+body main .s1 .equipos .c1,
+body main .s1 .equipos .cc1 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s1 .equipos .c1::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s1 .equipos .c1::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s1 .equipos .c1::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #1e1e9c, #0055cc);
+  border-radius: 10px;
+}
+body main .s1 .equipos .c1::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #18188c, #0044bb);
+}
+body main .s1 .equipos .cc1::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s1 .equipos .cc1::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s1 .equipos .cc1::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  border-radius: 10px;
+}
+body main .s1 .equipos .cc1::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #2f6ac5, #00bfff);
+}
+body main .s1 .equipos table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s1 .equipos table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s1 .equipos table tbody tr:hover {
+  background-color: rgba(100, 149, 237, 0.15);
+}
+body main .s1 .equipos table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #333;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s1 .equipos .c1 table thead {
+  background: linear-gradient(90deg, #1e1e9c, #0055cc);
+}
+body main .s1 .equipos .cc1 table thead {
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+}
+body main .s1 .equipos article {
+  margin-top: 2rem;
+}
+body main .s2 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s2 .ups {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
+body main .s2 .ups h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #4c2c72;
+}
+body main .s2 .ups h2 a {
+  text-decoration: none;
+  color: #4c2c72;
+}
+body main .s2 .ups h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #2b6777;
+  font-size: 1.5rem;
+}
+body main .s2 .ups .c2,
+body main .s2 .ups .cc2 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s2 .ups .c2::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s2 .ups .c2::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s2 .ups .c2::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #8e2de2, #ff6ec4);
+  border-radius: 10px;
+}
+body main .s2 .ups .c2::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #7b1fa2, #e91e63);
+}
+body main .s2 .ups .cc2::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s2 .ups .cc2::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s2 .ups .cc2::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+  border-radius: 10px;
+}
+body main .s2 .ups .cc2::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #2ccf6d, #2decd6);
+}
+body main .s2 .ups table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s2 .ups table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s2 .ups table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #2d2d2d;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s2 .ups .c2 table thead {
+  background: linear-gradient(90deg, #8e2de2, #ff6ec4);
+}
+body main .s2 .ups .c2 table tbody {
+  background-color: #fbe8ff;
+}
+body main .s2 .ups .c2 table tr:hover {
+  background-color: rgba(255, 105, 180, 0.2);
+}
+body main .s2 .ups .cc2 table thead {
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+}
+body main .s2 .ups .cc2 table tbody {
+  background-color: #e8fdfc;
+}
+body main .s2 .ups .cc2 table tr:hover {
+  background-color: rgba(56, 249, 215, 0.2);
+}
+body main .s2 .ups article {
+  margin-top: 2rem;
+}
+body main .s3 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s3 .impresoras {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
+body main .s3 .impresoras h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #1c4e80;
+}
+body main .s3 .impresoras h2 a {
+  text-decoration: none;
+  color: #1c4e80;
+}
+body main .s3 .impresoras h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #206a5d;
+  font-size: 1.5rem;
+}
+body main .s3 .impresoras .c3,
+body main .s3 .impresoras .cc3 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s3 .impresoras .c3::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s3 .impresoras .c3::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s3 .impresoras .c3::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #2193b0, #6dd5ed);
+  border-radius: 10px;
+}
+body main .s3 .impresoras .c3::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #1976d2, #00c6ff);
+}
+body main .s3 .impresoras .cc3::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s3 .impresoras .cc3::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s3 .impresoras .cc3::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #ffb347, #ffcc33);
+  border-radius: 10px;
+}
+body main .s3 .impresoras .cc3::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #f39c12, #f1c40f);
+}
+body main .s3 .impresoras table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s3 .impresoras table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s3 .impresoras table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #2d2d2d;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s3 .impresoras .c3 table thead {
+  background: linear-gradient(90deg, #2193b0, #6dd5ed);
+}
+body main .s3 .impresoras .c3 table tbody {
+  background-color: #e6f7ff;
+}
+body main .s3 .impresoras .c3 table tr:hover {
+  background-color: rgba(173, 216, 230, 0.3);
+}
+body main .s3 .impresoras .cc3 table thead {
+  background: linear-gradient(90deg, #5f72bd, #9b23ea);
+}
+body main .s3 .impresoras .cc3 table tbody {
+  background-color: #f3f3fa;
+}
+body main .s3 .impresoras .cc3 table tr:hover {
+  background-color: rgba(155, 35, 234, 0.08);
+}
+body main .s3 .impresoras article {
+  margin-top: 2rem;
+}
+body main .s4 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s4 .otros {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
+body main .s4 .otros h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #6c63ff;
+}
+body main .s4 .otros h2 a {
+  text-decoration: none;
+  color: #6c63ff;
+}
+body main .s4 .otros h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #7f8c8d;
+  font-size: 1.5rem;
+}
+body main .s4 .otros .c4,
+body main .s4 .otros .cc4 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s4 .otros .c4::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s4 .otros .c4::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s4 .otros .c4::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #b9b6e5, #a3a1d4);
+  border-radius: 10px;
+}
+body main .s4 .otros .c4::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #9e9ac8, #8684bc);
+}
+body main .s4 .otros .cc4::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s4 .otros .cc4::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s4 .otros .cc4::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #a8d5ba, #74b49b);
+  border-radius: 10px;
+}
+body main .s4 .otros .cc4::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #8ec9a7, #5aa384);
+}
+body main .s4 .otros table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s4 .otros table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s4 .otros table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #2d2d2d;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s4 .otros .c4 table thead {
+  background: linear-gradient(90deg, #b9b6e5, #a3a1d4);
+}
+body main .s4 .otros .c4 table tbody {
+  background-color: #f4f3fb;
+}
+body main .s4 .otros .c4 table tr:hover {
+  background-color: rgba(179, 173, 224, 0.2);
+}
+body main .s4 .otros .cc4 table thead {
+  background: linear-gradient(90deg, #a8d5ba, #74b49b);
+}
+body main .s4 .otros .cc4 table tbody {
+  background-color: #f5fdf8;
+}
+body main .s4 .otros .cc4 table tr:hover {
+  background-color: rgba(116, 180, 155, 0.15);
+}
+body main .s4 .otros article {
+  margin-top: 2rem;
+}
+body main .s5 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s5 .servidor {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+}
+body main .s5 .servidor h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #4b4453;
+}
+body main .s5 .servidor h2 a {
+  text-decoration: none;
+  color: #4b4453;
+}
+body main .s5 .servidor h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #29323c;
+  font-size: 1.5rem;
+}
+body main .s5 .servidor .c5,
+body main .s5 .servidor .cc5 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s5 .servidor .c5::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s5 .servidor .c5::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s5 .servidor .c5::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #a770ef, #cf8bf3, #fdb99b);
+  border-radius: 10px;
+}
+body main .s5 .servidor .c5::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #8e44ad, #e67e22);
+}
+body main .s5 .servidor .cc5::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s5 .servidor .cc5::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s5 .servidor .cc5::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #485563, #29323c);
+  border-radius: 10px;
+}
+body main .s5 .servidor .cc5::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #1e2a33, #20262e);
+}
+body main .s5 .servidor table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s5 .servidor table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s5 .servidor table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #2d2d2d;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s5 .servidor .c5 table thead {
+  background: linear-gradient(90deg, #a770ef, #cf8bf3, #fdb99b);
+}
+body main .s5 .servidor .c5 table tbody {
+  background-color: #fdf5ec;
+}
+body main .s5 .servidor .c5 table tr:hover {
+  background-color: rgba(253, 185, 155, 0.25);
+}
+body main .s5 .servidor .cc5 table thead {
+  background: linear-gradient(90deg, #485563, #29323c);
+}
+body main .s5 .servidor .cc5 table tbody {
+  background-color: #f3f6f9;
+}
+body main .s5 .servidor .cc5 table tr:hover {
+  background-color: rgba(72, 85, 99, 0.2);
+}
+body main .s5 .servidor article {
+  margin-top: 2rem;
+}
+body main .s6 {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+body main .s6 .monitores {
+  padding: 1rem;
+  background-color: #f9f9fb;
+  font-family: "Segoe UI", sans-serif;
+}
+body main .s6 .monitores h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #3e3f5e;
+}
+body main .s6 .monitores h2 a {
+  text-decoration: none;
+  color: #3e3f5e;
+}
+body main .s6 .monitores h3 {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #2e3c44;
+  font-size: 1.5rem;
+}
+body main .s6 .monitores .c6,
+body main .s6 .monitores .cc5 {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+body main .s6 .monitores .c6::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s6 .monitores .c6::-webkit-scrollbar-track {
+  background: #e8e8e8;
+  border-radius: 10px;
+}
+body main .s6 .monitores .c6::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #43cea2, #185a9d);
+  border-radius: 10px;
+}
+body main .s6 .monitores .c6::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #11998e, #0f2027);
+}
+body main .s6 .monitores .cc5::-webkit-scrollbar {
+  height: 10px;
+}
+body main .s6 .monitores .cc5::-webkit-scrollbar-track {
+  background: #e4e4e4;
+  border-radius: 10px;
+}
+body main .s6 .monitores .cc5::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #3c3b3f, #605c3c);
+  border-radius: 10px;
+}
+body main .s6 .monitores .cc5::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #232526, #414345);
+}
+body main .s6 .monitores table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 750px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+body main .s6 .monitores table thead th {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  min-width: 80px;
+  border: 1px solid #d2d2d2;
+}
+body main .s6 .monitores table tbody tr td {
+  padding: 0.55rem 0.8rem;
+  color: #2d2d2d;
+  white-space: nowrap;
+  border: 1px solid #d2d2d2;
+}
+body main .s6 .monitores .c6 table thead {
+  background: linear-gradient(90deg, #43cea2, #185a9d);
+}
+body main .s6 .monitores .c6 table tbody {
+  background-color: #eafdfc;
+}
+body main .s6 .monitores .c6 table tr:hover {
+  background-color: rgba(67, 206, 162, 0.2);
+}
+body main .s6 .monitores .cc5 table thead {
+  background: linear-gradient(90deg, #3c3b3f, #605c3c);
+}
+body main .s6 .monitores .cc5 table tbody {
+  background-color: #f4f4f4;
+}
+body main .s6 .monitores .cc5 table tr:hover {
+  background-color: rgba(60, 59, 63, 0.1);
+}
+body main .s6 .monitores article {
+  margin-top: 2rem;
+}
+
+.search {
+  background: linear-gradient(135deg, rgba(12, 30, 58, 0.8), rgba(16, 42, 76, 0.8));
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+.search form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+.search form select,
+.search form input[type=text] {
+  background-color: rgba(16, 42, 76, 0.7);
+  color: #fff;
+  border: 1px solid #1e3a66;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  outline: none;
+  min-width: 180px;
+  transition: box-shadow 0.2s;
+}
+.search form select:focus,
+.search form input[type=text]:focus {
+  border-color: #7b61ff;
+  box-shadow: 0 0 0 2px rgba(123, 97, 255, 0.4);
+}
+.search form button {
+  background-color: #7b61ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+.search form button:hover {
+  background-color: #5b44cc;
+}
+.search form .clear-btn {
+  text-decoration: none;
+  background-color: #e53935;
+  color: #fff;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  display: inline-block;
+  border: none;
+}
+.search form .clear-btn:hover {
+  background-color: #b71c1c;
+}
+
+.filtro-mantenimientos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: #2c2c2c;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: white;
+}
+.filtro-mantenimientos label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.filtro-mantenimientos input,
+.filtro-mantenimientos select {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #444;
+  color: white;
+}
+.filtro-mantenimientos button,
+.filtro-mantenimientos .limpiar-filtros {
+  background: #1f8ef1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  align-self: flex-end;
+  margin-top: auto;
+}
+.filtro-mantenimientos button:hover,
+.filtro-mantenimientos .limpiar-filtros:hover {
+  background: #0f6fd2;
+}
+.filtro-mantenimientos .limpiar-filtros {
+  background: #e74c3c;
+}
+.filtro-mantenimientos .limpiar-filtros:hover {
+  background: #c0392b;
+}/*# sourceMappingURL=equipo.css.map */

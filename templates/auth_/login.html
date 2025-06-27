@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | LOGIN</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <!-- Remix Icons CDN (necesario para el ícono de ojo) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/log.css' %}">
+</head>
+<body>
+    <main>
+        <div class="container">
+            <div class="d1"></div>
+            <div class="d2"></div>
+            <h1>Iniciar sesión</h1>
+    
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="username" id="username" placeholder=" " required>
+                    <span class="floating-label">Usuario</span>
+                </div>
+    
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder=" " required>
+                    <span class="floating-label">Contraseña</span>
+                    <!-- El ícono se añadirá automáticamente via JS -->
+                </div>
+    
+                <button type="submit">Iniciar Sesión</button>
+                <div class="d3"></div>
+        </div>
+    </main>
+    <!-- Script integrado (sin necesidad de archivo externo) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle para mostrar/ocultar contraseña
+            const passwordInput = document.getElementById('password');
+            
+            if (passwordInput) {
+                const passwordToggle = document.createElement('i');
+                passwordToggle.classList.add('ri-eye-off-line', 'password-toggle');
+                passwordInput.parentNode.appendChild(passwordToggle);
+                
+                passwordToggle.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        passwordToggle.classList.replace('ri-eye-off-line', 'ri-eye-line');
+                    } else {
+                        passwordInput.type = 'password';
+                        passwordToggle.classList.replace('ri-eye-line', 'ri-eye-off-line');
+                    }
+                });
+            }
+
+            // Efecto floating label (alternativa por si el CSS no funciona)
+            const inputs = document.querySelectorAll('.input-group input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.nextElementSibling.style.top = '-15px';
+                    input.nextElementSibling.style.fontSize = '0.813rem';
+                });
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        input.nextElementSibling.style.top = '10px';
+                        input.nextElementSibling.style.fontSize = '1rem';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

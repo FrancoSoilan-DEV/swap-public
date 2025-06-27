@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | TTHH | Ex Funcionarios</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/ex_fun.css' %}">
+</head>
+<body>
+    <div class="comeback">
+        <a href="{% url 'tthhfunc' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+    </div>
+    <div class="supercontainer">
+        <section>
+            <div class="container">
+                <!-- Añadido el título que el SASS espera -->
+                <div class="title">
+                    <h2>Ex Funcionarios</h2>
+                </div>
+                
+                <!-- Movido search dentro de container -->
+                <div class="search">
+                    <form method="get">
+                        <div class="form-group">
+                            <label for="funcionario">Funcionario:</label>
+                            <select name="funcionario" id="funcionario-select">
+                                <option value="">Todos</option>
+                                {% for nombre in lista_exfuncionarios %}
+                                    <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
+                                        {{ nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fecha_exacta">Fecha exacta:</label>
+                            <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="fecha_desde">Desde:</label>
+                            <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="fecha_hasta">Hasta:</label>
+                            <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                        </div>
+                        
+                        <button type="submit">Filtrar</button>
+                        
+                        <a href="{% url 'ex_funcionarios' %}">Limpiar</a>
+                    </form>
+                </div>
+                
+                <!-- Movido tablecontainer dentro de container -->
+                <div class="tablecontainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Funcionario</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ef in ex_funcionarios %}
+                                <tr>
+                                    <td>{{ ef.fun_nombres_apellidos }}</td>
+                                    <td>{{ ef.fun_entrada }}</td>
+                                    <td>{{ ef.fun_salida }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
