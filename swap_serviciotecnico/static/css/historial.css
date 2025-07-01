@@ -341,6 +341,28 @@ body .comeback a {
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.search form .btn-editar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #D43527;
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.search form .btn-editar:hover {
+  background-color: #971e1c;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 .tablecontainer {
   background: white;

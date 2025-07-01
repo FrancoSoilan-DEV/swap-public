@@ -438,7 +438,27 @@ $transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     }
-    
+    .btn-editar{
+      @include flex-center;
+      background-color: #D43527;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: $border-radius;
+      font-weight: 600;
+      transition: $transition;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+  
+      &:hover {
+          background-color: darken(#C22624, 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
   }
 }
 
