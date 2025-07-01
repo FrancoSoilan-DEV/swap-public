@@ -211,7 +211,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY", default="clave-insegura")
 DEBUG = config("DEBUG", default=False, cast=bool)
 #ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1").split(",") LOCAL
-ALLOWED_HOSTS = ['sertecti.com', 'www.sertecti.com', 'serpy-17288fafdad2.herokuapp.com']
+#ALLOWED_HOSTS = ['sertecti.com', 'www.sertecti.com', 'serpy-17288fafdad2.herokuapp.com']
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="serpy-17288fafdad2.herokuapp.com,sertecti.com,www.sertecti.com").split(",")
 # APLICACIONES
 INSTALLED_APPS = [
     'django.contrib.admin',
