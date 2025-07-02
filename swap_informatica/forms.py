@@ -97,14 +97,62 @@ class NewArticleForm(forms.ModelForm):
         fields = ["ii_iic","ii_iid","ii_cantidad","ii_iie","ii_descripcion"]
    
 # añadir nuevo equipo     
+# class NewEquipo(forms.ModelForm):
+#     class Meta:
+#         model = Equipos
+#         fields = ["eq_id","eq_tipe","eq_numdeserie","eq_dpto","eq_usuario","eq_contrasenna","eq_marca","eq_modelo","eq_marcamonitor","eq_pulgadamonitor","eq_placamadre","eq_grafica","eq_discoduro","eq_lectordisco","eq_audio","eq_sistemop"]
+#     def __init__(self, *args, **kwargs):
+#         super(NewEquipo, self).__init__(*args, **kwargs)
+#         # Filtrar las opciones del campo eq_tipe solo a "PC" y "Notebook"
+#         self.fields['eq_tipe'].queryset = Tipoequipo.objects.filter(tipe_nombre__in=["PC", "Notebook"])
+from django import forms
+from .models import Equipos, Tipoequipo
+
 class NewEquipo(forms.ModelForm):
     class Meta:
         model = Equipos
-        fields = ["eq_id","eq_tipe","eq_numdeserie","eq_dpto","eq_usuario","eq_contrasenna","eq_marca","eq_modelo","eq_marcamonitor","eq_pulgadamonitor","eq_placamadre","eq_grafica","eq_discoduro","eq_lectordisco","eq_audio","eq_sistemop"]
+        fields = [
+            "eq_id",
+            "eq_tipe",
+            "eq_numdeserie",
+            "eq_dpto",
+            "eq_usuario",
+            "eq_contrasenna",
+            "eq_marca",
+            "eq_modelo",
+            "eq_marcamonitor",
+            "eq_pulgadamonitor",
+            "eq_placamadre",
+            "eq_grafica",
+            "eq_discoduro",
+            "eq_lectordisco",
+            "eq_audio",
+            "eq_sistemop",
+            # 🔽 Nuevos campos añadidos
+            "nombre",
+            "nombre_equipo",
+            "ip",
+            "responsable",
+            "conexion_monitor",
+            "ram",
+            "cpu",
+            "mouse",
+            "teclado",
+            "accesorios",
+            "office",
+            "antiviruz",
+            "thunderbird",
+            "programas",
+        ]
+
     def __init__(self, *args, **kwargs):
         super(NewEquipo, self).__init__(*args, **kwargs)
         # Filtrar las opciones del campo eq_tipe solo a "PC" y "Notebook"
         self.fields['eq_tipe'].queryset = Tipoequipo.objects.filter(tipe_nombre__in=["PC", "Notebook"])
+
+ 
+ 
+ 
         
 # añadir nueva ups
 class NewUps(forms.ModelForm):

@@ -5,6 +5,7 @@ body {
   background-color: #f5f7fa;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 header {
@@ -308,4 +309,27 @@ section:nth-child(5) {
 }
 section:nth-child(6) {
   animation-delay: 0.6s;
+}
+
+.c1 {
+  cursor: grab;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  display: block;
+  max-width: 100%;
+}
+
+.c1.dragging {
+  cursor: grabbing;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.eq-table {
+  min-width: 2000px;
+  width: -moz-max-content;
+  width: max-content;
+  display: table;
 }/*# sourceMappingURL=equipo.css.map */

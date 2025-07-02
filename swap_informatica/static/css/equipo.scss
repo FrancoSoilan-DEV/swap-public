@@ -1094,6 +1094,8 @@
 //   }
 // }
 
+
+
 // Variables
 $primary-color: #3498db;
 $secondary-color: #2c3e50;
@@ -1145,6 +1147,7 @@ body {
   background-color: #f5f7fa;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 header {
@@ -1404,4 +1407,24 @@ section {
       animation-delay: $i * 0.1s;
     }
   }
+}
+.c1 {
+  cursor: grab;
+  overflow-x: auto;
+  overflow-y: hidden; // asegurás que no interfiera
+  white-space: nowrap;
+  display: block;
+  max-width: 100%;
+}
+
+.c1.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+// Desactivá el scroll en table
+.eq-table {
+  min-width: 2000px; // hacélo lo suficientemente ancho
+  width: max-content;
+  display: table; // esto es clave para que se comporte como tabla normal
 }

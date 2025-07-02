@@ -200,7 +200,7 @@
 # }
 
 
-
+import os#para imagenes
 from pathlib import Path
 import dj_database_url
 from decouple import config
@@ -210,9 +210,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # CONFIGURACIONES BÁSICAS
 SECRET_KEY = config("SECRET_KEY", default="clave-insegura")
 DEBUG = config("DEBUG", default=False, cast=bool)
-#ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1").split(",") LOCAL
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1").split(",") #Local
 #ALLOWED_HOSTS = ['sertecti.com', 'www.sertecti.com', 'serpy-17288fafdad2.herokuapp.com']
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="serpy-17288fafdad2.herokuapp.com,sertecti.com,www.sertecti.com").split(",")
+#ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="serpy-17288fafdad2.herokuapp.com,sertecti.com,www.sertecti.com").split(",") #produccion
 # APLICACIONES
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -300,3 +300,7 @@ LOGGING = {
     'handlers': {'console': {'class': 'logging.StreamHandler'}},
     'root': {'handlers': ['console'], 'level': 'INFO'},
 }
+
+#para imagenes
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

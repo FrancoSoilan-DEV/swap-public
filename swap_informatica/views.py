@@ -863,21 +863,21 @@ def equipos(request):
         equipos = equipos.filter(eq_dpto__dpto_id=departamento)
 
     if usuario:
-        equipos = equipos.filter(eq_usuario__icontains=usuario)
+        equipos = equipos.filter(responsable__icontains=usuario)
     
     # filtro ups's
     if departamento:
         upss = upss.filter(eq_dpto__dpto_id=departamento)
         
     if usuario:
-        upss = upss.filter(eq_usuario__icontains=usuario)
+        upss = upss.filter(responsable__icontains=usuario)#
 
     # filtro impresoras
     if departamento:
         impresoras = impresoras.filter(eq_dpto__dpto_id=departamento)
 
     if usuario:
-        impresoras = impresoras.filter(eq_usuario__icontains=usuario)
+        impresoras = impresoras.filter(responsable__icontains=usuario)
         
     # filtro otros
     tipo_equipo_otros = request.GET.get('tipo_equipo_otros')
@@ -891,7 +891,7 @@ def equipos(request):
         otros = otros.filter(eq_dpto__dpto_id=departamento_otros)
 
     if usuario_otros:
-        otros = otros.filter(eq_usuario__icontains=usuario_otros)
+        otros = otros.filter(responsable=usuario_otros)
         
     # filtro cosas_servidores
     tipo_equipo = request.GET.get('tipo_equipo_servidor')
@@ -910,7 +910,7 @@ def equipos(request):
         monitores = monitores.filter(eq_dpto__dpto_id=departamento_monitor)
 
     if usuario_monitor:
-        monitores = monitores.filter(eq_usuario__icontains=usuario_monitor)
+        monitores = monitores.filter(responsable=usuario_monitor)
 
         
     return render(request, "equipos.html",{

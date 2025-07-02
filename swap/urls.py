@@ -26,3 +26,9 @@ urlpatterns = [
     path("tecnico/", include("swap_tecnico.urls")),
     path("ServicioTecnico/", include("swap_serviciotecnico.urls")),
 ]
+
+# Manejo de Imagenes
+# from django.conf.urls.static import static
+# from django.conf import settings
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

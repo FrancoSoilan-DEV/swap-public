@@ -160,9 +160,36 @@ class InventarioinformaticaEstado(models.Model):
     def __str__(self):
         return f"{self.iie_nombre}"
 
+# class Equipos(models.Model):
+#     eq_id = models.SmallAutoField(primary_key=True)
+#     eq_tipe = models.ForeignKey('Tipoequipo', models.DO_NOTHING,verbose_name="Tipo de Equipo")
+#     eq_numdeserie = models.CharField(max_length=45, verbose_name="Numero de Serie")
+#     eq_dpto = models.ForeignKey(Departamentos, models.DO_NOTHING, verbose_name="Departamento")
+#     eq_usuario = models.CharField(max_length=60, blank=True, null=True, verbose_name="Usuario")
+#     eq_contrasenna = models.CharField(max_length=45, blank=True, null=True, verbose_name="Contraseña")
+#     eq_marca = models.CharField(max_length=45, blank=True, null=True, verbose_name="Marca")
+#     eq_modelo = models.CharField(max_length=45, blank=True, null=True, verbose_name="Modelo")
+#     eq_marcamonitor = models.CharField(max_length=45, blank=True, null=True, verbose_name="Marca del Monitor")
+#     eq_pulgadamonitor = models.CharField(max_length=45, blank=True, null=True, verbose_name="Pulgadas del Monitor")
+#     eq_placamadre = models.CharField(max_length=45, blank=True, null=True, verbose_name="Placa Madre")
+#     eq_grafica = models.CharField(max_length=45, blank=True, null=True, verbose_name="Tarjeta Grafica")
+#     eq_discoduro = models.CharField(max_length=45, blank=True, null=True, verbose_name="Disco Duro")
+#     eq_lectordisco = models.CharField(max_length=45, blank=True, null=True, verbose_name="Lector de Disco")
+#     eq_audio = models.CharField(max_length=45, blank=True, null=True, verbose_name="Audio")
+#     eq_sistemop = models.CharField(max_length=45, blank=True, null=True, verbose_name="Sistema Operativo")
+#     class Meta:
+#         #managed = False
+#         db_table = 'equipos'
+#         verbose_name = "Equipo"
+#         verbose_name_plural = "Equipos"
+#         ordering = ["eq_tipe"]
+#     def __str__(self):
+#         return  f"{self.eq_id} {self.eq_tipe} {self.eq_usuario} {self.eq_dpto}"
+from django.db import models
+
 class Equipos(models.Model):
     eq_id = models.SmallAutoField(primary_key=True)
-    eq_tipe = models.ForeignKey('Tipoequipo', models.DO_NOTHING,verbose_name="Tipo de Equipo")
+    eq_tipe = models.ForeignKey('Tipoequipo', models.DO_NOTHING, verbose_name="Tipo de Equipo")
     eq_numdeserie = models.CharField(max_length=45, verbose_name="Numero de Serie")
     eq_dpto = models.ForeignKey(Departamentos, models.DO_NOTHING, verbose_name="Departamento")
     eq_usuario = models.CharField(max_length=60, blank=True, null=True, verbose_name="Usuario")
@@ -177,14 +204,32 @@ class Equipos(models.Model):
     eq_lectordisco = models.CharField(max_length=45, blank=True, null=True, verbose_name="Lector de Disco")
     eq_audio = models.CharField(max_length=45, blank=True, null=True, verbose_name="Audio")
     eq_sistemop = models.CharField(max_length=45, blank=True, null=True, verbose_name="Sistema Operativo")
+
+    # 🔽 Nuevos campos agregados(me olvide de agregar el prefijo "eq_")
+    nombre = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Nombre")
+    nombre_equipo = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Nombre del Equipo")
+    ip = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Dirección IP")
+    responsable = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Responsable")
+    conexion_monitor = models.CharField(max_length=70, blank=True, null=True, default="-", verbose_name="Conexión del Monitor")
+    ram = models.CharField(max_length=50, blank=True, null=True, default="-", verbose_name="RAM")
+    cpu = models.CharField(max_length=50, blank=True, null=True, default="-", verbose_name="CPU")
+    mouse = models.CharField(max_length=80, blank=True, null=True, default="-", verbose_name="Mouse")
+    teclado = models.CharField(max_length=80, blank=True, null=True, default="-", verbose_name="Teclado")
+    accesorios = models.CharField(max_length=200, blank=True, null=True, default="-", verbose_name="Accesorios")
+    office = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Office")
+    antiviruz = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Antivirus")
+    thunderbird = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Thunderbird")
+    programas = models.CharField(max_length=100, blank=True, null=True, default="-", verbose_name="Programas")
+    #programas = models.ImageField(upload_to='programas/', blank=True, null=True, verbose_name="Captura de Programas")
     class Meta:
-        #managed = False
         db_table = 'equipos'
         verbose_name = "Equipo"
         verbose_name_plural = "Equipos"
         ordering = ["eq_tipe"]
+
     def __str__(self):
-        return  f"{self.eq_id} {self.eq_tipe} {self.eq_usuario} {self.eq_dpto}"
+        return f"{self.eq_id} {self.eq_tipe} {self.eq_usuario} {self.eq_dpto}"
+
 
 class Tipoequipo(models.Model):
     tipe_id = models.AutoField(primary_key=True)

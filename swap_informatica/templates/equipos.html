@@ -62,7 +62,7 @@
                             {% endfor %}
                         </select>
                 
-                        <input type="text" name="usuario" placeholder="Buscar Usuario" value="{{ request.GET.usuario|default_if_none:'' }}">
+                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
                 
                         <button type="submit">Filtrar</button>
                         <!-- NUEVO: botón para limpiar los filtros -->
@@ -71,46 +71,74 @@
                     </form>
                 </div>
                 <div class="c1" >
-                    <table>
+                    <table class="eq-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
+                                <th>Responsable</th>
                                 <th>Departamento</th>
+                                <th>Equipo</th>
+                                <th>Nombre de Equipo</th>
+                                <th>Nombre</th>
+                                <th>Numero de Serie</th>
+                                <th>IP</th>
                                 <th>Usuario</th>
                                 <th>Contraseña</th>
-                                <th>Marca</th>
-                                <th>Modelo </th>
+                                <th>Marca Equipo</th>
+                                <th>Modelo Equipo</th>
                                 <th>Marca Monitor</th>
                                 <th>Pulgadas Monitor</th>
+                                <th>Conexion Monitor</th>
                                 <th>Placa Madre</th>
                                 <th>Grafica</th>
                                 <th>Disco Duro</th>
                                 <th>Lector de Disco</th>
                                 <th>Audio</th>
+                                <th>RAM</th>
+                                <th>CPU</th>
+                                <th>Mouse</th>
+                                <th>Teclado</th>
+                                <th>Accesorios</th>
                                 <th>Sistema Operativo</th>
+                                <th>Office</th>
+                                <th>Antivirus</th>
+                                <th>Thunderbird</th>
+                                <th>Programas</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for equipo in equipos %}
                             <tr>
                                 <td>{{ equipo.eq_id }}</td>
-                                <td>{{ equipo.eq_tipe }}</td>
-                                <td>{{ equipo.eq_numdeserie }}</td>
+                                <td>{{ equipo.responsable }}</td>
                                 <td> {{ equipo.eq_dpto }} </td>
+                                <td>{{ equipo.eq_tipe }}</td>
+                                <td>{{ equipo.nombre_equipo }}</td>
+                                <td>{{ equipo.nombre }}</td>
+                                <td>{{ equipo.eq_numdeserie }}</td>
+                                <td>{{ equipo.ip }}</td>
                                 <td>{{ equipo.eq_usuario }} </td>
                                 <td>{{ equipo.eq_contrasenna }} </td>
                                 <td>{{ equipo.eq_marca }} </td>
                                 <td>{{ equipo.eq_modelo }} </td>
                                 <td>{{ equipo.eq_marcamonitor }} </td>
                                 <td>{{ equipo.eq_pulgadamonitor }} </td>
+                                <td>{{ equipo.conexion_monitor }}</td>
                                 <td>{{ equipo.eq_placamadre }} </td>
                                 <td>{{ equipo.eq_grafica }} </td>
                                 <td>{{ equipo.eq_discoduro }} </td>
                                 <td>{{ equipo.eq_lectordisco }} </td>
                                 <td>{{ equipo.eq_audio }} </td>
+                                <td>{{ equipo.ram }} </td>
+                                <td>{{ equipo.cpu }} </td>
+                                <td>{{ equipo.mouse }} </td>
+                                <td>{{ equipo.teclado }} </td>
+                                <td>{{ equipo.accesorios }} </td>
                                 <td>{{ equipo.eq_sistemop }} </td>
+                                <td>{{ equipo.office }} </td>
+                                <td>{{ equipo.antiviruz }} </td>
+                                <td>{{ equipo.thunderbird }} </td>
+                                <td>{{ equipo.programas }} </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -197,7 +225,7 @@
                         </select>
             
                         <!-- Usuario -->
-                        <input type="text" name="usuario" placeholder="Buscar Usuario" value="{{ request.GET.usuario|default_if_none:'' }}">
+                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
             
                         <!-- Botones -->
                         <button type="submit">Filtrar</button>
@@ -305,7 +333,7 @@
                         </select>
             
                         <!-- Usuario -->
-                        <input type="text" name="usuario" placeholder="Buscar Usuario" value="{{ request.GET.usuario|default_if_none:'' }}">
+                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
             
                         <!-- Botones -->
                         <button type="submit">Filtrar</button>
@@ -420,7 +448,7 @@
                         </select>
                     
                         <!-- Usuario -->
-                        <input type="text" name="usuario_otros" placeholder="Buscar Usuario" value="{{ request.GET.usuario_otros|default_if_none:'' }}">
+                        <input type="text" name="usuario_otros" placeholder="Buscar Responsable" value="{{ request.GET.usuario_otros|default_if_none:'' }}">
                     
                         <button type="submit">Filtrar</button>
                         <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
@@ -659,7 +687,7 @@
                         </select>
                     
                         <!-- Usuario -->
-                        <input type="text" name="usuario_monitor" placeholder="Buscar Usuario" value="{{ request.GET.usuario_monitor|default_if_none:'' }}">
+                        <input type="text" name="usuario_monitor" placeholder="Buscar Responsable" value="{{ request.GET.usuario_monitor|default_if_none:'' }}">
                     
                         <!-- Botones -->
                         <button type="submit">Filtrar</button>
@@ -760,5 +788,41 @@
         </section>
 
     </main>
+<script>
+  const scrollContainers = document.querySelectorAll('.c1');
+
+  scrollContainers.forEach(container => {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    container.addEventListener('mousedown', (e) => {
+      isDown = true;
+      container.classList.add('dragging');
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      isDown = false;
+      container.classList.remove('dragging');
+    });
+
+    container.addEventListener('mouseup', () => {
+      isDown = false;
+      container.classList.remove('dragging');
+    });
+
+    container.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5; // podés ajustar velocidad
+      container.scrollLeft = scrollLeft - walk;
+    });
+  });
+</script>
+
+
 </body>
 </html>
