@@ -43,38 +43,36 @@ def serviciotecnico(request):
 def veregistro(request):
     trabajos_realizados = Tecnicos.objects.filter(tec_ee__ee_estado="Pendiente⚠️")
 
-    funcionario = request.GET.get("funcionario")
+    funcionarios_sel = request.GET.getlist("funcionario")  # << aquí
     fecha_exacta = request.GET.get("fecha_exacta")
     fecha_desde = request.GET.get("fecha_desde")
     fecha_hasta = request.GET.get("fecha_hasta")
 
-    if funcionario:
-        trabajos_realizados = trabajos_realizados.filter(tec_nombre__icontains=funcionario)
+    if funcionarios_sel:
+        # Igualdad exacta por nombre; si querés case-insensitive ver nota abajo
+        trabajos_realizados = trabajos_realizados.filter(tec_nombre__in=funcionarios_sel)
 
     if fecha_exacta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha=fecha_exacta)
-
     if fecha_desde:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha__gte=fecha_desde)
-
     if fecha_hasta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha__lte=fecha_hasta)
 
-    # Traer nombres únicos de técnicos desde Tecnicos (asegurando que no se repitan)
     lista_tecnicos = (
         Tecnicos.objects.order_by("tec_nombre")
         .values_list("tec_nombre", flat=True)
         .distinct()
     )
-
     lista_estados = Estadoentrada.objects.all()
     lista_montos = Tecnicosmonto.objects.all()
 
     return render(request, "veregistros.html", {
-        'trabajos_realizados': trabajos_realizados,
-        'lista_tecnicos': lista_tecnicos,
-        'lista_estados': lista_estados,
-        'lista_montos': lista_montos,
+        "trabajos_realizados": trabajos_realizados,
+        "lista_tecnicos": lista_tecnicos,
+        "lista_estados": lista_estados,
+        "lista_montos": lista_montos,
+        "funcionarios_sel": funcionarios_sel,   # << pasa al template
     })
 
 
@@ -117,8 +115,10 @@ def addmonto(request):
 @login_required
 @user_passes_test(is_swap_serviciotecnico)
 def historial(request):
-    # Obtener parámetros de filtro
-    filtro_tipo = request.GET.get('filtro_tipo', '30_dias')  # Por defecto: últimos 30 días
+    # =========================
+    # Filtros del GRÁFICO
+    # =========================
+    filtro_tipo = request.GET.get('filtro_tipo', '30_dias')  # por defecto: últimos 30 días
     mes_inicio = request.GET.get('mes_inicio')
     mes_fin = request.GET.get('mes_fin')
     año_inicio = request.GET.get('año_inicio')
@@ -126,12 +126,12 @@ def historial(request):
     mes_exacto = request.GET.get('mes_exacto')
     año_exacto = request.GET.get('año_exacto')
 
-    # Consulta base
+    # Solo considera TRABAJOS FINALIZADOS en el gráfico
     datos_query = Tecnicos.objects.filter(tec_ee__ee_estado='Finalizado✅')
 
-    # Preparar datos según el tipo de filtro
+    # ----- Construcción de labels/valores según filtro seleccionado -----
     if filtro_tipo == 'rango_meses':
-        # Filtro por rango de meses (suma por mes)
+        # Vista por MES dentro de un rango (suma por mes)
         datos = (
             datos_query
             .filter(tec_fecha__month__gte=mes_inicio, tec_fecha__month__lte=mes_fin)
@@ -141,19 +141,20 @@ def historial(request):
             .order_by('tec_fecha__year', 'tec_fecha__month')
         )
         labels = [f"{month_name[d['tec_fecha__month']]} {d['tec_fecha__year']}" for d in datos]
-
         valores = [d['total'] for d in datos]
-        
+
     elif filtro_tipo == 'mes_exacto':
-        # Filtro por mes exacto (días completos)
+        # Vista por DÍA dentro de un mes exacto
         year = int(año_exacto)
         month = int(mes_exacto)
-        
-        # Generar todos los días del mes
-        num_days = (datetime(year=year, month=month+1, day=1) - 
-                   datetime(year=year, month=month, day=1)).days if month != 12 else 31
-        
-        # Consulta para el mes seleccionado
+
+        # calcular cantidad de días del mes
+        if month == 12:
+            num_days = 31
+        else:
+            num_days = (datetime(year=year, month=month + 1, day=1) -
+                        datetime(year=year, month=month, day=1)).days
+
         datos_db = (
             datos_query
             .filter(tec_fecha__year=year, tec_fecha__month=month)
@@ -161,19 +162,16 @@ def historial(request):
             .annotate(total=Count('tec_id'))
             .order_by('tec_fecha__day')
         )
-        
-        # Convertir a diccionario para fácil acceso
         datos_dict = {d['tec_fecha__day']: d['total'] for d in datos_db}
-        
-        # Crear datos completos (incluyendo días sin registros)
+
         labels = []
         valores = []
-        for day in range(1, num_days+1):
+        for day in range(1, num_days + 1):
             labels.append(f"{day}/{month}/{year}")
             valores.append(datos_dict.get(day, 0))
-            
+
     elif filtro_tipo == 'rango_años':
-        # Filtro por rango de años (suma por año)
+        # Vista por AÑO dentro de un rango (suma por año)
         datos = (
             datos_query
             .filter(tec_fecha__year__gte=año_inicio, tec_fecha__year__lte=año_fin)
@@ -183,14 +181,12 @@ def historial(request):
         )
         labels = [str(d['tec_fecha__year']) for d in datos]
         valores = [d['total'] for d in datos]
-        
-    else:  # Por defecto: últimos 30 días
+
+    else:
+        # Por defecto: últimos 30 días (vista por DÍA)
         fecha_limite = timezone.now().date() - timedelta(days=30)
-        
-        # Generar rango de fechas de los últimos 30 días
         date_range = [fecha_limite + timedelta(days=x) for x in range(31)]
-        
-        # Consulta para los últimos 30 días
+
         datos_db = (
             datos_query
             .filter(tec_fecha__gte=fecha_limite)
@@ -198,74 +194,76 @@ def historial(request):
             .annotate(total=Count('tec_id'))
             .order_by('tec_fecha')
         )
-        
-        # Convertir a diccionario para fácil acceso
         datos_dict = {d['tec_fecha']: d['total'] for d in datos_db}
-        
-        # Crear datos completos (incluyendo días sin registros)
+
         labels = []
         valores = []
         for date in date_range:
             labels.append(date.strftime('%d/%m/%Y'))
             valores.append(datos_dict.get(date, 0))
 
-    # Obtener años y meses disponibles para los filtros
+    # Años/meses disponibles para selects del gráfico
     años_disponibles = (
         datos_query
         .dates('tec_fecha', 'year')
         .order_by('-tec_fecha__year')
     )
-    
-    meses_disponibles = [
-        {'num': i, 'nombre': month_name[i]} 
-        for i in range(1, 13)
-    ]
+    meses_disponibles = [{'num': i, 'nombre': month_name[i]} for i in range(1, 13)]
 
-
-
-
+    # =========================
+    # Tabla inferior (LISTADO)
+    # =========================
     trabajos_realizados = Tecnicos.objects.all()
-    funcionario = request.GET.get("funcionario")
+
+    # --- MÚLTIPLES funcionarios ---
+    funcionarios_sel = request.GET.getlist("funcionario")  # << clave
     fecha_exacta = request.GET.get("fecha_exacta")
     fecha_desde = request.GET.get("fecha_desde")
     fecha_hasta = request.GET.get("fecha_hasta")
-    estado = request.GET.get("estado")  # Nuevo filtro
-    
-    if funcionario:
-        trabajos_realizados = trabajos_realizados.filter(tec_nombre__icontains=funcionario)
+    estado = request.GET.get("estado")
+
+    if funcionarios_sel:
+        # Igualdad exacta por nombre
+        trabajos_realizados = trabajos_realizados.filter(tec_nombre__in=funcionarios_sel)
+
+        # (Alternativa tolerante: descomenta si prefieres icontains OR)
+        # q = Q()
+        # for f in funcionarios_sel:
+        #     q |= Q(tec_nombre__icontains=f)
+        # trabajos_realizados = trabajos_realizados.filter(q)
 
     if fecha_exacta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha=fecha_exacta)
-
     if fecha_desde:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha__gte=fecha_desde)
-
     if fecha_hasta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha__lte=fecha_hasta)
     if estado:
-        trabajos_realizados = trabajos_realizados.filter(tec_ee__ee_estado=estado)  # o usar `tec_ee__ee_id=estado` si pasas el ID
+        trabajos_realizados = trabajos_realizados.filter(tec_ee__ee_estado=estado)
+
+    # combos
     lista_tecnicos = (
         Tecnicos.objects.order_by("tec_nombre")
         .values_list("tec_nombre", flat=True)
         .distinct()
     )
-
     lista_estados = Estadoentrada.objects.all()
     lista_montos = Tecnicosmonto.objects.all()
+
     return render(request, 'historial.html', {
         'labels': labels,
         'datos': valores,
         'años_disponibles': años_disponibles,
         'meses_disponibles': meses_disponibles,
         'filtro_actual': filtro_tipo,
-        
+
         'trabajos_realizados': trabajos_realizados,
         'lista_tecnicos': lista_tecnicos,
         'lista_estados': lista_estados,
         'lista_montos': lista_montos,
+
+        'funcionarios_sel': funcionarios_sel,  # << para marcar seleccionados en el template
     })
-    
-    
     
 
 # excel

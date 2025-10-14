@@ -34,15 +34,16 @@
             <div class="container">
                 <div class="search">
                     <form method="get">
-                        <label for="funcionario">Funcionario:</label>
-                        <select name="funcionario" id="funcionario-select">
-                            <option value="">Todos</option>
-                            {% for nombre in lista_tecnicos %}
-                                <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
-                                    {{ nombre }}
-                                </option>
-                            {% endfor %}
+                        <label for="funcionario-select">Funcionario(s):</label>
+                        <select name="funcionario" id="funcionario-select" multiple>
+                        {% for nombre in lista_tecnicos %}
+                            <option value="{{ nombre }}" {% if nombre in funcionarios_sel %}selected{% endif %}>
+                            {{ nombre }}
+                            </option>
+                        {% endfor %}
                         </select>
+
+
 
                     
                         <label for="fecha_exacta">Fecha exacta:</label>
@@ -131,14 +132,16 @@
         </section>
     </main>
     <script>
-        $(document).ready(function() {
-            $('#funcionario-select').select2({
-                placeholder: "Seleccione un funcionario",
-                allowClear: true,
-                width: 'resolve'
-            });
+        $(function() {
+        $('#funcionario-select').select2({
+            placeholder: "Seleccione uno o más funcionarios",
+            allowClear: true,
+            width: 'resolve'
+        });
         });
     </script>
+
+
     
     
 </body>
