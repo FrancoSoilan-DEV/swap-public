@@ -7,6 +7,7 @@
     <title>SWAP | Ver Trabajos Cargados</title>
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'css/veregistros.css' %}">
+
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
@@ -15,134 +16,173 @@
 
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 </head>
 <body>
-    <header>
-        <div class="dpto-container">
-            <h2>Servicio Tecnico</h2>
-        </div>
-        <div class="new">
-            <h3><a href="{% url 'addmonto' %}">Nuevo Monto</a></h3>
-        </div>
-    </header>
-    <div class="comeback">
-        <a href="{% url 'serviciotecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+<header>
+    <div class="dpto-container">
+        <h2>Servicio Tecnico</h2>
     </div>
-    <main>
-        <section>
-            <div class="container">
-                <div class="search">
-                    <form method="get">
-                        <label for="funcionario-select">Funcionario(s):</label>
-                        <select name="funcionario" id="funcionario-select" multiple>
-                        {% for nombre in lista_tecnicos %}
-                            <option value="{{ nombre }}" {% if nombre in funcionarios_sel %}selected{% endif %}>
+    <div class="new">
+        <h3><a href="{% url 'addmonto' %}">Nuevo Monto</a></h3>
+    </div>
+</header>
+
+<div class="comeback">
+    <a href="{% url 'serviciotecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+</div>
+
+<main>
+<section>
+    <div class="container">
+        <div class="search">
+            <!-- Filtros (GET) -->
+            <form method="get">
+                <label for="funcionario-select">Funcionario(s):</label>
+                <select name="funcionario" id="funcionario-select" multiple>
+                    {% for nombre in lista_tecnicos %}
+                        <option value="{{ nombre }}" {% if nombre in funcionarios_sel %}selected{% endif %}>
                             {{ nombre }}
-                            </option>
-                        {% endfor %}
-                        </select>
+                        </option>
+                    {% endfor %}
+                </select>
 
+                <label for="fecha_exacta">Fecha exacta:</label>
+                <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
 
+                <label for="fecha_desde">Desde:</label>
+                <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
 
-                    
-                        <label for="fecha_exacta">Fecha exacta:</label>
-                        <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
-                    
-                        <label for="fecha_desde">Desde:</label>
-                        <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
-                    
-                        <label for="fecha_hasta">Hasta:</label>
-                        <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
-                    
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'veregistro' %}">Limpiar</a>
-                    </form>
-                    
-                    
-                    
-                    
-                </div>
-                <div class="tablecontainer">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha de Carga</th>
-                                <th>Hora de Carga</th>
-                                <th>Funcionario</th>
-                                <th>Sitio</th>
-                                <th>Cliente</th>
-                                <th>Descripción</th>
-                                <th>Fecha</th>
-                                <th>H. Inicio</th>
-                                <th>H. Salida</th>
-                                <th>Estado</th>
-                                <th class="monto-column">Monto</th>
-                                <th>Guardar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for trabajo in trabajos_realizados %}
-                            <form method="post" action="{% url 'editar_trabajo' trabajo.tec_id %}">
-                                {% csrf_token %}
-                                <tr>
-                                    <td data-label="F. Carga">{{ trabajo.tec_fexacta|date:"d/m/Y" }}</td>
-                                    <td data-label="H. Carga">{{ trabajo.tec_hexacta }}</td>
-                                    <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
-                                    <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
-                                    <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
-                                    <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
-                                    <td data-label="Fecha">{{ trabajo.tec_fecha|date:"d/m/Y" }}</td>
-                                    <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
-                                    <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
-                        
-                                    <!-- Estado editable -->
-                                    <td>
-                                        <select name="estado">
-                                            {% for estado in lista_estados %}
-                                                <option value="{{ estado.ee_id }}" {% if trabajo.tec_ee.ee_id == estado.ee_id %}selected{% endif %}>
-                                                    {{ estado.ee_estado }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                        
-                                    <!-- Monto editable -->
-                                    {% load humanize %}
-                                    <td>
-                                        <select name="monto">
-                                            {% for monto in lista_montos %}
-                                                <option value="{{ monto.tm_id }}" {% if trabajo.tec_tm.tm_id == monto.tm_id %}selected{% endif %}>
-                                                    {{ monto.tm_monto|intcomma }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
+                <label for="fecha_hasta">Hasta:</label>
+                <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
 
-                        
-                                    <td><button type="submit" aria-label="Guardar cambios">💾</button></td>
-                                </tr>
-                            </form>
-                            {% endfor %}
-                        </tbody>
-                        
-                    </table>
-                </div>
+                <button type="submit">Filtrar</button>
+                <a href="{% url 'veregistro' %}">Limpiar</a>
+            </form>
+        </div>
+
+        <!-- Guardado masivo (POST) -->
+        <form method="post" action="{% url 'editar_trabajos_bulk' %}">
+            {% csrf_token %}
+            <!-- preserva la URL de retorno con filtros -->
+            <input type="hidden" name="next" value="?{{ request.GET.urlencode }}">
+
+            <!-- Botón de guardar arriba de la tabla -->
+            <div class="bulk-header">
+                <button type="submit" class="btn-bulk">💾 Guardar seleccionados</button>
             </div>
-        </section>
-    </main>
-    <script>
-        $(function() {
-        $('#funcionario-select').select2({
-            placeholder: "Seleccione uno o más funcionarios",
-            allowClear: true,
-            width: 'resolve'
-        });
-        });
-    </script>
 
+            <div class="tablecontainer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <!-- seleccionar/deseleccionar todos -->
+                                <input type="checkbox" id="check_all">
+                            </th>
+                            <th>Fecha de Carga</th>
+                            <th>Hora de Carga</th>
+                            <th>Funcionario</th>
+                            <th>Sitio</th>
+                            <th>Cliente</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>H. Inicio</th>
+                            <th>H. Salida</th>
+                            <th>Estado</th>
+                            <th class="monto-column">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% load humanize %}
+                        {% for trabajo in trabajos_realizados %}
+                        <tr>
+                            <td data-label="Sel.">
+                                <input type="checkbox" name="selected_ids" value="{{ trabajo.tec_id }}" class="row-check">
+                            </td>
+                            <td data-label="F. Carga">{{ trabajo.tec_fexacta|date:"d/m/Y" }}</td>
+                            <td data-label="H. Carga">{{ trabajo.tec_hexacta }}</td>
+                            <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
+                            <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
+                            <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
+                            <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
+                            <td data-label="Fecha">{{ trabajo.tec_fecha|date:"d/m/Y" }}</td>
+                            <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
+                            <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
 
-    
-    
+                            <!-- Estado editable -->
+                            <td>
+                                <select name="estado_{{ trabajo.tec_id }}">
+                                    {% for estado in lista_estados %}
+                                        <option value="{{ estado.ee_id }}"
+                                          {% if trabajo.tec_ee.ee_id == estado.ee_id %}selected{% endif %}>
+                                            {{ estado.ee_estado }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+
+                            <!-- Monto editable -->
+                            <td>
+                                <select name="monto_{{ trabajo.tec_id }}">
+                                    {% for monto in lista_montos %}
+                                        <option value="{{ monto.tm_id }}"
+                                          {% if trabajo.tec_tm.tm_id == monto.tm_id %}selected{% endif %}>
+                                            {{ monto.tm_monto|intcomma }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</section>
+</main>
+
+<script>
+  // Select2 para funcionarios
+  $(function() {
+    $('#funcionario-select').select2({
+      placeholder: "Seleccione uno o más funcionarios",
+      allowClear: true,
+      width: 'resolve'
+    });
+  });
+
+  // Seleccionar/Deseleccionar todos
+  const checkAll = document.getElementById('check_all');
+  if (checkAll) {
+    checkAll.addEventListener('change', function() {
+      document.querySelectorAll('.row-check').forEach(cb => {
+        cb.checked = checkAll.checked;
+      });
+    });
+  }
+</script>
+
+<style>
+.bulk-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+.btn-bulk {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.btn-bulk:hover {
+    background-color: #125ca3;
+}
+</style>
+
 </body>
 </html>

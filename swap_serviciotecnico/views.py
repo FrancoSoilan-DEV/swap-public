@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+from django.urls import reverse
 from swap_home.models import *
 from swap_informatica.models import *
 from swap_porteria.models import *
@@ -37,6 +40,56 @@ def serviciotecnico(request):
         'dia': tarea_dia,
     })
     
+    
+    
+
+
+@login_required
+@user_passes_test(is_swap_serviciotecnico)
+def editar_trabajos_bulk(request):
+    """
+    Guarda múltiples filas seleccionadas desde veregistros.html.
+    Espera:
+      - selected_ids: lista de tec_id marcados
+      - Por cada id: estado_<id>, monto_<id>
+    """
+    if request.method != "POST":
+        return redirect('veregistro')
+
+    selected_ids = request.POST.getlist('selected_ids')
+    if not selected_ids:
+        messages.warning(request, "No seleccionaste ningún registro.")
+        return redirect('veregistro')
+
+    # Cargar catálogos para resolver ids a objetos
+    estados = {str(e.ee_id): e for e in Estadoentrada.objects.all()}
+    montos  = {str(m.tm_id): m for m in Tecnicosmonto.objects.all()}
+
+    actualizado = 0
+    with transaction.atomic():
+        for tec_id in selected_ids:
+            try:
+                t = Tecnicos.objects.select_for_update().get(tec_id=tec_id)
+            except Tecnicos.DoesNotExist:
+                continue
+
+            estado_id = request.POST.get(f"estado_{tec_id}")
+            monto_id  = request.POST.get(f"monto_{tec_id}")
+
+            if estado_id and estado_id in estados:
+                t.tec_ee = estados[estado_id]
+            if monto_id and monto_id in montos:
+                t.tec_tm = montos[monto_id]
+
+            t.save(update_fields=["tec_ee", "tec_tm"])
+            actualizado += 1
+
+    messages.success(request, f"Se actualizaron {actualizado} registro(s).")
+    # Volver a la vista con filtros GET si los mandaste como hidden "next"
+    next_url = request.POST.get("next") or reverse("veregistro")
+    return redirect(veregistro)
+
+
 # ver los registros ingresados por los trabajodores
 @login_required
 @user_passes_test(is_swap_serviciotecnico)
