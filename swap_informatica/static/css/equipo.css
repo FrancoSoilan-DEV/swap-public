@@ -78,11 +78,11 @@ main {
   display: inline-block;
 }
 .comeback a:hover {
-  background-color: #217dbb;
+  background-color: rgb(33.1380753138, 125.1882845188, 186.8619246862);
   transform: translateY(-2px);
 }
 .comeback a:hover {
-  background-color: #1a252f;
+  background-color: rgb(25.9032258065, 36.5, 47.0967741935);
 }
 
 section {
@@ -138,7 +138,7 @@ section h2 a:hover {
   font-weight: 500;
 }
 .search form button:hover {
-  background-color: #217dbb;
+  background-color: rgb(33.1380753138, 125.1882845188, 186.8619246862);
   transform: translateY(-2px);
 }
 .search form .clear-btn {
@@ -155,11 +155,11 @@ section h2 a:hover {
   text-align: center;
 }
 .search form .clear-btn:hover {
-  background-color: #217dbb;
+  background-color: rgb(33.1380753138, 125.1882845188, 186.8619246862);
   transform: translateY(-2px);
 }
 .search form .clear-btn:hover {
-  background-color: #c87f0a;
+  background-color: rgb(199.8795180723, 126.5060240964, 10.1204819277);
 }
 
 table {
@@ -242,7 +242,7 @@ article .search-m .filtro-mantenimientos button {
   align-self: end;
 }
 article .search-m .filtro-mantenimientos button:hover {
-  background-color: #217dbb;
+  background-color: rgb(33.1380753138, 125.1882845188, 186.8619246862);
   transform: translateY(-2px);
 }
 article .search-m .filtro-mantenimientos .limpiar-filtros {
@@ -260,11 +260,11 @@ article .search-m .filtro-mantenimientos .limpiar-filtros {
   align-self: end;
 }
 article .search-m .filtro-mantenimientos .limpiar-filtros:hover {
-  background-color: #217dbb;
+  background-color: rgb(33.1380753138, 125.1882845188, 186.8619246862);
   transform: translateY(-2px);
 }
 article .search-m .filtro-mantenimientos .limpiar-filtros:hover {
-  background-color: #d62c1a;
+  background-color: rgb(213.698630137, 43.8356164384, 26.301369863);
 }
 
 @media (max-width: 768px) {

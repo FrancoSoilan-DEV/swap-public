@@ -232,11 +232,11 @@ body main section .container .search form a:hover {
   color: #333;
 }
 body main section .container .search form a.btn-exportar {
-  background: linear-gradient(45deg, #ff1493, #ff47aa);
+  background: linear-gradient(45deg, #ff1493, rgb(255, 71, 170.4382978723));
   color: white;
 }
 body main section .container .search form a.btn-exportar:hover {
-  background: linear-gradient(45deg, #ff47aa, #ff1493);
+  background: linear-gradient(45deg, rgb(255, 71, 170.4382978723), #ff1493);
 }
 body main section .container .tablecontainer {
   background: rgba(255, 255, 255, 0.1);

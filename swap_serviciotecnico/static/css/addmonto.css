@@ -44,7 +44,7 @@ body {
   width: 100px;
   height: 40px;
   margin: 20px;
-  background: linear-gradient(135deg, #4f08e1 0%, #6a25f7 100%);
+  background: linear-gradient(135deg, #4f08e1 0%, rgb(105.6266094421, 36.7596566524, 247.2403433476) 100%);
   border-radius: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 10px rgba(79, 8, 225, 0.2);
@@ -131,7 +131,7 @@ main article .container form p {
 }
 main article .container form p label {
   font-weight: 500;
-  color: #0d0d0d;
+  color: rgb(12.75, 12.75, 12.75);
   font-size: 0.95rem;
   margin-left: 5px;
 }

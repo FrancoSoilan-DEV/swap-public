@@ -98,7 +98,7 @@ table {
 table th, table td {
   padding: 12px;
   text-align: center;
-  border: 1px solid #5e5e5e;
+  border: 1px solid rgb(93.5, 93.5, 93.5);
 }
 table th {
   background: #777;
@@ -106,17 +106,17 @@ table th {
   text-transform: uppercase;
 }
 table tr:nth-child(even) {
-  background: #262626;
+  background: rgb(38.25, 38.25, 38.25);
 }
 table tr:hover {
-  background: #404040;
+  background: rgb(63.75, 63.75, 63.75);
 }
 
 .filter-form {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #262626;
+  background: rgb(38.25, 38.25, 38.25);
   padding: 10px 15px;
   border-radius: 8px;
 }
@@ -144,7 +144,7 @@ table tr:hover {
   transition: 0.3s ease-in-out;
 }
 .filter-form button:hover {
-  background: rgba(128, 148, 254, 0.8156862745);
+  background: rgba(127.7150837989, 148.4525139665, 254.2849162011, 0.8156862745);
 }
 .filter-form .clear-btn {
   background: #d9534f;
@@ -156,7 +156,7 @@ table tr:hover {
   transition: 0.3s ease-in-out;
 }
 .filter-form .clear-btn:hover {
-  background: #e27c79;
+  background: rgb(226.0560747664, 123.9906542056, 120.9439252336);
 }
 
 input[type=checkbox] {
@@ -193,7 +193,7 @@ input[type=checkbox]:checked::after {
 }
 
 .delete-btn {
-  background: #454545;
+  background: rgb(68.5, 68.5, 68.5);
   color: #ddd;
   border: 2px solid #777;
   padding: 8px 15px;
@@ -208,7 +208,7 @@ input[type=checkbox]:checked::after {
 }
 .delete-btn:hover {
   background: #d9534f;
-  border-color: #c9302c;
+  border-color: rgb(201.4953271028, 48.0841121495, 43.5046728972);
   color: white;
   transform: scale(1.05);
 }

@@ -61,7 +61,7 @@ body main {
   align-items: center;
   min-height: calc(100vh - 180px);
   padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, rgb(228, 233.4, 241.5) 100%);
 }
 body main article {
   width: 100%;
@@ -125,7 +125,7 @@ body form select {
   font-size: 1rem;
   transition: all 0.3s ease-in-out;
   background-color: rgba(255, 255, 255, 0.9);
-  color: #090428;
+  color: rgb(9.425, 3.625, 39.875);
   font-family: "Poppins", sans-serif;
   box-shadow: 0 2px 8px rgba(79, 8, 225, 0.05);
 }
@@ -168,11 +168,11 @@ body form .form-group {
   margin-bottom: 1.8rem !important;
 }
 body form .form-group:hover label {
-  color: #4607c8 !important;
+  color: rgb(70.3540772532, 7.1244635193, 200.3755364807) !important;
 }
 body form .form-group:hover label::before {
   height: 70%;
-  background: linear-gradient(to bottom, #947ef8, #4f08e1);
+  background: linear-gradient(to bottom, rgb(148.0909090909, 125.5454545455, 248.4545454545), #4f08e1);
 }
 body form button[type=submit] {
   width: 100%;

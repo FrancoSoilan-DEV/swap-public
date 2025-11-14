@@ -7,23 +7,24 @@
     <title>SWAP | TTHH | Servicio Tecnico</title>
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'css/vistast.css' %}">
-    <!-- Asegúrate de tener Font Awesome para el ícono -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="comeback">
-        <a href="{% url 'tthh' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+        <a href="{% url 'tthh' %}">
+            <i class="fas fa-arrow-left"></i> Atrás
+        </a>
     </div>
     
     <div class="supercontainer">
         <section>
             <div class="container">
-                <!-- Añadido el título que el SASS espera -->
                 <div class="title">
                     <h2>Historial de Trabajos</h2>
                 </div>
                 
-                <!-- Movido search dentro de container -->
                 <div class="search">
                     <form method="get">
                         <div class="form-group">
@@ -31,8 +32,23 @@
                             <select name="funcionario" id="funcionario-select">
                                 <option value="">Todos</option>
                                 {% for nombre in lista_tecnicos %}
-                                    <option value="{{ nombre }}" {% if request.GET.funcionario == nombre %}selected{% endif %}>
+                                    <option value="{{ nombre }}"
+                                        {% if request.GET.funcionario == nombre %}selected{% endif %}>
                                         {{ nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- NUEVO: filtro por estado -->
+                        <div class="form-group">
+                            <label for="estado">Estado:</label>
+                            <select name="estado" id="estado-select">
+                                <option value="">Todos</option>
+                                {% for est in lista_estados %}
+                                    <option value="{{ est }}"
+                                        {% if request.GET.estado == est %}selected{% endif %}>
+                                        {{ est }}
                                     </option>
                                 {% endfor %}
                             </select>
@@ -40,27 +56,30 @@
 
                         <div class="form-group">
                             <label for="fecha_exacta">Fecha exacta:</label>
-                            <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+                            <input type="date" name="fecha_exacta"
+                                   value="{{ request.GET.fecha_exacta }}">
                         </div>
                     
                         <div class="form-group">
                             <label for="fecha_desde">Desde:</label>
-                            <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+                            <input type="date" name="fecha_desde"
+                                   value="{{ request.GET.fecha_desde }}">
                         </div>
                     
                         <div class="form-group">
                             <label for="fecha_hasta">Hasta:</label>
-                            <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+                            <input type="date" name="fecha_hasta"
+                                   value="{{ request.GET.fecha_hasta }}">
                         </div>
                         
                         <button type="submit">Filtrar</button>
                         
                         <a href="{% url 'vistast' %}">Limpiar</a>
-                        <a href="{% url 'ex_excel' %}?{{ request.GET.urlencode }}" class="btn-exportar">Exportar a Excel</a>
+                        <a href="{% url 'ex_excel' %}?{{ request.GET.urlencode }}"
+                           class="btn-exportar">Exportar a Excel</a>
                     </form>
                 </div>
                 
-                <!-- Movido tablecontainer dentro de container -->
                 <div class="tablecontainer">
                     <table>
                         <thead>
@@ -77,6 +96,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% load humanize %}
                             {% for trabajo in trabajos_realizados %}
                                 <tr>
                                     <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
@@ -87,13 +107,62 @@
                                     <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
                                     <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
                                     <td data-label="Estado">{{ trabajo.tec_ee }}</td>
-                                    {% load humanize %}
                                     <td data-label="Monto">{{ trabajo.tec_tm|intcomma }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="9" style="text-align:center;">
+                                        No se encontraron trabajos con los filtros seleccionados.
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- PAGINACIÓN -->
+                {% if trabajos_realizados.has_other_pages %}
+                    <div class="pagination">
+                        <span class="page-info">
+                            Página {{ trabajos_realizados.number }} de {{ trabajos_realizados.paginator.num_pages }}
+                        </span>
+
+                        <ul class="pagination-list">
+                            {% if trabajos_realizados.has_previous %}
+                                <li>
+                                    <a class="page-link prev"
+                                       href="{% if querystring %}?{{ querystring }}&page={{ trabajos_realizados.previous_page_number }}{% else %}?page={{ trabajos_realizados.previous_page_number }}{% endif %}">
+                                        &laquo;
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in trabajos_realizados.paginator.page_range %}
+                                {% if num == trabajos_realizados.number %}
+                                    <li>
+                                        <span class="page-link active">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a class="page-link"
+                                           href="{% if querystring %}?{{ querystring }}&page={{ num }}{% else %}?page={{ num }}{% endif %}">
+                                            {{ num }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if trabajos_realizados.has_next %}
+                                <li>
+                                    <a class="page-link next"
+                                       href="{% if querystring %}?{{ querystring }}&page={{ trabajos_realizados.next_page_number }}{% else %}?page={{ trabajos_realizados.next_page_number }}{% endif %}">
+                                        &raquo;
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
         </section>
     </div>

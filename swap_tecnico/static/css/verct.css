@@ -45,7 +45,7 @@ body .comeback {
   width: 85px;
   height: 40px;
   margin: 15px;
-  background: linear-gradient(135deg, #4f08e1 0%, #6a25f7 100%);
+  background: linear-gradient(135deg, #4f08e1 0%, rgb(105.6266094421, 36.7596566524, 247.2403433476) 100%);
   border-radius: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -166,7 +166,7 @@ body .comeback a {
   color: #4f08e1;
 }
 .submit-btn:hover {
-  background: #f2f2f2;
+  background: rgb(242.25, 242.25, 242.25);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(79, 8, 225, 0.2);
 }

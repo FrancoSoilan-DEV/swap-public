@@ -8,8 +8,6 @@
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
 
-
-
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
@@ -57,31 +55,33 @@
                     <form method="get">
                         <label for="fecha_exacta">Fecha exacta:</label>
                         <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
-                
+
                         <label for="fecha_desde">Desde:</label>
                         <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
-                
+
                         <label for="fecha_hasta">Hasta:</label>
                         <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
-                
+
                         <label for="funcionario">Funcionario:</label>
                         <select name="funcionario" id="funcionario-select">
                             <option value="">Todos</option>
                             {% for f in lista_funcionarios %}
-                                <option value="{{ f.fun_id }}" {% if request.GET.funcionario == f.fun_id|stringformat:"s" %}selected{% endif %}>{{ f }}</option>
+                                <option value="{{ f.fun_id }}" {% if request.GET.funcionario == f.fun_id|stringformat:"s" %}selected{% endif %}>
+                                    {{ f }}
+                                </option>
                             {% endfor %}
                         </select>
 
-                
                         <label>
                             <input type="checkbox" name="solo_tarde" value="1" {% if request.GET.solo_tarde == "1" %}checked{% endif %}>
                             Solo llegadas tarde
                         </label>
-                
+
                         <button type="submit">Filtrar</button>
                         <a href="{% url 'registro_entrada' %}">Limpiar</a>
                     </form>
                 </div>
+
                 <table>
                     <thead>
                         <tr>
@@ -93,9 +93,8 @@
                             <th>Comentario</th>
                         </tr>
                     </thead>
-                   
                     <tbody>
-                        {% for funcionario in funcionarios %}
+                        {% for funcionario in page_obj %}
                         <tr{% if funcionario.e_entrada|stringformat:"H:i" > "07:35" %} class="llegada-tarde"{% endif %}>
                             <td data-label="Fecha">{{ funcionario.e_fecha }}</td>
                             <td data-label="Funcionario">{{ funcionario.e_fun|default_if_none:"-" }}</td>
@@ -108,11 +107,35 @@
                                 {% else %}
                                   {{ funcionario.e_comentario }}
                                 {% endif %}
-                              </td>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="no-results">No se encontraron registros.</td>
                         </tr>
                         {% endfor %}
                     </tbody>                    
                 </table>
+
+                {# --- PAGINACIÓN --- #}
+                {% if page_obj.paginator.num_pages > 1 %}
+                <div class="pagination">
+                    <div class="pagination__info">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </div>
+                    <div class="pagination__controls">
+                        {% if page_obj.has_previous %}
+                            <a class="pagination__btn" href="?page=1{% if current_query %}&{{ current_query }}{% endif %}">&laquo; Primera</a>
+                            <a class="pagination__btn" href="?page={{ page_obj.previous_page_number }}{% if current_query %}&{{ current_query }}{% endif %}">Anterior</a>
+                        {% endif %}
+
+                        {% if page_obj.has_next %}
+                            <a class="pagination__btn" href="?page={{ page_obj.next_page_number }}{% if current_query %}&{{ current_query }}{% endif %}">Siguiente</a>
+                            <a class="pagination__btn" href="?page={{ page_obj.paginator.num_pages }}{% if current_query %}&{{ current_query }}{% endif %}">Última &raquo;</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </section>
     </main>
@@ -125,6 +148,5 @@
             });
         });
     </script>
-    
 </body>
 </html>

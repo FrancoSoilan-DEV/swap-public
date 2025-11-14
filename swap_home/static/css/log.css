@@ -120,7 +120,7 @@ body main {
 .container form .input-group input::placeholder {
   color: transparent;
 }
-.container form .input-group input:not(:-moz-placeholder-shown) + .floating-label {
+.container form .input-group input:not(:-moz-placeholder) + .floating-label {
   top: -15px;
   font-size: 0.813rem;
 }

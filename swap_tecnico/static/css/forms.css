@@ -107,7 +107,7 @@ body .comeback a {
 }
 .tech-form .form-group label {
   font-weight: 500;
-  color: #1a1a1a;
+  color: rgb(25.5, 25.5, 25.5);
 }
 .tech-form .form-group.full-width {
   grid-column: 1/-1;
@@ -173,7 +173,7 @@ body .comeback a {
   margin-top: 1rem;
 }
 .tech-form .submit-btn:hover {
-  background: #3e06b0;
+  background: rgb(61.7081545064, 6.2489270386, 175.7510729614);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(79, 8, 225, 0.3);
 }

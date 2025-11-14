@@ -80,12 +80,12 @@ main {
   gap: 0.5rem;
 }
 .comeback a:hover {
-  background-color: #1e42eb;
+  background-color: rgb(29.5834146341, 65.5541463415, 234.6165853659);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 .comeback a:hover {
-  background-color: #2c097d;
+  background-color: rgb(44.4777142857, 9.2022857143, 124.9977142857);
 }
 
 section {
@@ -180,7 +180,7 @@ section h2 {
   flex: 1;
 }
 .search .filter-form .botones-container button:hover {
-  background-color: #1e42eb;
+  background-color: rgb(29.5834146341, 65.5541463415, 234.6165853659);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
@@ -201,12 +201,12 @@ section h2 {
   flex: 1;
 }
 .search .filter-form .botones-container .clear-btn:hover {
-  background-color: #1e42eb;
+  background-color: rgb(29.5834146341, 65.5541463415, 234.6165853659);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 .search .filter-form .botones-container .clear-btn:hover {
-  background-color: #e9ecef;
+  background-color: rgb(233.125, 236.25, 239.375);
   color: #212529;
 }
 
@@ -325,7 +325,7 @@ table tbody tr td .save-btn {
   margin-top: 1rem;
 }
 .cargar-articulo-nuevo form .btn:hover, .add-item form .btn:hover, .add-rak form .btn:hover, .add-estado form .btn:hover {
-  background-color: #1e42eb;
+  background-color: rgb(29.5834146341, 65.5541463415, 234.6165853659);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
@@ -365,13 +365,13 @@ table tbody tr td .save-btn {
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
 }
 .many-tables .table-item table thead, .many-tables .table-deposito table thead, .many-tables .table-estado table thead {
-  background: linear-gradient(135deg, #4cc9f0, #1dbbec);
+  background: linear-gradient(135deg, #4cc9f0, rgb(28.9432989691, 186.8041237113, 236.0567010309));
 }
 .many-tables .table-deposito table thead {
-  background: linear-gradient(135deg, #f72585, #e1086b);
+  background: linear-gradient(135deg, #f72585, rgb(224.7522123894, 8.2477876106, 107.2212389381));
 }
 .many-tables .table-estado table thead {
-  background: linear-gradient(135deg, #f8961e, #dc7c07);
+  background: linear-gradient(135deg, #f8961e, rgb(220.150862069, 124.2629310345, 6.849137931));
 }
 
 @media (max-width: 768px) {

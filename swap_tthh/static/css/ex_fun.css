@@ -1,6 +1,6 @@
 body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  background-color: #fefefe;
+  background-color: rgb(253.95, 254.1, 254.25);
   color: #2b2d42;
   line-height: 1.6;
 }
@@ -11,7 +11,7 @@ body .comeback {
   width: 85px;
   height: 40px;
   margin: 15px;
-  background: linear-gradient(135deg, #4361ee 0%, #7288f2 100%);
+  background: linear-gradient(135deg, #4361ee 0%, rgb(113.7707317073, 136.3073170732, 242.2292682927) 100%);
   border-radius: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

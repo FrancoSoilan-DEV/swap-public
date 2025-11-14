@@ -1,6 +1,6 @@
 body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  background-color: #fefefe;
+  background-color: rgb(253.95, 254.1, 254.25);
   color: #2b2d42;
   line-height: 1.6;
 }
@@ -11,7 +11,7 @@ body .comeback {
   width: 85px;
   height: 40px;
   margin: 15px;
-  background: linear-gradient(135deg, #4361ee 0%, #7288f2 100%);
+  background: linear-gradient(135deg, #4361ee 0%, rgb(113.7707317073, 136.3073170732, 242.2292682927) 100%);
   border-radius: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -149,7 +149,7 @@ body .comeback a {
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
-  background: linear-gradient(135deg, #5a75f0, #524bce);
+  background: linear-gradient(135deg, rgb(90.3853658537, 116.6536585366, 240.1146341463), rgb(82.2755905512, 75.0787401575, 206.4212598425));
 }
 .btn-secondary {
   background: #ffffff;
@@ -162,9 +162,9 @@ body .comeback a {
 }
 .btn-secondary:hover {
   background: rgba(67, 97, 238, 0.1);
-  color: #153ae9;
+  color: rgb(21.0634146341, 58.2341463415, 232.9365853659);
   transform: translateY(-2px);
-  border-color: #153ae9;
+  border-color: rgb(21.0634146341, 58.2341463415, 232.9365853659);
 }
 
 .chart-container {
@@ -206,12 +206,12 @@ body .comeback a {
 
 ::-moz-selection {
   background: rgba(67, 97, 238, 0.2);
-  color: #153ae9;
+  color: rgb(21.0634146341, 58.2341463415, 232.9365853659);
 }
 
 ::selection {
   background: rgba(67, 97, 238, 0.2);
-  color: #153ae9;
+  color: rgb(21.0634146341, 58.2341463415, 232.9365853659);
 }
 
 @media (max-width: 768px) {
@@ -337,7 +337,7 @@ body .comeback a {
   text-transform: uppercase;
 }
 .search form .btn-exportar:hover {
-  background-color: #3d8b40;
+  background-color: rgb(60.5577689243, 139.4422310757, 63.7450199203);
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -359,7 +359,7 @@ body .comeback a {
   text-transform: uppercase;
 }
 .search form .btn-editar:hover {
-  background-color: #971e1c;
+  background-color: rgb(150.9826086957, 29.5739130435, 28.0173913043);
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

@@ -21,6 +21,10 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from openpyxl import Workbook
+
+from django.core.paginator import Paginator
+
+
 # Create your views here.
 
 def is_swap_tthh(user):
@@ -83,35 +87,55 @@ def actualizar_estado(request, tarea_id):
 @login_required
 @user_passes_test(is_swap_tthh)
 def registro_entrada(request):
-    #order_by('e_fecha') ordenar de menor fecha a mayor fecha(ascendente)
-    funcionarios = Entrada.objects.filter(e_ee__ee_estado="Finalizado✅", e_fun__isnull=False).order_by('-e_fecha')
+    # Query base (solo registros finalizados y con funcionario asignado)
+    funcionarios_qs = (
+        Entrada.objects
+        .filter(e_ee__ee_estado="Finalizado✅", e_fun__isnull=False)
+        .order_by('-e_fecha')  # más recientes primero
+    )
 
-    # Obtener filtros del formulario
+    # --- Filtros ---
     fecha_exacta = request.GET.get('fecha_exacta')
     fecha_desde = request.GET.get('fecha_desde')
     fecha_hasta = request.GET.get('fecha_hasta')
     funcionario_id = request.GET.get('funcionario')
-    solo_tarde = request.GET.get('solo_tarde')  # checkbox o valor booleano
+    solo_tarde = request.GET.get('solo_tarde')  # checkbox
 
-    # Aplicar filtros
     if fecha_exacta:
-        funcionarios = funcionarios.filter(e_fecha=fecha_exacta)
+        funcionarios_qs = funcionarios_qs.filter(e_fecha=fecha_exacta)
+
     if fecha_desde:
-        funcionarios = funcionarios.filter(e_fecha__gte=fecha_desde)
+        funcionarios_qs = funcionarios_qs.filter(e_fecha__gte=fecha_desde)
+
     if fecha_hasta:
-        funcionarios = funcionarios.filter(e_fecha__lte=fecha_hasta)
+        funcionarios_qs = funcionarios_qs.filter(e_fecha__lte=fecha_hasta)
+
     if funcionario_id:
-        funcionarios = funcionarios.filter(e_fun=funcionario_id)
+        funcionarios_qs = funcionarios_qs.filter(e_fun=funcionario_id)
+
     if solo_tarde == "1":
-        funcionarios = funcionarios.filter(e_entrada__gt="07:35:00")
+        funcionarios_qs = funcionarios_qs.filter(e_entrada__gt="07:35:00")
+
+    # --- Paginación ---
+    # cuántos registros por página (ajusta a tu gusto)
+    PER_PAGE = 25
+
+    paginator = Paginator(funcionarios_qs, PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # construir querystring sin el parámetro "page"
+    get_params = request.GET.copy()
+    if 'page' in get_params:
+        del get_params['page']
+    current_query = get_params.urlencode()
 
     lista_funcionarios = Funcionarios.objects.all()
 
-
-
     return render(request, "registro_entrada.html", {
-        'funcionarios': funcionarios,
-        'lista_funcionarios': lista_funcionarios,
+        "page_obj": page_obj,                     # lista paginada
+        "lista_funcionarios": lista_funcionarios,
+        "current_query": current_query,           # para conservar filtros al cambiar de página
     })
 
 # Excel de Funcionarios
@@ -662,15 +686,32 @@ def exportar_excel_cobradores(request):
 @login_required
 @user_passes_test(is_swap_tthh)
 def vistast(request):
-    trabajos_realizados = Tecnicos.objects.filter(tec_ee__ee_estado="Finalizado✅")
+    # Estados permitidos en el historial
+    ESTADOS_PERMITIDOS = ["Finalizado✅", "Cancelar❌"]
+
+    trabajos_realizados = Tecnicos.objects.filter(
+        tec_ee__ee_estado__in=ESTADOS_PERMITIDOS
+    )
+
     funcionario = request.GET.get("funcionario")
+    estado = request.GET.get("estado")  # nuevo filtro
     fecha_exacta = request.GET.get("fecha_exacta")
     fecha_desde = request.GET.get("fecha_desde")
     fecha_hasta = request.GET.get("fecha_hasta")
-    
-    if funcionario:
-        trabajos_realizados = trabajos_realizados.filter(tec_nombre__icontains=funcionario)
 
+    # Filtro por funcionario
+    if funcionario:
+        trabajos_realizados = trabajos_realizados.filter(
+            tec_nombre__icontains=funcionario
+        )
+
+    # Filtro por estado (Finalizado✅ o Cancelar❌)
+    if estado:
+        trabajos_realizados = trabajos_realizados.filter(
+            tec_ee__ee_estado=estado
+        )
+
+    # Filtros de fecha
     if fecha_exacta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha=fecha_exacta)
 
@@ -679,19 +720,42 @@ def vistast(request):
 
     if fecha_hasta:
         trabajos_realizados = trabajos_realizados.filter(tec_fecha__lte=fecha_hasta)
-        
+
+    # Lista de técnicos para el select
     lista_tecnicos = (
-        Tecnicos.objects.order_by("tec_nombre")
+        Tecnicos.objects
+        .filter(tec_ee__ee_estado__in=ESTADOS_PERMITIDOS)
+        .order_by("tec_nombre")
         .values_list("tec_nombre", flat=True)
         .distinct()
     )
 
-    #lista_montos = Tecnicosmonto.objects.all()
-    return render(request, "vistast.html",{
-        'trabajos_realizados': trabajos_realizados,
-        'lista_tecnicos': lista_tecnicos,
-        #'lista_montos': lista_montos,
-    })
+    # Lista de estados para el select
+    lista_estados = ESTADOS_PERMITIDOS
+
+    # --------- PAGINACIÓN ---------
+    # 20 registros por página (ajústalo a gusto)
+    paginator = Paginator(trabajos_realizados.order_by("-tec_fecha"), 20)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Querystring sin el parámetro "page" para reutilizar filtros en la paginación
+    params = request.GET.copy()
+    if "page" in params:
+        params.pop("page")
+    querystring = params.urlencode()
+
+    return render(
+        request,
+        "vistast.html",
+        {
+            "trabajos_realizados": page_obj,   # ahora es un Page object
+            "lista_tecnicos": lista_tecnicos,
+            "lista_estados": lista_estados,
+            "page_obj": page_obj,
+            "querystring": querystring,
+        },
+    )
     
 # Excel de Servicio Tecnico
 @login_required
