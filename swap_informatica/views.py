@@ -99,10 +99,9 @@ def backups(request):
 
 
 
-def week_start_of(date_obj: datetime.date) -> datetime.date:
-    """Lunes ISO de la semana para una fecha."""
-    return date_obj - datetime.timedelta(days=date_obj.weekday())
-
+def week_start_of(date_obj):
+    """Lunes ISO de la semana para una fecha (date)."""
+    return date_obj - timedelta(days=date_obj.weekday())
 
 @login_required
 @user_passes_test(is_swap_informatica)
@@ -124,7 +123,7 @@ def backups_semanales(request):
 
     hoy = timezone.localdate()
     week_start = week_start_of(hoy)
-    week_end = week_start + datetime.timedelta(days=6)
+    week_end = week_start + timedelta(days=6)
 
     # =========================
     # 1) RESET SEMANAL PERSISTENTE
@@ -138,8 +137,15 @@ def backups_semanales(request):
         else:
             # Si cambió la semana, resetea
             if control.last_week_start < week_start:
-                estado_pendiente = get_object_or_404(Backupsestado, be_estado="Pendiente⏳")
-
+                #estado_pendiente = get_object_or_404(Backupsestado, be_estado="Pendiente⏳")
+                estado_pendiente = (
+                    Backupsestado.objects
+                    .filter(be_estado__istartswith="Pendiente")
+                    .first()
+                )
+                if not estado_pendiente:
+                    messages.error(request, "❌ No existe un estado 'Pendiente' en Backupsestado. Crealo primero.")
+                    return redirect("backups")  # o a donde quieras
                 # Resetea activos + también los que estén NULL
                 Backupsproceso.objects.filter(bp_be__isnull=True).update(bp_be=estado_pendiente)
                 Backupsproceso.objects.exclude(bp_be__be_estado__icontains="inactivo").update(bp_be=estado_pendiente)
@@ -191,8 +197,15 @@ def backups_semanales(request):
                 messages.warning(request, "⚠️ No seleccionaste ningún backup.")
                 return redirect("backups-semanales")
 
-            estado_finalizado = get_object_or_404(Backupsestado, be_estado="Finalizado✅")
-
+            #estado_finalizado = get_object_or_404(Backupsestado, be_estado="Finalizado✅")
+            estado_finalizado = (
+                Backupsestado.objects
+                .filter(be_estado__istartswith="Finalizado")
+                .first()
+            )
+            if not estado_finalizado:
+                messages.error(request, "❌ No existe un estado 'Finalizado' en Backupsestado. Crealo primero.")
+                return redirect("backups-semanales")
             guardados = 0
             ya_existian = 0
 
