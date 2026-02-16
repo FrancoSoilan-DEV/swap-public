@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gestión de Backups | Backups{% endblock %}
+{% block page_icon %}assignment{% endblock %}
+{% block page_title %}Gestión de Backups{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/backups/gestion_backups.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="gestion-backups">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="material-symbols-outlined">backup</span>
+        <span>Gestión de Backups</span>
+      </div>
+      <h1>Asignación de Backups</h1>
+      <p>Administra los backups asignados a cada funcionario y equipo</p>
+    </div>
+
+    {% comment %} <div class="hero-stats">
+      <div class="stat-card">
+        <span class="stat-number" id="totalBackups">{{ backups.paginator.count }}</span>
+        <span class="stat-label">Backups Activos</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number" id="totalSinBackup">{{ total_sin_backup }}</span>
+        <span class="stat-label">Sin Backup</span>
+      </div>
+    </div> {% endcomment %}
+  </div>
+
+  <!-- Mobile Hint -->
+  <div class="mobile-hint">
+    <span class="material-symbols-outlined">swap_horiz</span>
+    <span>Desliza horizontalmente para ver más columnas</span>
+  </div>
+
+  <!-- Grid Principal -->
+  <div class="responsive-grid">
+    <!-- Columna Izquierda -->
+    <div class="grid-left">
+
+      <!-- LISTADO DE BACKUPS -->
+      <div class="data-card">
+        <div class="card-header">
+          <div class="header-title">
+            <span class="material-symbols-outlined">list_alt</span>
+            <h2>Listado de Backups</h2>
+          </div>
+          <div class="header-actions">
+            <span class="badge">{{ backups.paginator.count }} activos</span>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+          <div class="search-box">
+            <span class="material-symbols-outlined">search</span>
+            <input
+              type="text"
+              id="searchBackups"
+              placeholder="Buscar por funcionario, equipo, disco..."
+              class="filter-input"
+              autocomplete="off"
+            >
+            <button type="button" class="clear-search" id="clearSearchBackups" aria-label="Limpiar búsqueda">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-responsive">
+          <table class="modern-table" id="backupsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Funcionario</th>
+                <th>Disco</th>
+                <th class="hide-mobile">Equipo</th>
+                <th>Nombre Backup</th>
+              </tr>
+            </thead>
+
+            <tbody id="backupsTableBody">
+              {% for backup in backups %}
+              <tr>
+                <td class="id-col">#{{ backup.b_id }}</td>
+                <td>
+                  <div class="cell-with-icon">
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="truncate-text">
+                      {{ backup.b_fce.fce_fun|truncatechars:25 }}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <span class="disco-tag">{{ backup.b_disco }}</span>
+                </td>
+                <td class="hide-mobile">
+                  <span class="equipo-tag">{{ backup.b_equipo }}</span>
+                </td>
+                <td>
+                  <span class="backup-nombre">{{ backup.b_nombre }}</span>
+                </td>
+              </tr>
+              {% empty %}
+              <tr class="empty-row">
+                <td colspan="5">
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined">backup</span>
+                    <p>No hay backups registrados</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación Backups -->
+        {% if backups.paginator.num_pages > 1 %}
+        <div class="pagination-section">
+          <div class="pagination-info">
+            Mostrando {{ backups.start_index }} - {{ backups.end_index }} de {{ backups.paginator.count }} backups
+          </div>
+
+          <div class="pagination-controls">
+            {% if backups.has_previous %}
+              <a href="?page=1&page_sin={{ funcionarios_sin_backup.number }}" class="page-btn" title="Primera página">
+                <span class="material-symbols-outlined">first_page</span>
+              </a>
+              <a href="?page={{ backups.previous_page_number }}&page_sin={{ funcionarios_sin_backup.number }}" class="page-btn" title="Página anterior">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </a>
+            {% else %}
+              <span class="page-btn disabled">
+                <span class="material-symbols-outlined">first_page</span>
+              </span>
+              <span class="page-btn disabled">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </span>
+            {% endif %}
+
+            <span class="page-numbers">
+              {% for i in backups.paginator.page_range %}
+                {% if backups.number == i %}
+                  <span class="page-number active">{{ i }}</span>
+                {% elif i > backups.number|add:'-3' and i < backups.number|add:'3' %}
+                  <a href="?page={{ i }}&page_sin={{ funcionarios_sin_backup.number }}" class="page-number">{{ i }}</a>
+                {% endif %}
+              {% endfor %}
+            </span>
+
+            {% if backups.has_next %}
+              <a href="?page={{ backups.next_page_number }}&page_sin={{ funcionarios_sin_backup.number }}" class="page-btn" title="Página siguiente">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </a>
+              <a href="?page={{ backups.paginator.num_pages }}&page_sin={{ funcionarios_sin_backup.number }}" class="page-btn" title="Última página">
+                <span class="material-symbols-outlined">last_page</span>
+              </a>
+            {% else %}
+              <span class="page-btn disabled">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </span>
+              <span class="page-btn disabled">
+                <span class="material-symbols-outlined">last_page</span>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- FUNCIONARIOS SIN BACKUP -->
+      {% comment %} <div class="data-card warning-card">
+        <div class="card-header">
+          <div class="header-title">
+            <span class="material-symbols-outlined">warning</span>
+            <h2>Funcionarios sin Backup</h2>
+          </div>
+          <div class="header-actions">
+            <span class="badge warning">{{ total_sin_backup }}</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          {% if total_sin_backup > 0 %}
+            <div class="table-responsive">
+              <table class="modern-table compact">
+                <thead>
+                  <tr>
+                    <th>Funcionario</th>
+                    <th class="hide-mobile">Departamento</th>
+                    <th class="hide-tablet">Equipo</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for fce in funcionarios_sin_backup %}
+                  <tr>
+                    <td>
+                      <div class="cell-with-icon warning">
+                        <span class="material-symbols-outlined">person_off</span>
+                        <span class="truncate-text">{{ fce.fce_fun|truncatechars:25 }}</span>
+                      </div>
+                    </td>
+                    <td class="hide-mobile">
+                      {{ fce.fce_fun.fun_dpto|default:"-" }}
+                    </td>
+                    <td class="hide-tablet">
+                      {{ fce.fce_equipo|default:"-" }}
+                    </td>
+                    <td>
+                      <a href="#asignar-backup" onclick="selectFuncionario({{ fce.fce_id }})" class="btn-outline">
+                        <span class="material-symbols-outlined">add</span>
+                        Asignar
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Paginación Sin Backup -->
+            {% if funcionarios_sin_backup.paginator.num_pages > 1 %}
+            <div class="pagination-section">
+              <div class="pagination-info">
+                Mostrando {{ funcionarios_sin_backup.start_index }} - {{ funcionarios_sin_backup.end_index }} de {{ total_sin_backup }} funcionarios
+              </div>
+
+              <div class="pagination-controls">
+                {% if funcionarios_sin_backup.has_previous %}
+                  <a href="?page={{ backups.number }}&page_sin=1" class="page-btn" title="Primera página">
+                    <span class="material-symbols-outlined">first_page</span>
+                  </a>
+                  <a href="?page={{ backups.number }}&page_sin={{ funcionarios_sin_backup.previous_page_number }}" class="page-btn" title="Página anterior">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </a>
+                {% else %}
+                  <span class="page-btn disabled">
+                    <span class="material-symbols-outlined">first_page</span>
+                  </span>
+                  <span class="page-btn disabled">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                  </span>
+                {% endif %}
+
+                <span class="page-numbers">
+                  {% for i in funcionarios_sin_backup.paginator.page_range %}
+                    {% if funcionarios_sin_backup.number == i %}
+                      <span class="page-number active">{{ i }}</span>
+                    {% elif i > funcionarios_sin_backup.number|add:'-3' and i < funcionarios_sin_backup.number|add:'3' %}
+                      <a href="?page={{ backups.number }}&page_sin={{ i }}" class="page-number">{{ i }}</a>
+                    {% endif %}
+                  {% endfor %}
+                </span>
+
+                {% if funcionarios_sin_backup.has_next %}
+                  <a href="?page={{ backups.number }}&page_sin={{ funcionarios_sin_backup.next_page_number }}" class="page-btn" title="Página siguiente">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </a>
+                  <a href="?page={{ backups.number }}&page_sin={{ funcionarios_sin_backup.paginator.num_pages }}" class="page-btn" title="Última página">
+                    <span class="material-symbols-outlined">last_page</span>
+                  </a>
+                {% else %}
+                  <span class="page-btn disabled">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </span>
+                  <span class="page-btn disabled">
+                    <span class="material-symbols-outlined">last_page</span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+          {% else %}
+            <div class="empty-state small">
+              <span class="material-symbols-outlined">check_circle</span>
+              <p>Todos los funcionarios tienen backup asignado</p>
+            </div>
+          {% endif %}
+        </div>
+      </div> {% endcomment %}
+
+    </div>
+
+    <!-- Columna Derecha -->
+    <div class="grid-right">
+
+      <!-- ASIGNAR NUEVO BACKUP -->
+      <div class="form-card" id="asignar-backup">
+        <div class="card-header">
+          <div class="header-title">
+            <span class="material-symbols-outlined">add_task</span>
+            <h2>Asignar Nuevo Backup</h2>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form method="POST" action="{% url 'bk-asignacion' %}" class="modern-form">
+            {% csrf_token %}
+            <input type="hidden" name="add_bk" value="1">
+
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label>
+                  <span class="material-symbols-outlined">assignment_ind</span>
+                  Funcionario
+                </label>
+                {{ form2.b_fce }}
+                <small class="help-text">Selecciona el funcionario que recibirá el backup</small>
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <span class="material-symbols-outlined">storage</span>
+                  Disco
+                </label>
+                {{ form2.b_disco }}
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <span class="material-symbols-outlined">computer</span>
+                  Equipo
+                </label>
+                {{ form2.b_equipo }}
+              </div>
+
+              <div class="form-group full-width">
+                <label>
+                  <span class="material-symbols-outlined">badge</span>
+                  Nombre del Backup
+                </label>
+                {{ form2.b_nombre }}
+                <small class="help-text">Ej: Backup Diario, Backup Semanal, Respaldo Crítico</small>
+              </div>
+
+              <input type="hidden" name="b_estado" value="activo">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-outlined">save</span>
+                Guardar Backup
+              </button>
+              <button type="reset" class="btn btn-secondary">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- DESACTIVAR BACKUP -->
+      <div class="form-card danger-card">
+        <div class="card-header">
+          <div class="header-title">
+            <span class="material-symbols-outlined"></span>
+            <h2>Desactivar Backup</h2>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form method="POST" action="{% url 'bk-asignacion' %}" class="modern-form">
+            {% csrf_token %}
+            <input type="hidden" name="delete_bk" value="1">
+
+            <div class="form-group full-width">
+              <label>
+                <span class="material-symbols-outlined">search</span>
+                Seleccionar Backup
+              </label>
+
+              <select name="bk_id" class="form-select" required>
+                <option value="" disabled selected>-- Selecciona un backup --</option>
+                {% for backup in backups_activos_all %}
+                  <option value="{{ backup.b_id }}">
+                    {{ backup.b_fce.fce_fun }} • {{ backup.b_disco }} • {{ backup.b_nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+
+              <small class="help-text">El backup pasará a estado "inactivo"</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que quieres desactivar este backup?')">
+                <span class="material-symbols-outlined">delete</span>
+                Desactivar Backup
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  window.totalBackups = {{ backups.paginator.count }};
+  window.totalSinBackup = {{ total_sin_backup }};
+
+  function selectFuncionario(fceId) {
+    const select = document.querySelector('select[name="b_fce"]');
+    if (!select) return;
+
+    select.value = fceId;
+    select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    select.style.borderColor = 'var(--primary)';
+    select.style.boxShadow = '0 0 0 4px rgba(67, 97, 238, 0.2)';
+
+    setTimeout(() => {
+      select.style.borderColor = '';
+      select.style.boxShadow = '';
+    }, 2000);
+  }
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/backups/gestion_backups.js' %}"></script>
+{% endblock %}

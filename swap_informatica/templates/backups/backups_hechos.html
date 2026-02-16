@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Backups Hechos{% endblock %}
+{% block page_icon %}check_circle{% endblock %}
+{% block page_title %}Backups Hechos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/backups/backups_hechos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="bkhechos" data-page="backups-hechos" id="top">
+
+  <!-- HERO -->
+  <header class="bkhechos__hero">
+    <div class="bkhechos__hero-left">
+      <div class="bkhechos__badge">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>Historial de backups realizados</span>
+      </div>
+
+      <h1 class="bkhechos__title">Backups Hechos</h1>
+
+      <p class="bkhechos__subtitle">
+        Filtra por fecha o por backup. Selecciona registros y elimina en lote.
+      </p>
+    </div>
+
+    <div class="bkhechos__hero-actions">
+      <a class="bkhechos__btn bkhechos__btn--soft" href="{% url 'bk-hechos' %}?limpiar=1">
+        <span class="material-symbols-outlined">restart_alt</span>
+        Limpiar
+      </a>
+
+      <a class="bkhechos__btn bkhechos__btn--primary"
+         href="{% url 'exportar-excel-backups' %}?fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}">
+        <span class="material-symbols-outlined">download</span>
+        Exportar Excel
+      </a>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <section class="bkhechos__card">
+    <form method="GET" class="bkhechos__filters" autocomplete="off">
+      <div class="bkhechos__field">
+        <label for="fecha">Fecha exacta</label>
+        <input type="date" name="fecha" id="fecha" value="{{ fecha_filtro }}">
+        <small class="bkhechos__help">Si completas esto, “Desde/Hasta” se ignoran.</small>
+      </div>
+
+      <div class="bkhechos__field">
+        <label for="fecha_desde">Desde</label>
+        <input type="date" name="fecha_desde" id="fecha_desde" value="{{ fecha_desde }}">
+      </div>
+
+      <div class="bkhechos__field">
+        <label for="fecha_hasta">Hasta</label>
+        <input type="date" name="fecha_hasta" id="fecha_hasta" value="{{ fecha_hasta }}">
+      </div>
+
+      <div class="bkhechos__field">
+        <label for="backup">Backup</label>
+        <select name="backup" id="backup">
+          <option value="">Todos</option>
+          {% for backup in backups %}
+            <option value="{{ backup.b_id }}" {% if backup_filtro == backup.b_id|stringformat:"s" %}selected{% endif %}>
+              {{ backup }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="bkhechos__filters-actions">
+        <button class="bkhechos__btn bkhechos__btn--filter" type="submit">
+          <span class="material-symbols-outlined">search</span>
+          Filtrar
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- TABLE + DELETE -->
+  <section class="bkhechos__card">
+    <form method="POST" class="bkhechos__tableform">
+      {% csrf_token %}
+
+      <div class="bkhechos__tablebar">
+        <div class="bkhechos__tablebar-left">
+          <label class="bkhechos__selectall">
+            <input type="checkbox" id="select-all">
+            <span>Seleccionar todo</span>
+          </label>
+
+          <span class="bkhechos__count">
+            {{ page_obj.paginator.count }} registro{{ page_obj.paginator.count|pluralize }}
+            <span class="bkhechos__muted">
+              (mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }})
+            </span>
+          </span>
+        </div>
+
+        <div class="bkhechos__tablebar-right">
+          <button type="submit" class="bkhechos__btn bkhechos__btn--danger" id="delete-selected" disabled>
+            <span class="material-symbols-outlined">delete</span>
+            Eliminar seleccionados
+          </button>
+        </div>
+      </div>
+
+      <div class="bkhechos__tablewrap" role="region" aria-label="Tabla backups hechos" tabindex="0">
+        <table class="bkhechos__table">
+          <thead>
+            <tr>
+              <th class="bkhechos__col-check"></th>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Semana</th>
+              <th>Backup (proceso)</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for b in page_obj %}
+              <tr>
+                <td class="bkhechos__col-check" data-label="Sel.">
+                  <input type="checkbox" name="delete_ids" value="{{ b.bh_id }}" class="row-check">
+                </td>
+
+                <td class="bkhechos__mono" data-label="ID">{{ b.bh_id }}</td>
+
+                <td data-label="Fecha">
+                  {% if b.bh_fecha %}
+                    <span class="bkhechos__pill bkhechos__pill--date">
+                      <span class="material-symbols-outlined">event</span>
+                      {{ b.bh_fecha|date:"d/m/Y" }}
+                    </span>
+                  {% else %}
+                    <span class="bkhechos__muted">-</span>
+                  {% endif %}
+                </td>
+
+                <td data-label="Semana">
+                  {% if b.bh_week_start %}
+                    <span class="bkhechos__pill bkhechos__pill--week">
+                      <span class="material-symbols-outlined">calendar_month</span>
+                      {{ b.bh_week_start|date:"d/m/Y" }}
+                    </span>
+                  {% else %}
+                    <span class="bkhechos__muted">-</span>
+                  {% endif %}
+                </td>
+
+                <td class="bkhechos__wide" data-label="Backup">
+                  <span class="bkhechos__backup">
+                    <span class="material-symbols-outlined">backup</span>
+                    {{ b.bh_bp|default:"(sin relación)" }}
+                  </span>
+
+                  {% if b.bh_bp %}
+                    <div class="bkhechos__meta">
+                      <span class="bkhechos__meta-item">
+                        <span class="material-symbols-outlined">today</span>
+                        Día: {{ b.bh_bp.bp_bd|default:"-" }}
+                      </span>
+                      <span class="bkhechos__meta-item">
+                        <span class="material-symbols-outlined">hard_drive</span>
+                        Disco: {{ b.bh_bp.bp_b.b_disco|default:"-" }}
+                      </span>
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="bkhechos__empty">
+                  <span class="material-symbols-outlined">info</span>
+                  No hay registros con esos filtros.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ✅ PAGINACIÓN (SIEMPRE VISIBLE) -->
+      {% if page_obj.paginator.num_pages > 1 %}
+      <nav class="bkhechos__pagination" aria-label="Paginación">
+        <div class="bkhechos__pagination-left">
+          <span class="bkhechos__muted">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+          </span>
+        </div>
+
+        <div class="bkhechos__pagination-right">
+
+          {% if page_obj.has_previous %}
+            <a class="bkhechos__pbtn"
+               href="?page=1&fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}"
+               aria-label="Primera">
+              <span class="material-symbols-outlined">first_page</span>
+            </a>
+
+            <a class="bkhechos__pbtn"
+               href="?page={{ page_obj.previous_page_number }}&fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}"
+               aria-label="Anterior">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </a>
+          {% else %}
+            <span class="bkhechos__pbtn bkhechos__pbtn--disabled">
+              <span class="material-symbols-outlined">first_page</span>
+            </span>
+            <span class="bkhechos__pbtn bkhechos__pbtn--disabled">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </span>
+          {% endif %}
+
+          {# Ventana de páginas: -2 a +2 #}
+          {% for n in page_obj.paginator.page_range %}
+            {% if n >= page_obj.number|add:-2 and n <= page_obj.number|add:2 %}
+              {% if n == page_obj.number %}
+                <span class="bkhechos__pnum bkhechos__pnum--active">{{ n }}</span>
+              {% else %}
+                <a class="bkhechos__pnum"
+                   href="?page={{ n }}&fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}">
+                  {{ n }}
+                </a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a class="bkhechos__pbtn"
+               href="?page={{ page_obj.next_page_number }}&fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}"
+               aria-label="Siguiente">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+
+            <a class="bkhechos__pbtn"
+               href="?page={{ page_obj.paginator.num_pages }}&fecha={{ fecha_filtro }}&fecha_desde={{ fecha_desde }}&fecha_hasta={{ fecha_hasta }}&backup={{ backup_filtro }}"
+               aria-label="Última">
+              <span class="material-symbols-outlined">last_page</span>
+            </a>
+          {% else %}
+            <span class="bkhechos__pbtn bkhechos__pbtn--disabled">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </span>
+            <span class="bkhechos__pbtn bkhechos__pbtn--disabled">
+              <span class="material-symbols-outlined">last_page</span>
+            </span>
+          {% endif %}
+        </div>
+      </nav>
+      {% endif %}
+
+      <div class="bkhechos__footer">
+        <div class="bkhechos__footer-left">
+          <span class="bkhechos__muted">
+            Tip: “Seleccionar todo” borra solo lo que ves en esta página.
+          </span>
+        </div>
+        <div class="bkhechos__footer-right">
+          <a class="bkhechos__btn bkhechos__btn--ghost"
+             href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
+            <span class="material-symbols-outlined">arrow_upward</span>
+            Subir
+          </a>
+        </div>
+      </div>
+
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/backups/backups_hechos.js' %}"></script>
+{% endblock %}

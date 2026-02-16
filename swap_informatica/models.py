@@ -41,6 +41,15 @@ class Backups(models.Model):
     def __str__(self):
         return f"{self.b_fce} | {self.b_disco} | {self.b_equipo}"
 
+class BackupsSemanaControl(models.Model):
+    """
+    Singleton de control: guarda el lunes (inicio ISO) de la última semana reseteada.
+    """
+    last_week_start = models.DateField()
+
+    def __str__(self):
+        return f"Último reset: {self.last_week_start}"
+
 class Backupsdia(models.Model):
     bd_id = models.AutoField(primary_key=True)
     bd_dia = models.CharField(max_length=45, verbose_name="Dia del Backup")
@@ -68,13 +77,20 @@ class Backupsestado(models.Model):
 class Backupshechos(models.Model):
     bh_id = models.AutoField(primary_key=True)  # The composite primary key (bh_id, bh_bp_id) found, that is not supported. The first column is selected.
     bh_fecha = models.DateField(verbose_name="Fecha del Backup")
-    bh_bp = models.ForeignKey('Backupsproceso', models.DO_NOTHING, verbose_name="Backup")
+    bh_week_start = models.DateField(verbose_name="Semana (lunes)", db_index=True)
+    bh_bp = models.ForeignKey('Backupsproceso', models.DO_NOTHING, verbose_name="Backup", blank=True, null=True)
     class Meta:
-        #managed = False
         db_table = 'backupshechos'
         verbose_name = "Backup Hecho"
         verbose_name_plural = "Backups Hechos"
         ordering = ["bh_fecha"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["bh_bp", "bh_week_start"],
+                name="unique_backup_por_semana"
+            )
+        ]
+
     def __str__(self):
         return f"{self.bh_fecha} - {self.bh_bp}"
 

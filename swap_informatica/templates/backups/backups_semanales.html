@@ -1,0 +1,302 @@
+{# templates/backups/backups_semanales.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Backups Semanales{% endblock %}
+{% block page_icon %}calendar_month{% endblock %}
+{% block page_title %}Backups Semanales{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/backups/backups_semanales.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="backups-semanales" data-week-start="{{ week_start|date:'Y-m-d' }}">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero__left">
+      <div class="hero__badge">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <span>Semana: {{ week_start|date:"d/m" }} → {{ week_end|date:"d/m" }}</span>
+      </div>
+      <h1>Backups Semanales</h1>
+      <p>
+        Cambia estados en la programación. <strong>Guardar hechos</strong> muestra <strong>solo</strong> los
+        <strong>Finalizado✅</strong> que <strong>aún no están guardados</strong> esta semana.
+      </p>
+    </div>
+
+    <div class="hero__right">
+      <div class="stat">
+        <div class="stat__num">{{ bkproceso|length }}</div>
+        <div class="stat__lbl">Programados</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">{{ hechos_hoy|length }}</div>
+        <div class="stat__lbl">Hechos hoy</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">{{ hoy|date:"d/m" }}</div>
+        <div class="stat__lbl">{{ hoy|date:"l" }}</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- ======================= -->
+    <!-- IZQUIERDA: PROGRAMACIÓN -->
+    <!-- ======================= -->
+    <section class="card">
+      <div class="card__head">
+        <h2>
+          <span class="material-symbols-outlined">view_week</span>
+          Programación
+        </h2>
+        <span class="pill">{{ bkproceso|length }} activos</span>
+      </div>
+
+      <!-- Tabs por día (Programación) -->
+      <nav class="day-tabs" aria-label="Días de la semana (Programación)" data-tabs="prog">
+        {% for dia in bkdia %}
+          {% for key, items in proceso_por_dia.items %}
+            {% if key == dia.bd_dia %}
+              <button
+                type="button"
+                class="day-tab"
+                data-tab-btn="prog"
+                data-day="{{ dia.bd_dia }}"
+                aria-controls="panel-prog-{{ forloop.parentloop.counter }}"
+                aria-selected="false">
+                <span class="day-tab__label">{{ dia.bd_dia }}</span>
+                <span class="day-tab__count">{{ items|length }}</span>
+              </button>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </nav>
+
+      <!-- Panels por día (Programación) -->
+      <div class="day-panels" data-panels="prog">
+        {% for dia in bkdia %}
+          <section
+            class="day-panel"
+            id="panel-prog-{{ forloop.counter }}"
+            data-tab-panel="prog"
+            data-day="{{ dia.bd_dia }}"
+            aria-label="Programación {{ dia.bd_dia }}">
+
+            <div class="day-panel__head">
+              <div class="day-panel__title">
+                <span class="material-symbols-outlined">event</span>
+                <h3>{{ dia.bd_dia }}</h3>
+              </div>
+
+              <button type="button" class="btn btn--ghost btn--detail" data-detail-btn="{{ dia.bd_dia }}">
+                <span class="material-symbols-outlined">table_rows</span>
+                Detalle del día
+              </button>
+            </div>
+
+            <div class="table" role="table" aria-label="Detalle {{ dia.bd_dia }}">
+              <div class="table__head" role="rowgroup">
+                <div class="tr tr--head" role="row">
+                  <div class="th" role="columnheader">Backup</div>
+                  <div class="th" role="columnheader">Funcionario</div>
+                  <div class="th" role="columnheader">Disco</div>
+                  <div class="th" role="columnheader">Equipo</div>
+                  <div class="th th--right" role="columnheader">Estado</div>
+                </div>
+              </div>
+
+              <div class="table__body" role="rowgroup">
+                {% for key, items in proceso_por_dia.items %}
+                  {% if key == dia.bd_dia %}
+                    {% if items %}
+                      {% for p in items %}
+                        <div class="tr {% if p.bp_be and p.bp_be.be_estado == 'Finalizado✅' %}is-done{% endif %}" role="row">
+                          <div class="td td--strong" role="cell">
+                            <span class="material-symbols-outlined row-icon">folder</span>
+                            <span class="truncate" title="{{ p.bp_b.b_nombre }}">{{ p.bp_b.b_nombre }}</span>
+                          </div>
+
+                          <div class="td" role="cell">
+                            <span class="badge">
+                              <span class="material-symbols-outlined">person</span>
+                              <span class="truncate" title="{{ p.bp_b.b_fce.fce_fun }}">{{ p.bp_b.b_fce.fce_fun }}</span>
+                            </span>
+                          </div>
+
+                          <div class="td" role="cell">
+                            <span class="badge badge--disk">
+                              <span class="material-symbols-outlined">hard_drive</span>
+                              <span class="truncate" title="{{ p.bp_b.b_disco }}">{{ p.bp_b.b_disco }}</span>
+                            </span>
+                          </div>
+
+                          <div class="td" role="cell">
+                            <span class="badge badge--pc">
+                              <span class="material-symbols-outlined">computer</span>
+                              <span class="truncate" title="{{ p.bp_b.b_equipo }}">{{ p.bp_b.b_equipo }}</span>
+                            </span>
+                          </div>
+
+                          <div class="td td--right" role="cell">
+                            <form method="POST" class="item__form">
+                              {% csrf_token %}
+                              <input type="hidden" name="action" value="update_estado">
+                              <input type="hidden" name="bp_id" value="{{ p.bp_id }}">
+                              <select name="bkestado" class="select" onchange="this.form.submit()">
+                                {% for e in bkestado %}
+                                  <option value="{{ e.be_estado }}" {% if p.bp_be and e.be_estado == p.bp_be.be_estado %}selected{% endif %}>
+                                    {{ e.be_estado }}
+                                  </option>
+                                {% endfor %}
+                              </select>
+                            </form>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <div class="empty empty--panel">
+                        <span class="material-symbols-outlined">info</span>
+                        <div>
+                          <strong>Sin backups para este día</strong>
+                          <small>No hay programación asignada para {{ dia.bd_dia }}.</small>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+          </section>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- ====================== -->
+    <!-- DERECHA: GUARDAR HECHOS -->
+    <!-- ====================== -->
+    <aside class="side">
+
+      <section class="card card--ok">
+        <div class="card__head">
+          <h2>
+            <span class="material-symbols-outlined">save</span>
+            Guardar hechos
+          </h2>
+          <span class="pill pill--ok">Semana actual</span>
+        </div>
+
+        <form method="POST" id="guardarForm" class="form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="guardar_realizados">
+
+          <div class="hint">
+            Se guardan con fecha real de hoy: <strong>{{ hoy|date:"d/m/Y" }}</strong>.<br>
+            Aquí aparecen <strong>solo</strong> los que están <strong>Finalizado✅</strong> y aún <strong>no guardados</strong> esta semana.
+          </div>
+
+          <!-- Tabs por día (Guardar hechos) -->
+          <nav class="day-tabs day-tabs--small" aria-label="Días (Guardar hechos)" data-tabs="save">
+            {% for dia in bkdia %}
+                <button
+                type="button"
+                class="day-tab day-tab--small"
+                data-tab-btn="save"
+                data-day="{{ dia.bd_dia }}"
+                aria-selected="false">
+                <span class="day-tab__label">{{ dia.bd_dia }}</span>
+                <span class="day-tab__count" data-save-count="{{ dia.bd_dia }}">0</span>
+                </button>
+            {% endfor %}
+            </nav>
+
+
+          <!-- Panels por día (Guardar hechos) -->
+          <div class="check-panels" data-panels="save">
+            {% for dia in bkdia %}
+              <section class="check-panel" data-tab-panel="save" data-day="{{ dia.bd_dia }}" aria-label="Guardar hechos {{ dia.bd_dia }}">
+
+                {% with found="" %}
+                  {% for key, items in proceso_por_dia.items %}
+                    {% if key == dia.bd_dia %}
+
+                      {% for p in items %}
+                        {# Mostrar solo: Finalizado✅ y NO guardado en semana #}
+                        {% if p.bp_be and p.bp_be.be_estado == 'Finalizado✅' and p.bp_id not in hechos_semana_ids %}
+                          {% with found=found|add:"1" %}{% endwith %}
+
+                          <label class="check" data-save-item="{{ dia.bd_dia }}">
+                            <input type="checkbox" name="backups_realizados" value="{{ p.bp_id }}" checked>
+                            <span class="check__box"></span>
+
+                            <span class="check__text">
+                              <strong class="truncate" title="{{ p.bp_b.b_nombre }}">{{ p.bp_b.b_nombre }}</strong>
+                              <small class="truncate" title="{{ p.bp_b.b_fce.fce_fun }} • {{ p.bp_b.b_disco }} • {{ p.bp_b.b_equipo }}">
+                                {{ p.bp_b.b_fce.fce_fun }} • {{ p.bp_b.b_disco }} • {{ p.bp_b.b_equipo }}
+                              </small>
+                            </span>
+
+                            <span class="tag">Listo para guardar</span>
+                          </label>
+                        {% endif %}
+                      {% endfor %}
+
+                    {% endif %}
+                  {% endfor %}
+
+                 
+                {% endwith %}
+
+              </section>
+            {% endfor %}
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn--ok" id="btnGuardar">
+              <span class="material-symbols-outlined">save</span>
+              Guardar seleccionados
+            </button>
+            <button type="button" class="btn btn--ghost" id="btnToggleAll">
+              <span class="material-symbols-outlined">select_check_box</span>
+              Seleccionar todo
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- Agregar programado -->
+      <section class="card">
+        <div class="card__head">
+          <h2>
+            <span class="material-symbols-outlined">add_task</span>
+            Añadir a programación
+          </h2>
+          <span class="pill pill--soft">Nuevo</span>
+        </div>
+
+        <form method="POST" class="form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_programado">
+          {{ form.as_p }}
+          <button class="btn" type="submit">
+            <span class="material-symbols-outlined">add</span>
+            Agregar
+          </button>
+        </form>
+      </section>
+
+    </aside>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/backups/backups_semanales.js' %}"></script>
+{% endblock %}

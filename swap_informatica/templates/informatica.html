@@ -1,105 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWAP | Informatica</title>
-    <link rel="stylesheet" href="{% static 'css/informatica.css' %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=home" />
-    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
-    <body>
-    <header>
-        <div class="dpto-container">
-            <h2>Departamento de informatica</h2>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | Informática{% endblock %}
+{% block page_icon %}devices{% endblock %}
+{% block page_title %}Panel de Control{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/informatica.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <!-- Hero Section -->
+    <div class="dashboard-hero">
+        <div class="hero-content">
+            <span class="badge">Departamento de Informática</span>
+            <h1>Gestión de Sistemas</h1>
+            <p>Administra backups, inventario y mantenimiento desde un solo lugar</p>
         </div>
-        <div class="fun-container">
-            <h4>¡ Bienvenido !</h4>
-        </div>
-    </header>
-    <main>
-        <aside>
-            <div class="container">
-                <a href="{% url 'backups' %}">
-                  <h1><span>BACKUPS</span></h1>
-                </a>
-              
-                <a href="{% url 'inventario' %}">
-                  <h1><span>Inventario</span></h1>
-                </a>
-              
-                <a href="{% url 'mantenimiento' %}">
-                  <h1><span>Mantenimiento</span></h1>
-                </a>
-              
-                <a href="{% url 'logout' %}">
-                  <h1><span>Cerrar sesión</span></h1>
-                </a>
-              </div>
-        </aside>
-        <section>
-            <div class="container-tasks" id="task">
-                <div class="tasks-containers">
-                    {% for dia in dia %}
-                        <div class="task">
-                            <div class="task-title">
-                                <h2>{{ dia }}</h2>
-                            </div>
-                            <div class="tasks-container">
-                                {% for tarea in tarea %}
-    
-                                    {% if tarea.tarea_td == dia %}
-                                        <div class="task-container">
-                                            <h3>• {{ tarea.tarea_titulo }}</h3> 
-                                                                                
-                                            <!-- Formulario para actualizar estado -->
-                                            {% if tarea.tarea_td.td_dia != "General" %}
-                                                <form method="POST" action="{% url 'actualizar_estado' tarea.tarea_id %}">
-                                                    {% csrf_token %}
-                                                    <select name="estado" onchange="this.form.submit()">
-                                                        {% for e in estado %}
-                                                            <option value="{{ e.te_estado }}" {% if e.te_estado == tarea.tarea_te.te_estado %} selected {% endif %}>
-                                                                {{ e.te_estado }}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </form>
-                                            {% endif %}
-                                        </div>
-                                        <div class="textContainer">
-                                            <p>&emsp;&emsp;{{ tarea.tarea_descripcion }}</p>
-                                        </div> 
-                                    {% endif %}
-                                {% endfor %}
-    
-     
-                            </div>
-                        </div>
-                    {% endfor %}
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="material-symbols-outlined">schedule</span>
+                <div class="stat-info">
+                    <h3>{% now "l" %}</h3>
+                    <p>{% now "d/m/Y" %}</p>
                 </div>
             </div>
-    
-            <div class="control">
-                <div class="añadir" id="addtask">
-                    <form method="post">
-                        <h2>Agregar Tarea</h2> 
-                        {% csrf_token %}
-                        {{ agregar_form.as_p }}
-                        <button type="submit" name="agregar_tarea">Agregar Tarea</button>
-                    </form>
+        </div>
+    </div>
+
+    <!-- Quick Access Grid -->
+    <div class="quick-access">
+        <h2>Acceso Rápido</h2>
+        <div class="card-grid">
+            <!-- Backups Card -->
+            <a href="{% url 'backups-semanales' %}" class="dashboard-card card-backups">
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">backup</span>
                 </div>
-                
-                <div class="eliminar-tarea" id="deletetask">
-                    <h2>Eliminar Tarea</h2>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ eliminar_form.as_p }}
-                        <button type="submit" name="eliminar_tarea">Eliminar</button>
-                    </form>
+                <div class="card-content">
+                    <h3>Backups</h3>
+                    <p>Gestión de copias de seguridad y respaldos</p>
+                    <span class="card-link">
+                        Acceder
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </span>
                 </div>
-            </div>
-        </section>
-        
-    </main>
-</body>
-</html>
+                <div class="card-bg-pattern"></div>
+            </a>
+
+            <!-- Inventario Card -->
+            <a href="{% url 'inventario' %}" class="dashboard-card card-inventario">
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">inventory</span>
+                </div>
+                <div class="card-content">
+                    <h3>Inventario</h3>
+                    <p>Control de equipos, artículos y stock</p>
+                    <span class="card-link">
+                        Acceder
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </span>
+                </div>
+                <div class="card-bg-pattern"></div>
+            </a>
+
+            <!-- Mantenimiento Card -->
+            <a href="{% url 'mantenimiento' %}" class="dashboard-card card-mantenimiento">
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">build</span>
+                </div>
+                <div class="card-content">
+                    <h3>Mantenimiento</h3>
+                    <p>Soporte técnico y reparaciones</p>
+                    <span class="card-link">
+                        Acceder
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </span>
+                </div>
+                <div class="card-bg-pattern"></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2>Acciones Rápidas</h2>
+        <div class="actions-grid">
+            <a href="{% url 'bkdone' %}" class="action-item">
+                <span class="material-symbols-outlined">add_task</span>
+                <span>Registrar Backup</span>
+            </a>
+            <a href="{% url 'add-new-article' %}" class="action-item">
+                <span class="material-symbols-outlined">add_box</span>
+                <span>Nuevo Artículo</span>
+            </a>
+            <a href="{% url 'addmantenimiento' %}" class="action-item">
+                <span class="material-symbols-outlined">handyman</span>
+                <span>Nuevo Mantenimiento</span>
+            </a>
+            <a href="{% url 'nuevo_equipo' %}" class="action-item">
+                <span class="material-symbols-outlined">computer</span>
+                <span>Nuevo Equipo</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

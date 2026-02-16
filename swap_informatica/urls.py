@@ -1,5 +1,6 @@
 from django.urls import path
 from swap_informatica import views
+from swap_informatica.views import InformaticaDashboardView
 
 from django.contrib.auth.decorators import login_required
 
@@ -9,9 +10,9 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     
     #vista principal
-    path('', views.informatica, name='informatica'),
+    path('', InformaticaDashboardView.as_view(), name='informatica'),
     #actualizar estado TAREA SEMANAL
-    path("actualizar_estado/<int:tarea_id>/", views.actualizar_estado, name="actualizar_estado"),
+    #path("actualizar_estado/<int:tarea_id>/", views.actualizar_estado, name="actualizar_estado"),
     
     
     #==============================================================================#
@@ -19,26 +20,34 @@ urlpatterns = [
     #redirigir a BACKUPS
     path('backups/', views.backups, name="backups"),
     
+    
+    path('backups/semanales/', views.backups_semanales, name='backups-semanales'),
+    #path('backups/semanales/agregar/', views.agregar_backup_semanal, name='agregar-backup-semanal'),
+    #path('backups/semanales/actualizar-estado/<int:bp_id>/', views.actualizar_estado_backup_semanal, name='actualizar-estado-backup-semanal'),
+    #path('backups/semanales/guardar-realizados/', views.guardar_backups_realizados, name='guardar-backups-realizados'),
+    
     #actualizar estado BACKUP
-    path("actualizar_estado_bk/<int:bp_id>/", views.actualizar_estado_bk, name="actualizar_estado_bk" ),
+    #path("actualizar_estado_bk/<int:bp_id>/", views.actualizar_estado_bk, name="actualizar_estado_bk" ),
     
     #AÑADIR/ELIMINAR BACKUP SEMANAL
-    path("add-bk/", views.add_backup, name="add_backup"),
+    #path("add-bk/", views.add_backup, name="add_backup"),
     #path("delete-bk/", views.delete_backup, name="delete_backup"),
     
     #AÑADIR BACKUP A FUNCIONARIO CON EQUIPO
-    path("add-backup/", views.add_bk, name="new_bk"),
-    path("delete-backup/", views.delete_bk, name="delete_bk"),
+    #path("add-backup/", views.add_bk, name="new_bk"),
+    #path("delete-backup/", views.delete_bk, name="delete_bk"),
+    path('backups/asignacion/', views.bk_asignacion, name='bk-asignacion'),
     
     #AÑADIR FUNCIONARIO CON EQUIPO
-    path("add-fce/", views.add_fce, name="add_fce"),
-    path("delete-fce/", views.delete_fce, name="delete_fce"),
+    #path("add-fce/", views.add_fce, name="add_fce"),
+    #path("delete-fce/", views.delete_fce, name="delete_fce"),
+    path("backups/configuracion", views.bk_configuracion, name="config-equipos"),
     
     #GUARDAR LOS BACKUPS HECHOS
     path("bkhecho/", views.agregar_backups_hechos, name="bkdone"),
     #REDIRIGIR A OTRA PAGINA DE BKHECHOS
-    path("backups/hechos/", views.bkhechos, name="bk-hechos"),
-    path('eliminar-backups/', views.eliminar_backups, name='eliminar-backups'),
+    path("backups/hechos/", views.backups_hechos, name="bk-hechos"),
+    #path('eliminar-backups/', views.eliminar_backups, name='eliminar-backups'),
     
     # Exportar Excel
     path("backups/exportar-excel/", views.exportar_excel_backups, name="exportar-excel-backups"),

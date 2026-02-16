@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAP | {% block title %}Informática{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="material-symbols-outlined">devices</span>
+                    <h1>SWAP</h1>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <!-- Dashboard -->
+                <a href="{% url 'informatica' %}" class="nav-item {% if request.resolver_match.url_name == 'informatica' %}active{% endif %}">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Backups Dropdown -->
+                <div class="nav-dropdown">
+                    <button class="dropdown-toggle {% if 'backups' in request.path %}active{% endif %}" id="backupsDropdown">
+                        <span class="material-symbols-outlined">backup</span>
+                        <span>Backups</span>
+                        <span class="material-symbols-outlined dropdown-arrow">chevron_right</span>
+                    </button>
+                    <div class="dropdown-menu" id="backupsMenu">
+                        <a href="{% url 'config-equipos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'config-equipos' %}active{% endif %}">
+                            <span class="material-symbols-outlined">settings</span>
+                            <span>Configuración de Equipos</span>
+                        </a>
+                        <a href="{% url 'bk-asignacion' %}" class="dropdown-item {% if request.resolver_match.url_name == 'bk-asignacion' %}active{% endif %}">
+                            <span class="material-symbols-outlined">assignment</span>
+                            <span>Gestión de Backups</span>
+                        </a>
+                        <a href="{% url 'backups-semanales' %}" class="dropdown-item {% if request.resolver_match.url_name == 'bk-semanales' %}active{% endif %}">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            <span>Backups Semanales</span>
+                        </a>
+                        <a href="{% url 'bk-hechos' %}" class="dropdown-item {% if request.resolver_match.url_name == 'bk-hechos' %}active{% endif %}">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            <span>Backups Hechos</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Inventario -->
+                {# === Inventario Dropdown (FIX: IDs únicos + iconos nuevos) === #}
+                <div class="nav-dropdown">
+                    <button class="dropdown-toggle {% if 'inventario' in request.path %}active{% endif %}"
+                            id="inventarioDropdown"
+                            type="button">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <span>Inventario</span>
+                        <span class="material-symbols-outlined dropdown-arrow">chevron_right</span>
+                    </button>
+
+                    <div class="dropdown-menu" id="inventarioMenu">
+                        <a href="{% url 'inventario' %}"
+                        class="dropdown-item {% if request.resolver_match.url_name == 'inventario' %}active{% endif %}">
+                        <span class="material-symbols-outlined">list_alt</span>
+                        <span>Inventario Informática</span>
+                        </a>
+
+                        <a href="{% url 'equipos' %}"
+                        class="dropdown-item {% if request.resolver_match.url_name == 'equipos' %}active{% endif %}">
+                        <span class="material-symbols-outlined">computer</span>
+                        <span>Inventario de Equipos</span>
+                        </a>
+                    </div>
+                </div>
+                {% comment %} <a href="{% url 'inventario' %}" class="nav-item {% if request.resolver_match.url_name == 'inventario' %}active{% endif %}">
+                    <span class="material-symbols-outlined">inventory</span>
+                    <span>Inventario</span>
+                </a> {% endcomment %}
+                
+                <!-- Mantenimiento -->
+                <a href="{% url 'mantenimiento' %}" class="nav-item {% if request.resolver_match.url_name == 'mantenimiento' %}active{% endif %}">
+                    <span class="material-symbols-outlined">build</span>
+                    <span>Mantenimiento</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Cerrar sesión</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Navbar -->
+            <header class="navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <div class="page-title">
+                        <span class="material-symbols-outlined">{% block page_icon %}home{% endblock %}</span>
+                        <h2>{% block page_title %}Departamento de Informática{% endblock %}</h2>
+                    </div>
+                </div>
+                
+                <div class="navbar-right">
+                    <div class="user-info">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <span class="username">{{ request.user.username|default:'Usuario' }}</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile menu overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

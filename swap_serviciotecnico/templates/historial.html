@@ -1,327 +1,423 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWAP | Historial de Trabajos</title>
-    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  {% load static %}
+  {% load humanize %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWAP | Historial de Trabajos</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
 
-    <!-- Bootstrap CSS (tu chart section usa estilos de bootstrap) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap (para el bloque del gráfico) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Select2 + jQuery (para el multiselect de funcionarios en la tabla) -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Select2 + jQuery (tabla) -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <!-- Tu CSS -->
-    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+  <!-- Tu CSS -->
+  <link rel="stylesheet" href="{% static 'css/historial.css' %}">
 </head>
+
 <body>
-    <div class="comeback">
-        <a href="{% url 'serviciotecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+  <div class="comeback">
+    <a href="{% url 'serviciotecnico' %}"><i class="fas fa-arrow-left"></i> Atrás</a>
+  </div>
+
+  <!-- =================== BLOQUE GRÁFICO =================== -->
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">Trabajos finalizados</h1>
+
+    <!-- Datos del gráfico (seguro para JS) -->
+    {{ labels|json_script:"chart-labels" }}
+    {{ datos|json_script:"chart-datos" }}
+
+    <!-- =================== FILTROS DEL GRÁFICO =================== -->
+    <div class="filtros mb-4">
+      <form method="get" class="row g-3" id="chartForm">
+        <input type="hidden" name="filtro_tipo" id="filtro_tipo" value="{{ filtro_actual }}">
+
+        <!-- Preservar filtros de TABLA cuando aplico filtros del GRÁFICO -->
+        {% for f in funcionarios_sel %}
+          <input type="hidden" name="funcionario" value="{{ f }}">
+        {% endfor %}
+        <input type="hidden" name="estado" value="{{ request.GET.estado }}">
+        <input type="hidden" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+        <input type="hidden" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+        <input type="hidden" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+        <input type="hidden" name="page" value="1">
+
+        <!-- 30 días -->
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filtro_radio" id="radio_30dias"
+                   value="30_dias" {% if filtro_actual == '30_dias' %}checked{% endif %}>
+            <label class="form-check-label" for="radio_30dias">
+              Últimos 30 días (vista por día)
+            </label>
+          </div>
+        </div>
+
+        <!-- Mes exacto -->
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filtro_radio" id="radio_mes_exacto"
+                   value="mes_exacto" {% if filtro_actual == 'mes_exacto' %}checked{% endif %}>
+            <label class="form-check-label" for="radio_mes_exacto">
+              Mes exacto (vista por día)
+            </label>
+          </div>
+
+          <div id="mes_exacto_fields" class="row mt-2">
+            <div class="col-md-6">
+              <label for="mes_exacto" class="form-label">Mes</label>
+              <select class="form-select" id="mes_exacto" name="mes_exacto">
+                {% for mes in meses_disponibles %}
+                  <option value="{{ mes.num }}" {% if request.GET.mes_exacto == mes.num|stringformat:"s" %}selected{% endif %}>
+                    {{ mes.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="anio_exacto" class="form-label">Año</label>
+              <select class="form-select" id="anio_exacto" name="año_exacto">
+                {% for a in años_disponibles %}
+                  <option value="{{ a.year }}" {% if request.GET.año_exacto == a.year|stringformat:"s" %}selected{% endif %}>
+                    {{ a.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rango de meses -->
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filtro_radio" id="radio_rango_meses"
+                   value="rango_meses" {% if filtro_actual == 'rango_meses' %}checked{% endif %}>
+            <label class="form-check-label" for="radio_rango_meses">
+              Rango de meses (vista por mes)
+            </label>
+          </div>
+
+          <div id="rango_meses_fields" class="row mt-2">
+            <div class="col-md-3">
+              <label for="mes_inicio" class="form-label">Mes inicio</label>
+              <select class="form-select" id="mes_inicio" name="mes_inicio">
+                {% for mes in meses_disponibles %}
+                  <option value="{{ mes.num }}" {% if request.GET.mes_inicio == mes.num|stringformat:"s" %}selected{% endif %}>
+                    {{ mes.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label for="mes_fin" class="form-label">Mes fin</label>
+              <select class="form-select" id="mes_fin" name="mes_fin">
+                {% for mes in meses_disponibles %}
+                  <option value="{{ mes.num }}" {% if request.GET.mes_fin == mes.num|stringformat:"s" %}selected{% endif %}>
+                    {{ mes.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label for="anio_inicio" class="form-label">Año inicio</label>
+              <select class="form-select" id="anio_inicio" name="año_inicio">
+                {% for a in años_disponibles %}
+                  <option value="{{ a.year }}" {% if request.GET.año_inicio == a.year|stringformat:"s" %}selected{% endif %}>
+                    {{ a.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label for="anio_fin" class="form-label">Año fin</label>
+              <select class="form-select" id="anio_fin" name="año_fin">
+                {% for a in años_disponibles %}
+                  <option value="{{ a.year }}" {% if request.GET.año_fin == a.year|stringformat:"s" %}selected{% endif %}>
+                    {{ a.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rango de años -->
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filtro_radio" id="radio_rango_anios"
+                   value="rango_años" {% if filtro_actual == 'rango_años' %}checked{% endif %}>
+            <label class="form-check-label" for="radio_rango_anios">
+              Rango de años (vista por año)
+            </label>
+          </div>
+
+          <div id="rango_anios_fields" class="row mt-2">
+            <div class="col-md-6">
+              <label for="anio_inicio_anios" class="form-label">Año inicio</label>
+              <select class="form-select" id="anio_inicio_anios" name="año_inicio">
+                {% for a in años_disponibles %}
+                  <option value="{{ a.year }}" {% if request.GET.año_inicio == a.year|stringformat:"s" %}selected{% endif %}>
+                    {{ a.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="anio_fin_anios" class="form-label">Año fin</label>
+              <select class="form-select" id="anio_fin_anios" name="año_fin">
+                {% for a in años_disponibles %}
+                  <option value="{{ a.year }}" {% if request.GET.año_fin == a.year|stringformat:"s" %}selected{% endif %}>
+                    {{ a.year }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 d-flex gap-2 flex-wrap">
+          <button type="submit" class="btn btn-primary">Aplicar filtros del gráfico</button>
+          <a href="{% url 'historial' %}" class="btn btn-secondary">Restablecer todo</a>
+        </div>
+      </form>
     </div>
 
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Trabajos Finalizados</h1>
+    <!-- =================== GRÁFICO =================== -->
+    {% if datos %}
+      <div class="chart-container" style="height: 420px;">
+        <canvas id="miGrafico"></canvas>
+      </div>
+    {% else %}
+      <div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados.</div>
+    {% endif %}
+  </div>
 
-        <!-- =================== FILTROS DEL GRÁFICO =================== -->
-        <div class="filtros mb-4">
-            <form method="get" class="row g-3">
-                <input type="hidden" name="filtro_tipo" id="filtro_tipo" value="{{ filtro_actual }}">
+  <!-- =================== TABLA + FILTROS =================== -->
+  <div class="supercontainer">
+    <div class="search">
+      <form method="get" id="tableForm">
+        <!-- Preservar filtros del GRÁFICO cuando aplico filtros de TABLA -->
+        <input type="hidden" name="filtro_tipo" value="{{ filtro_actual }}">
+        <input type="hidden" name="mes_inicio" value="{{ request.GET.mes_inicio }}">
+        <input type="hidden" name="mes_fin" value="{{ request.GET.mes_fin }}">
+        <input type="hidden" name="año_inicio" value="{{ request.GET.año_inicio }}">
+        <input type="hidden" name="año_fin" value="{{ request.GET.año_fin }}">
+        <input type="hidden" name="mes_exacto" value="{{ request.GET.mes_exacto }}">
+        <input type="hidden" name="año_exacto" value="{{ request.GET.año_exacto }}">
+        <input type="hidden" name="page" value="1">
 
-                <!-- 30 días -->
-                <div class="filtro-group col-md-12">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="filtro_radio" id="filtro_30dias"
-                               value="30_dias" {% if filtro_actual == '30_dias' %}checked{% endif %}>
-                        <label class="form-check-label" for="filtro_30dias">
-                            Últimos 30 días (vista por día)
-                        </label>
-                    </div>
-                </div>
+        <label for="funcionario-select">Funcionario(s):</label>
+        <select name="funcionario" id="funcionario-select" multiple>
+          {% for nombre in lista_tecnicos %}
+            <option value="{{ nombre }}" {% if nombre in funcionarios_sel %}selected{% endif %}>
+              {{ nombre }}
+            </option>
+          {% endfor %}
+        </select>
 
-                <!-- Mes exacto -->
-                <div class="filtro-group col-md-12">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="filtro_radio" id="filtro_mes_exacto"
-                               value="mes_exacto" {% if filtro_actual == 'mes_exacto' %}checked{% endif %}>
-                        <label class="form-check-label" for="filtro_mes_exacto">
-                            Mes exacto (vista por día)
-                        </label>
-                    </div>
+        <label for="estado">Estado:</label>
+        <select name="estado" id="estado">
+          <option value="">Todos</option>
+          {% for est in lista_estados %}
+            <option value="{{ est.ee_estado }}" {% if request.GET.estado == est.ee_estado %}selected{% endif %}>
+              {{ est.ee_estado }}
+            </option>
+          {% endfor %}
+        </select>
 
-                    <div id="mes_exacto_fields" class="row mt-2"
-                         style="display: {% if filtro_actual == 'mes_exacto' %}block{% else %}none{% endif %};">
-                        <div class="col-md-6">
-                            <label for="mes_exacto" class="form-label">Mes</label>
-                            <select class="form-select" id="mes_exacto" name="mes_exacto">
-                                {% for mes in meses_disponibles %}
-                                    <option value="{{ mes.num }}">{{ mes.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="año_exacto" class="form-label">Año</label>
-                            <select class="form-select" id="año_exacto" name="año_exacto">
-                                {% for año in años_disponibles %}
-                                    <option value="{{ año.year }}">{{ año.year }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <label for="fecha_exacta">Fecha exacta (trabajo):</label>
+        <input type="date" name="fecha_exacta" id="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
 
-                <!-- Rango de meses -->
-                <div class="filtro-group col-md-12">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="filtro_radio" id="filtro_rango_meses"
-                               value="rango_meses" {% if filtro_actual == 'rango_meses' %}checked{% endif %}>
-                        <label class="form-check-label" for="filtro_rango_meses">
-                            Rango de meses (vista por mes)
-                        </label>
-                    </div>
+        <label for="fecha_desde">Desde (trabajo):</label>
+        <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request.GET.fecha_desde }}">
 
-                    <div id="rango_meses_fields" class="row mt-2"
-                         style="display: {% if filtro_actual == 'rango_meses' %}block{% else %}none{% endif %};">
-                        <div class="col-md-3">
-                            <label for="mes_inicio" class="form-label">Mes inicio</label>
-                            <select class="form-select" id="mes_inicio" name="mes_inicio">
-                                {% for mes in meses_disponibles %}
-                                    <option value="{{ mes.num }}">{{ mes.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="mes_fin" class="form-label">Mes fin</label>
-                            <select class="form-select" id="mes_fin" name="mes_fin">
-                                {% for mes in meses_disponibles %}
-                                    <option value="{{ mes.num }}">{{ mes.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="año_inicio" class="form-label">Año inicio</label>
-                            <select class="form-select" id="año_inicio" name="año_inicio">
-                                {% for año in años_disponibles %}
-                                    <option value="{{ año.year }}">{{ año.year }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="año_fin" class="form-label">Año fin</label>
-                            <select class="form-select" id="año_fin" name="año_fin">
-                                {% for año in años_disponibles %}
-                                    <option value="{{ año.year }}">{{ año.year }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <label for="fecha_hasta">Hasta (trabajo):</label>
+        <input type="date" name="fecha_hasta" id="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
 
-                <!-- Rango de años -->
-                <div class="filtro-group col-md-12">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="filtro_radio" id="filtro_rango_años"
-                               value="rango_años" {% if filtro_actual == 'rango_años' %}checked{% endif %}>
-                        <label class="form-check-label" for="filtro_rango_años">
-                            Rango de años (vista por año)
-                        </label>
-                    </div>
+        <button type="submit">Filtrar</button>
+        <a href="{% url 'historial' %}">Limpiar</a>
 
-                    <div id="rango_años_fields" class="row mt-2"
-                         style="display: {% if filtro_actual == 'rango_años' %}block{% else %}none{% endif %};">
-                        <div class="col-md-6">
-                            <label for="año_inicio" class="form-label">Año inicio</label>
-                            <select class="form-select" id="año_inicio" name="año_inicio">
-                                {% for año in años_disponibles %}
-                                    <option value="{{ año.year }}">{{ año.year }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="año_fin" class="form-label">Año fin</label>
-                            <select class="form-select" id="año_fin" name="año_fin">
-                                {% for año in años_disponibles %}
-                                    <option value="{{ año.year }}">{{ año.year }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
-                    <a href="{% url 'historial' %}" class="btn btn-secondary">Restablecer</a>
-                </div>
-            </form>
-        </div>
-
-        <!-- =================== GRÁFICO =================== -->
-        {% if datos %}
-        <div class="chart-container">
-            <canvas id="miGrafico"></canvas>
-        </div>
-
-        <script>
-            // Mostrar/ocultar campos del filtro del gráfico
-            document.querySelectorAll('input[name="filtro_radio"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.getElementById('filtro_tipo').value = this.value;
-                    document.querySelectorAll('[id$="_fields"]').forEach(div => div.style.display = 'none');
-                    if (this.value === 'mes_exacto') {
-                        document.getElementById('mes_exacto_fields').style.display = 'block';
-                    } else if (this.value === 'rango_meses') {
-                        document.getElementById('rango_meses_fields').style.display = 'block';
-                    } else if (this.value === 'rango_años') {
-                        document.getElementById('rango_años_fields').style.display = 'block';
-                    }
-                });
-            });
-
-            // Chart.js
-            const ctx = document.getElementById('miGrafico').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: {{ labels|safe }},
-                    datasets: [{
-                        label: 'Trabajos Finalizados',
-                        data: {{ datos|safe }},
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverRadius: 5,
-                        pointHoverBackgroundColor: 'rgba(54, 162, 235, 1)',
-                        pointHitRadius: 10,
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    interaction: { intersect: false, mode: 'index' },
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(ctx) {
-                                    return ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(0)}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { precision: 0 },
-                            title: { display: true, text: 'Cantidad de Trabajos' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Período' },
-                            ticks: { autoSkip: true, maxRotation: 45, minRotation: 45 }
-                        }
-                    }
-                }
-            });
-        </script>
-        {% else %}
-            <div class="alert alert-info">No hay datos para mostrar con los filtros seleccionados.</div>
-        {% endif %}
+        <a href="{% url 'e_e' %}?{{ request.GET.urlencode }}" class="btn-exportar">Exportar a Excel</a>
+        <a href="/admin/" target="_blank" class="btn-editar">Editar</a>
+      </form>
     </div>
 
-    <!-- =================== LISTADO + FILTROS (TABLA) =================== -->
-    <div class="supercontainer">
-        <div class="search">
-            <form method="get">
-                <label for="funcionario-select">Funcionario(s):</label>
-                <select name="funcionario" id="funcionario-select" multiple>
-                    {% for nombre in lista_tecnicos %}
-                        <option value="{{ nombre }}" {% if nombre in funcionarios_sel %}selected{% endif %}>
-                            {{ nombre }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <label for="estado">Estado:</label>
-                <select name="estado" id="estado">
-                    <option value="">Todos</option>
-                    {% for estado in lista_estados %}
-                        <option value="{{ estado.ee_estado }}" {% if request.GET.estado == estado.ee_estado %}selected{% endif %}>
-                            {{ estado.ee_estado }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <label for="fecha_exacta">Fecha exacta:</label>
-                <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
-
-                <label for="fecha_desde">Desde:</label>
-                <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
-
-                <label for="fecha_hasta">Hasta:</label>
-                <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
-
-                <button type="submit">Filtrar</button>
-
-                <a href="{% url 'historial' %}">Limpiar</a>
-                <!-- Preserva TODOS los parámetros (incluye múltiples funcionario=...) -->
-                <a href="{% url 'e_e' %}?{{ request.GET.urlencode }}" class="btn-exportar">Exportar a Excel</a>
-                <a href="/admin/" target="_blank" class="btn-editar">Editar</a>
-            </form>
-        </div>
-
-        <div class="tablecontainer">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Funcionario</th>
-                        <th>Sitio</th>
-                        <th>Cliente</th>
-                        <th>Descripción</th>
-                        <th>Fecha</th>
-                        <th>H. Inicio</th>
-                        <th>H. Salida</th>
-                        <th>Estado</th>
-                        <th>Monto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for trabajo in trabajos_realizados %}
-                        <tr>
-                            <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
-                            <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
-                            <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
-                            <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
-                            <td data-label="Fecha">{{ trabajo.tec_fecha|date:"d/m/Y" }}</td>
-                            <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
-                            <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
-                            <td data-label="Estado">{{ trabajo.tec_ee }}</td>
-                            {% load humanize %}
-                            <td data-label="Monto">{{ trabajo.tec_tm|intcomma }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="tablecontainer">
+      <table>
+        <thead>
+          <tr>
+            <th>Funcionario</th>
+            <th>Sitio</th>
+            <th>Cliente</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>H. Inicio</th>
+            <th>H. Salida</th>
+            <th>Estado</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for trabajo in trabajos_realizados %}
+            <tr>
+              <td data-label="Funcionario">{{ trabajo.tec_nombre }}</td>
+              <td data-label="Sitio">{{ trabajo.tec_sitios }}</td>
+              <td data-label="Cliente">{{ trabajo.tec_cliente }}</td>
+              <td data-label="Descripción">{{ trabajo.tec_descripcion }}</td>
+              <td data-label="Fecha">{{ trabajo.tec_fecha|date:"d/m/Y" }}</td>
+              <td data-label="H. Inicio">{{ trabajo.tec_hinicio }}</td>
+              <td data-label="H. Salida">{{ trabajo.tec_hfinal }}</td>
+              <td data-label="Estado">{{ trabajo.tec_ee }}</td>
+              <td data-label="Monto">
+                {% if trabajo.tec_tm %}
+                  {{ trabajo.tec_tm.tm_monto|intcomma }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="9" style="padding: 14px; text-align:center;">
+                No hay registros con esos filtros.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
 
-    <!-- Init Select2 para el multiselect -->
-    <script>
-      $(function () {
-        $('#funcionario-select').select2({
-          placeholder: "Seleccione uno o más funcionarios",
-          allowClear: true,
-          width: 'resolve'
-        });
+    <!-- =================== PAGINACIÓN =================== -->
+    {% if is_paginated %}
+      <nav class="pagination" aria-label="Paginación">
+        <div class="pagination__info">
+          Página <strong>{{ page_obj.number }}</strong> de <strong>{{ paginator.num_pages }}</strong>
+          · Total: <strong>{{ paginator.count }}</strong>
+        </div>
+
+        <div class="pagination__controls">
+          {% if page_obj.has_previous %}
+            <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page=1">« Primera</a>
+            <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ page_obj.previous_page_number }}">‹ Anterior</a>
+          {% else %}
+            <span class="pagination__btn pagination__btn--disabled">« Primera</span>
+            <span class="pagination__btn pagination__btn--disabled">‹ Anterior</span>
+          {% endif %}
+
+          <span class="pagination__current">{{ page_obj.number }}</span>
+
+          {% if page_obj.has_next %}
+            <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente ›</a>
+            <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ paginator.num_pages }}">Última »</a>
+          {% else %}
+            <span class="pagination__btn pagination__btn--disabled">Siguiente ›</span>
+            <span class="pagination__btn pagination__btn--disabled">Última »</span>
+          {% endif %}
+        </div>
+      </nav>
+    {% endif %}
+  </div>
+
+  <script>
+    // Select2 para el multiselect de la tabla
+    $(function () {
+      $('#funcionario-select').select2({
+        placeholder: "Seleccione uno o más funcionarios",
+        allowClear: true,
+        width: 'resolve'
       });
-    </script>
+    });
+
+    // UI + deshabilitar inputs ocultos (evita parámetros basura en el gráfico)
+    const filtroTipoInput = document.getElementById('filtro_tipo');
+
+    const blocks = {
+      '30_dias': [],
+      'mes_exacto': ['mes_exacto_fields'],
+      'rango_meses': ['rango_meses_fields'],
+      'rango_años': ['rango_anios_fields'],
+    };
+
+    function enableBlock(id, enabled) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = enabled ? 'block' : 'none';
+      el.querySelectorAll('select,input').forEach(inp => inp.disabled = !enabled);
+    }
+
+    function applyChartBlock(selected) {
+      filtroTipoInput.value = selected;
+
+      Object.values(blocks).flat().forEach(id => enableBlock(id, false));
+      (blocks[selected] || []).forEach(id => enableBlock(id, true));
+    }
+
+    applyChartBlock(filtroTipoInput.value);
+
+    document.querySelectorAll('input[name="filtro_radio"]').forEach(r => {
+      r.addEventListener('change', () => applyChartBlock(r.value));
+    });
+
+    // Chart.js (datos seguros desde json_script)
+    (function () {
+      const canvas = document.getElementById('miGrafico');
+      if (!canvas) return;
+
+      const labels = JSON.parse(document.getElementById('chart-labels').textContent);
+      const datos = JSON.parse(document.getElementById('chart-datos').textContent);
+
+      const ctx = canvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Trabajos finalizados',
+            data: datos,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            tension: 0.35,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { intersect: false, mode: 'index' },
+          plugins: {
+            legend: { position: 'top' }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 },
+              title: { display: true, text: 'Cantidad de trabajos' }
+            },
+            x: {
+              title: { display: true, text: 'Período' },
+              ticks: { autoSkip: true, maxRotation: 45, minRotation: 45 }
+            }
+          }
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

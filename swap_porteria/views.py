@@ -167,50 +167,53 @@ def formularios(request):
 @login_required
 @user_passes_test(is_swap_porteria)
 def salida(request):
-    # Solo entradas con funcionario (y sin cobrador, proveedor ni visita)
     entrada_funcionarios = Entrada.objects.filter(
-
         e_fun__isnull=False,
         e_prov__isnull=True,
         e_cob__isnull=True,
         e_visita__isnull=True,
         e_ee__ee_estado="Pendiente⚠️"
-    )
-    # Solo entradas con proveedor
+    ).select_related("e_fun", "e_ee")  # mejora performance
+
     entrada_proveedores = Entrada.objects.filter(
         e_fun__isnull=True,
         e_prov__isnull=False,
         e_cob__isnull=True,
         e_visita__isnull=True,
         e_ee__ee_estado="Pendiente⚠️"
-    )
-    # Solo entradas con cobrador
+    ).select_related("e_prov", "e_ee")
+
     entrada_cobradores = Entrada.objects.filter(
         e_fun__isnull=True,
         e_prov__isnull=True,
         e_cob__isnull=False,
         e_visita__isnull=True,
         e_ee__ee_estado="Pendiente⚠️"
-    )
-    # Solo entradas con visita (texto)
+    ).select_related("e_cob", "e_ee")
+
     entrada_visitas = Entrada.objects.filter(
         e_fun__isnull=True,
         e_prov__isnull=True,
         e_cob__isnull=True,
         e_ee__ee_estado="Pendiente⚠️"
-    ).exclude(e_visita__isnull=True).exclude(e_visita__exact='')
-    
+    ).exclude(e_visita__isnull=True).exclude(e_visita__exact='').select_related("e_ee")
+
     estados = Estadoentrada.objects.all()
-    
+
+    # Lista para el select del funcionario
+    funcionarios = Funcionarios.objects.order_by("fun_nombres_apellidos")  # <-- ajusta campo "nombre"
+
     return render(request, "salida.html", {
-        'entrada_funcionarios': entrada_funcionarios,
-        'entrada_proveedores': entrada_proveedores,
-        'entrada_cobradores': entrada_cobradores,
-        'entrada_visitas': entrada_visitas,
-        
-        'estados': estados,
+        "entrada_funcionarios": entrada_funcionarios,
+        "entrada_proveedores": entrada_proveedores,
+        "entrada_cobradores": entrada_cobradores,
+        "entrada_visitas": entrada_visitas,
+        "estados": estados,
+        "funcionarios": funcionarios,
     })
-    
+
+
+
 # cambiar el estado
 @login_required
 @user_passes_test(is_swap_porteria)
@@ -218,15 +221,29 @@ def editar_entrada(request, e_id):
     if request.method == "POST":
         entrada = get_object_or_404(Entrada, e_id=e_id)
 
+        # ✅ NUEVO: editar funcionario (solo si viene en el POST)
+        e_fun_id = request.POST.get("e_fun")
+        if e_fun_id:
+            entrada.e_fun = get_object_or_404(Funcionarios, pk=e_fun_id)
+
+        # ✅ NUEVO: editar entrada (solo si viene en el POST)
+        e_entrada = request.POST.get("e_entrada")
+        if e_entrada:
+            entrada.e_entrada = e_entrada
+
+        # ✅ lo que ya tenías
         entrada.e_salida = request.POST.get("e_salida")
         entrada.e_comentario = request.POST.get("e_comentario")
-        estado_id = request.POST.get("e_ee")
 
+        estado_id = request.POST.get("e_ee")
         if estado_id:
-            entrada.e_ee = Estadoentrada.objects.get(pk=estado_id)
+            entrada.e_ee = get_object_or_404(Estadoentrada, pk=estado_id)
 
         entrada.save()
-    return redirect('salida')
+
+    return redirect("salida")
+
+
 
 # ver registros guardados
 @login_required

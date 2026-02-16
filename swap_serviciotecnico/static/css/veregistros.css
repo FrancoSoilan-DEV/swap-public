@@ -358,3 +358,83 @@ body main section .container .tablecontainer option:checked {
     display: inline-block;
   }
 }/*# sourceMappingURL=veregistros.css.map */
+
+/* ===== PAGINACIÓN ===== */
+.pagination{
+  margin-top: 18px;
+  padding: 14px 12px;
+  border-radius: 12px;
+  background: rgba(79, 8, 225, 0.03);
+  border: 1px solid rgba(79, 8, 225, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pagination__info{
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.pagination__controls{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination__btn{
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(79, 8, 225, 0.20);
+  background: #fff;
+  color: #4f08e1;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.pagination__btn:hover{
+  transform: translateY(-1px);
+  background: rgba(79, 8, 225, 0.06);
+  box-shadow: 0 4px 10px rgba(79, 8, 225, 0.18);
+}
+
+.pagination__btn--disabled{
+  cursor: not-allowed;
+  opacity: .55;
+  background: #f4f4f4;
+  color: #666;
+  box-shadow: none;
+}
+
+.pagination__current{
+  min-width: 44px;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #4f08e1 0%, #030061 100%);
+  box-shadow: 0 4px 10px rgba(79, 8, 225, 0.22);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* Mobile */
+@media (max-width: 768px){
+  .pagination{
+    justify-content: center;
+  }
+  .pagination__info{
+    width: 100%;
+    text-align: center;
+  }
+  .pagination__controls{
+    justify-content: center;
+    width: 100%;
+  }
+}

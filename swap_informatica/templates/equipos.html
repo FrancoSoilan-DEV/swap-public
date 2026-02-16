@@ -1,794 +1,1004 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWAP | Inventario | Todo</title>
-    <link rel="stylesheet" href="{% static 'css/equipo.css' %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=home" />
-    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
-</head>
-<body>
-    <header id="up">
-        <div class="hc">
-            <h2>Equipos</h2>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inventario | Equipos{% endblock %}
+{% block page_icon %}computer{% endblock %}
+{% block page_title %}Inventario de Equipos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/equipo.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="equipos-page" id="up">
+
+  <!-- Subnav / accesos rápidos -->
+  <div class="equipos-subnav">
+    <div class="equipos-subnav__left">
+      <h1 class="equipos-subnav__title">Equipos</h1>
+      <p class="equipos-subnav__subtitle">Filtros, tablas y mantenimientos por categoría.</p>
+    </div>
+
+    <div class="equipos-subnav__right">
+      <a class="equipos-subnav__btn" href="#equipos">
+        <span class="material-symbols-outlined">desktop_windows</span>
+        Equipos
+      </a>
+      <a class="equipos-subnav__btn" href="#ups">
+        <span class="material-symbols-outlined">battery_charging_full</span>
+        UPS
+      </a>
+      <a class="equipos-subnav__btn" href="#impresoras">
+        <span class="material-symbols-outlined">print</span>
+        Impresoras
+      </a>
+      <a class="equipos-subnav__btn" href="#otros">
+        <span class="material-symbols-outlined">router</span>
+        Otros
+      </a>
+      <a class="equipos-subnav__btn" href="#cs">
+        <span class="material-symbols-outlined">dns</span>
+        Cosas Servidor
+      </a>
+      <a class="equipos-subnav__btn" href="#monitores">
+        <span class="material-symbols-outlined">monitor</span>
+        Monitores
+      </a>
+
+      <a class="equipos-subnav__btn equipos-subnav__btn--primary" href="{% url 'inventario' %}">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver a Inventario
+      </a>
+    </div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- 1) EQUIPOS (PC/Notebook) -->
+  <!-- ===================== -->
+  <section class="s1">
+    <div class="equipos" id="equipos">
+      <div class="section-head">
+        <h2 class="section-title">
+          Equipos
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=equipo" title="Agregar equipo">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
+
+      <div class="search">
+        <form method="get">
+          <!-- Tipo de Equipo -->
+          <select name="tipo_equipo">
+            <option value="">Tipo de Equipo</option>
+            <option value="PC" {% if request.GET.tipo_equipo == "PC" %}selected{% endif %}>PC</option>
+            <option value="Notebook" {% if request.GET.tipo_equipo == "Notebook" %}selected{% endif %}>Notebook</option>
+          </select>
+
+          <!-- Departamento -->
+          <select name="departamento">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
+
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
+
+      <div class="c1" role="region" aria-label="Tabla de equipos (drag para scroll horizontal)" tabindex="0">
+        <table class="eq-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Responsable</th>
+              <th>Departamento</th>
+              <th>Equipo</th>
+              <th>Nombre de Equipo</th>
+              <th>Nombre</th>
+              <th>Numero de Serie</th>
+              <th>IP</th>
+              <th>Usuario</th>
+              <th>Contraseña</th>
+              <th>Marca Equipo</th>
+              <th>Modelo Equipo</th>
+              <th>Marca Monitor</th>
+              <th>Pulgadas Monitor</th>
+              <th>Conexion Monitor</th>
+              <th>Placa Madre</th>
+              <th>Grafica</th>
+              <th>Disco Duro</th>
+              <th>Lector de Disco</th>
+              <th>Audio</th>
+              <th>RAM</th>
+              <th>CPU</th>
+              <th>Mouse</th>
+              <th>Teclado</th>
+              <th>Accesorios</th>
+              <th>Sistema Operativo</th>
+              <th>Office</th>
+              <th>Antivirus</th>
+              <th>Thunderbird</th>
+              <th>Programas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for equipo in equipos %}
+              <tr>
+                <td>{{ equipo.eq_id }}</td>
+                <td>{{ equipo.responsable }}</td>
+                <td>{{ equipo.eq_dpto }}</td>
+                <td>{{ equipo.eq_tipe }}</td>
+                <td>{{ equipo.nombre_equipo }}</td>
+                <td>{{ equipo.nombre }}</td>
+                <td>{{ equipo.eq_numdeserie }}</td>
+                <td>{{ equipo.ip }}</td>
+                <td>{{ equipo.eq_usuario }}</td>
+                <td>{{ equipo.eq_contrasenna }}</td>
+                <td>{{ equipo.eq_marca }}</td>
+                <td>{{ equipo.eq_modelo }}</td>
+                <td>{{ equipo.eq_marcamonitor }}</td>
+                <td>{{ equipo.eq_pulgadamonitor }}</td>
+                <td>{{ equipo.conexion_monitor }}</td>
+                <td>{{ equipo.eq_placamadre }}</td>
+                <td>{{ equipo.eq_grafica }}</td>
+                <td>{{ equipo.eq_discoduro }}</td>
+                <td>{{ equipo.eq_lectordisco }}</td>
+                <td>{{ equipo.eq_audio }}</td>
+                <td>{{ equipo.ram }}</td>
+                <td>{{ equipo.cpu }}</td>
+                <td>{{ equipo.mouse }}</td>
+                <td>{{ equipo.teclado }}</td>
+                <td>{{ equipo.accesorios }}</td>
+                <td>{{ equipo.eq_sistemop }}</td>
+                <td>{{ equipo.office }}</td>
+                <td>{{ equipo.antiviruz }}</td>
+                <td>{{ equipo.thunderbird }}</td>
+                <td>{{ equipo.programas }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="30" class="equipos-empty">
+                  <span class="material-symbols-outlined">info</span>
+                  No hay equipos para los filtros actuales.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <article>
+        <h3>Mantenimientos</h3>
+
+        <div class="cc1">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde:
+                <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
+              </label>
+
+              <label>Fecha hasta:
+                <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+              </label>
+
+              <label>Fecha exacta:
+                <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
+              </label>
+
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento == 'Preventivo' %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento == 'Correctivo' %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable" placeholder="Nombre (parcial)" value="{{ request.GET.responsable }}">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id" placeholder="ID" value="{{ request.GET.equipo_id }}">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for me in mantenimientos_equipos %}
+                <tr>
+                  <td>{{ me.m_id }}</td>
+                  <td>{{ me.m_fecha }}</td>
+                  <td>{{ me.m_mt }}</td>
+                  <td>{{ me.m_eq }}</td>
+                  <td>{{ me.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        <nav>
-            <ul>
-                <li>
-                    <a href="#equipos">Equipos</a>
-                </li>
-                <li>
-                    <a href="#ups">UPS</a>
-                </li>
-                <li>
-                    <a href="#impresoras">Impresoras</a>
-                </li>
-                <li>
-                    <a href="#otros">Otros</a>
-                </li>
-                <li>
-                    <a href="#cs">Cosas Servidor</a>
-                </li>
-                <li>
-                    <a href="#monitores">Monitores</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <div class="comeback">
-            <a href="{% url 'inventario' %}">Atras</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== -->
+  <!-- 2) UPS -->
+  <!-- ===================== -->
+  <section class="s2">
+    <div class="ups" id="ups">
+      <div class="section-head">
+        <h2 class="section-title">
+          UPS's
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=ups" title="Agregar UPS">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
+
+      <div class="search">
+        <form method="get">
+          <select name="departamento">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
+
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
+
+      <div class="c2" role="region" aria-label="Tabla de UPS" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipo</th>
+              <th>Numero de Serie</th>
+              <th>Departamento</th>
+              <th>Usuario</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ups in upss %}
+              <tr>
+                <td>{{ ups.eq_id }}</td>
+                <td>{{ ups.eq_tipe }}</td>
+                <td>{{ ups.eq_numdeserie }}</td>
+                <td>{{ ups.eq_dpto }}</td>
+                <td>{{ ups.eq_usuario }}</td>
+                <td>{{ ups.eq_marca }}</td>
+                <td>{{ ups.eq_modelo }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7">-</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <article>
+        <h3>Mantenimientos</h3>
+
+        <div class="cc2">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde: <input type="date" name="fecha_desde_ups" value="{{ request.GET.fecha_desde_ups }}"></label>
+              <label>Fecha hasta: <input type="date" name="fecha_hasta_ups" value="{{ request.GET.fecha_hasta_ups }}"></label>
+              <label>Fecha exacta: <input type="date" name="fecha_exacta_ups" value="{{ request.GET.fecha_exacta_ups }}"></label>
+
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento_ups">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento_ups == "Preventivo" %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento_ups == "Correctivo" %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable_ups" value="{{ request.GET.responsable_ups }}" placeholder="Nombre (parcial)">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id_ups" value="{{ request.GET.equipo_id_ups }}" placeholder="ID">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mu in mantenimientos_ups %}
+                <tr>
+                  <td>{{ mu.m_id }}</td>
+                  <td>{{ mu.m_fecha }}</td>
+                  <td>{{ mu.m_mt }}</td>
+                  <td>{{ mu.m_eq }}</td>
+                  <td>{{ mu.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+      </article>
+    </div>
+  </section>
 
+  <!-- ===================== -->
+  <!-- 3) IMPRESORAS -->
+  <!-- ===================== -->
+  <section class="s3">
+    <div class="impresoras" id="impresoras">
+      <div class="section-head">
+        <h2 class="section-title">
+          Impresoras
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=impresora" title="Agregar impresora">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
 
-        <section class="s1">
-            <div class="equipos" id="equipos">
-                <h2>Equipos<a href="{% url 'nuevo_equipo' %}?form=equipo">➕</a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Tipo de Equipo -->
-                        <select name="tipo_equipo">
-                            <option value="">Tipo de Equipo</option>
-                            <option value="PC" {% if request.GET.tipo_equipo == "PC" %}selected{% endif %}>PC</option>
-                            <option value="Notebook" {% if request.GET.tipo_equipo == "Notebook" %}selected{% endif %}>Notebook</option>
-                        </select>
-                        <!-- Departamento -->
-                        <select name="departamento">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>{{ dpto.dpto_nombre }}</option>
-                            {% endfor %}
-                        </select>
-                
-                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
-                
-                        <button type="submit">Filtrar</button>
-                        <!-- NUEVO: botón para limpiar los filtros -->
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
+      <div class="search">
+        <form method="get">
+          <select name="departamento">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
 
-                    </form>
-                </div>
-                <div class="c1" >
-                    <table class="eq-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Responsable</th>
-                                <th>Departamento</th>
-                                <th>Equipo</th>
-                                <th>Nombre de Equipo</th>
-                                <th>Nombre</th>
-                                <th>Numero de Serie</th>
-                                <th>IP</th>
-                                <th>Usuario</th>
-                                <th>Contraseña</th>
-                                <th>Marca Equipo</th>
-                                <th>Modelo Equipo</th>
-                                <th>Marca Monitor</th>
-                                <th>Pulgadas Monitor</th>
-                                <th>Conexion Monitor</th>
-                                <th>Placa Madre</th>
-                                <th>Grafica</th>
-                                <th>Disco Duro</th>
-                                <th>Lector de Disco</th>
-                                <th>Audio</th>
-                                <th>RAM</th>
-                                <th>CPU</th>
-                                <th>Mouse</th>
-                                <th>Teclado</th>
-                                <th>Accesorios</th>
-                                <th>Sistema Operativo</th>
-                                <th>Office</th>
-                                <th>Antivirus</th>
-                                <th>Thunderbird</th>
-                                <th>Programas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for equipo in equipos %}
-                            <tr>
-                                <td>{{ equipo.eq_id }}</td>
-                                <td>{{ equipo.responsable }}</td>
-                                <td> {{ equipo.eq_dpto }} </td>
-                                <td>{{ equipo.eq_tipe }}</td>
-                                <td>{{ equipo.nombre_equipo }}</td>
-                                <td>{{ equipo.nombre }}</td>
-                                <td>{{ equipo.eq_numdeserie }}</td>
-                                <td>{{ equipo.ip }}</td>
-                                <td>{{ equipo.eq_usuario }} </td>
-                                <td>{{ equipo.eq_contrasenna }} </td>
-                                <td>{{ equipo.eq_marca }} </td>
-                                <td>{{ equipo.eq_modelo }} </td>
-                                <td>{{ equipo.eq_marcamonitor }} </td>
-                                <td>{{ equipo.eq_pulgadamonitor }} </td>
-                                <td>{{ equipo.conexion_monitor }}</td>
-                                <td>{{ equipo.eq_placamadre }} </td>
-                                <td>{{ equipo.eq_grafica }} </td>
-                                <td>{{ equipo.eq_discoduro }} </td>
-                                <td>{{ equipo.eq_lectordisco }} </td>
-                                <td>{{ equipo.eq_audio }} </td>
-                                <td>{{ equipo.ram }} </td>
-                                <td>{{ equipo.cpu }} </td>
-                                <td>{{ equipo.mouse }} </td>
-                                <td>{{ equipo.teclado }} </td>
-                                <td>{{ equipo.accesorios }} </td>
-                                <td>{{ equipo.eq_sistemop }} </td>
-                                <td>{{ equipo.office }} </td>
-                                <td>{{ equipo.antiviruz }} </td>
-                                <td>{{ equipo.thunderbird }} </td>
-                                <td>{{ equipo.programas }} </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc1">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde: 
-                                    <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}">
-                                </label>
-                                
-                                <label>Fecha hasta: 
-                                    <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
-                                </label>
-                                
-                                <label>Fecha exacta: 
-                                    <input type="date" name="fecha_exacta" value="{{ request.GET.fecha_exacta }}">
-                                </label>
-                        
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento == 'Preventivo' %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento == 'Correctivo' %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                            
-                                <label>Responsable:
-                                    <input type="text" name="responsable" placeholder="Nombre (parcial)" value="{{ request.GET.responsable }}">
-                                </label>
-                            
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id" placeholder="ID" value="{{ request.GET.equipo_id }}">
-                                </label>
-                            
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                        </div>
-                        
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for me in mantenimientos_equipos %}
-                                <tr>
-                                    <td>{{ me.m_id }}</td>
-                                    <td>{{ me.m_fecha }}</td>
-                                    <td>{{ me.m_mt }}</td>
-                                    <td>{{ me.m_eq }}</td>
-                                    <td>{{ me.m_responsable}}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
+          <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
 
-        <section class="s2">
-            <div class="ups" id="ups">
-                <h2>UPS's<a href="{% url 'nuevo_equipo' %}?form=ups">➕</a></a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Departamento -->
-                        <select name="departamento">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
-                                    {{ dpto.dpto_nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-            
-                        <!-- Usuario -->
-                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
-            
-                        <!-- Botones -->
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
-                    </form>
-                </div>
-                <div class="c2">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
-                                <th>Departamento</th>
-                                <th>Usuario</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for ups in upss %}
-                            <tr>
-                                <td>{{ ups.eq_id }}</td>
-                                <td>{{ ups.eq_tipe }}</td>
-                                <td>{{ ups.eq_numdeserie }}</td>
-                                <td>{{ ups.eq_dpto }}</td>
-                                <td>{{ ups.eq_usuario }}</td>
-                                <td>{{ ups.eq_marca }}</td>
-                                <td>{{ ups.eq_modelo }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc2">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde: <input type="date" name="fecha_desde_ups" value="{{ request.GET.fecha_desde_ups }}"></label>
-                                <label>Fecha hasta: <input type="date" name="fecha_hasta_ups" value="{{ request.GET.fecha_hasta_ups }}"></label>
-                                <label>Fecha exacta: <input type="date" name="fecha_exacta_ups" value="{{ request.GET.fecha_exacta_ups }}"></label>
-                            
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento_ups">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento_ups == "Preventivo" %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento_ups == "Correctivo" %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                            
-                                <label>Responsable:
-                                    <input type="text" name="responsable_ups" value="{{ request.GET.responsable_ups }}" placeholder="Nombre (parcial)">
-                                </label>
-                            
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id_ups" value="{{ request.GET.equipo_id_ups }}" placeholder="ID">
-                                </label>
-                            
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                            
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for mu in mantenimientos_ups %}
-                                <tr>
-                                    <td>{{ mu.m_id }}</td>
-                                    <td>{{ mu.m_fecha }}</td>
-                                    <td>{{ mu.m_mt }}</td>
-                                    <td>{{ mu.m_eq }}</td>
-                                    <td>{{ mu.m_responsable }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
 
-        <section class="s3">
-            <div class="impresoras" id="impresoras">
-                <h2>Impresoras<a href="{% url 'nuevo_equipo' %}?form=impresora">➕</a></a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Departamento -->
-                        <select name="departamento">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
-                                    {{ dpto.dpto_nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-            
-                        <!-- Usuario -->
-                        <input type="text" name="usuario" placeholder="Buscar Responsable" value="{{ request.GET.usuario|default_if_none:'' }}">
-            
-                        <!-- Botones -->
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
-                    </form>
-                </div>
-                <div class="c3" >
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
-                                <th>Departamento</th>
-                                <th>Usuario</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for impresora in impresoras %}
-                            <tr>
-                                <td>{{ impresora.eq_id }}</td>
-                                <td>{{ impresora.eq_tipe }}</td>
-                                <td>{{ impresora.eq_numdeserie }}</td>
-                                <td>{{ impresora.eq_dpto }}</td>
-                                <td>{{ impresora.eq_usuario }}</td>
-                                <td>{{ impresora.eq_marca }}</td>
-                                <td>{{ impresora.eq_modelo }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc3">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde: <input type="date" name="fecha_desde_imp" value="{{ request.GET.fecha_desde_imp }}"></label>
-                                <label>Fecha hasta: <input type="date" name="fecha_hasta_imp" value="{{ request.GET.fecha_hasta_imp }}"></label>
-                                <label>Fecha exacta: <input type="date" name="fecha_exacta_imp" value="{{ request.GET.fecha_exacta_imp }}"></label>
-                            
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento_imp">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento_imp == "Preventivo" %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento_imp == "Correctivo" %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                            
-                                <label>Responsable:
-                                    <input type="text" name="responsable_imp" value="{{ request.GET.responsable_imp }}" placeholder="Nombre (parcial)">
-                                </label>
-                            
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id_imp" value="{{ request.GET.equipo_id_imp }}" placeholder="ID">
-                                </label>
-                            
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                            
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for mi in mantenimientos_impresoras %}
-                                <tr>
-                                    <td>{{ mi.m_id }}</td>
-                                    <td>{{ mi.m_fecha }}</td>
-                                    <td>{{ mi.m_mt }}</td>
-                                    <td>{{ mi.m_eq }}</td>
-                                    <td>{{ mi.m_responsable }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
+      <div class="c3" role="region" aria-label="Tabla de impresoras" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipo</th>
+              <th>Numero de Serie</th>
+              <th>Departamento</th>
+              <th>Usuario</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for impresora in impresoras %}
+              <tr>
+                <td>{{ impresora.eq_id }}</td>
+                <td>{{ impresora.eq_tipe }}</td>
+                <td>{{ impresora.eq_numdeserie }}</td>
+                <td>{{ impresora.eq_dpto }}</td>
+                <td>{{ impresora.eq_usuario }}</td>
+                <td>{{ impresora.eq_marca }}</td>
+                <td>{{ impresora.eq_modelo }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7">-</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-        <section class="s4">
-            <div class="otros" id="otros">
-                <h2>Otros<a href="{% url 'nuevo_equipo' %}?form=otros">➕</a></a></a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Tipo de Equipo -->
-                        <select name="tipo_equipo_otros">
-                            <option value="">Tipo de Equipo</option>
-                            <option value="Router" {% if request.GET.tipo_equipo_otros == "Router" %}selected{% endif %}>Router</option>
-                            <option value="DVR" {% if request.GET.tipo_equipo_otros == "DVR" %}selected{% endif %}>DVR</option>
-                            <option value="Scaner" {% if request.GET.tipo_equipo_otros == "Scaner" %}selected{% endif %}>Scaner</option>
-                            <option value="Laser" {% if request.GET.tipo_equipo_otros == "Laser" %}selected{% endif %}>Laser</option>
-                        </select>
-                    
-                        <!-- Departamento -->
-                        <select name="departamento_otros">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_otros == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>{{ dpto.dpto_nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    
-                        <!-- Usuario -->
-                        <input type="text" name="usuario_otros" placeholder="Buscar Responsable" value="{{ request.GET.usuario_otros|default_if_none:'' }}">
-                    
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
-                    </form>
-                </div>
-                <div class="c4">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
-                                <th>Departamento</th>
-                                <th>Usuario</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                                <th>Disco Duro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            {% for otro in otros %}
-                            <tr>
-                                <td>{{ otro.eq_id }}</td>
-                                <td>{{ otro.eq_tipe }}</td>
-                                <td>{{ otro.eq_numdeserie }}</td>
-                                <td>{{ otro.eq_dpto }}</td>
-                                <td>{{ otro.eq_usuario }}</td>
-                                <td>{{ otro.eq_marca }}</td>
-                                <td>{{ otro.eq_modelo }}</td>
-                                <td>{{ otro.eq_discoduro }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc4">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde: 
-                                    <input type="date" name="fecha_desde_otros" value="{{ request.GET.fecha_desde_otros }}">
-                                </label>
-                                
-                                <label>Fecha hasta: 
-                                    <input type="date" name="fecha_hasta_otros" value="{{ request.GET.fecha_hasta_otros }}">
-                                </label>
-                                
-                                <label>Fecha exacta: 
-                                    <input type="date" name="fecha_exacta_otros" value="{{ request.GET.fecha_exacta_otros }}">
-                                </label>
-                        
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento_otros">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento_otros == 'Preventivo' %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento_otros == 'Correctivo' %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                            
-                                <label>Responsable:
-                                    <input type="text" name="responsable_otros" placeholder="Nombre (parcial)" value="{{ request.GET.responsable_otros }}">
-                                </label>
-                            
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id_otros" placeholder="ID" value="{{ request.GET.equipo_id_otros }}">
-                                </label>
-                            
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for mo in mantenimientos_otros %}
-                                <tr>
-                                    <td>{{ mo.m_id }}</td>
-                                    <td>{{ mo.m_fecha }}</td>
-                                    <td>{{ mo.m_mt }}</td>
-                                    <td>{{ mo.m_eq }}</td>
-                                    <td>{{ mo.m_responsable }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
-        
-        <section class="s5">
-            <div class="servidor" id="cs">
-                <h2>Cosas de Servidor<a href="{% url 'nuevo_equipo' %}?form=servidor">➕</a></a></a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Tipo de Equipo -->
-                        <select name="tipo_equipo_servidor">
-                            <option value="">Tipo de Equipo</option>
-                            <option value="switch" {% if request.GET.tipo_equipo_servidor == "switch" %}selected{% endif %}>Switch</option>
-                            <option value="rack" {% if request.GET.tipo_equipo_servidor == "rack" %}selected{% endif %}>Rack</option>
-                            <option value="servidor" {% if request.GET.tipo_equipo_servidor == "servidor" %}selected{% endif %}>Servidor</option>
-                        </select>
-            
-                        <!-- Departamento -->
-                        <select name="departamento_servidor">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_servidor == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>{{ dpto.dpto_nombre }}</option>
-                            {% endfor %}
-                        </select>
-            
-                        <!-- Usuario -->
-                        <input type="text" name="usuario_servidor" placeholder="Buscar Usuario" value="{{ request.GET.usuario_servidor|default_if_none:'' }}">
-            
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
-                    </form>
-                </div>
-                <div class="c5">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
-                                <th>Departamento</th>
-                                <th>Usuario</th>
-                                <th>Marca</th>
-                                <th>Modelo</th>
-                                <th>Disco Duro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cs in cosas_servidores %}
-                            <tr>
-                                <td>{{ cs.eq_id }}</td>
-                                <td>{{ cs.eq_tipe }}</td>
-                                <td>{{ cs.eq_numdeserie }}</td>
-                                <td>{{ cs.eq_dpto }}</td>
-                                <td>{{ cs.eq_usuario }}</td>
-                                <td>{{ cs.eq_marca }}</td>
-                                <td>{{ cs.eq_modelo }}</td>
-                                <td>{{ cs.eq_discoduro }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc5">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde:
-                                    <input type="date" name="fecha_desde_srv" value="{{ request.GET.fecha_desde_srv }}">
-                                </label>
-                            
-                                <label>Fecha hasta:
-                                    <input type="date" name="fecha_hasta_srv" value="{{ request.GET.fecha_hasta_srv }}">
-                                </label>
-                            
-                                <label>Fecha exacta:
-                                    <input type="date" name="fecha_exacta_srv" value="{{ request.GET.fecha_exacta_srv }}">
-                                </label>
-                            
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento_srv">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento_srv == "Preventivo" %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento_srv == "Correctivo" %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                            
-                                <label>Responsable:
-                                    <input type="text" name="responsable_srv" value="{{ request.GET.responsable_srv }}" placeholder="Nombre (parcial)">
-                                </label>
-                            
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id_srv" value="{{ request.GET.equipo_id_srv }}" placeholder="ID">
-                                </label>
-                            
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for ms in mantenimientos_servidores %}
-                                <tr>
-                                    <td>{{ ms.m_id }}</td>
-                                    <td>{{ ms.m_fecha }}</td>
-                                    <td>{{ ms.m_mt }}</td>
-                                    <td>{{ ms.m_eq }}</td>
-                                    <td>{{ ms.m_responsable }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
+      <article>
+        <h3>Mantenimientos</h3>
 
-        <section class="s6">
-            <div class="monitores" id="monitores">
-                <h2>Monitores<a href="{% url 'nuevo_equipo' %}?form=monitor">➕</a></a></a>&emsp;<a href="#up">^</a></h2>
-                <div class="search">
-                    <form method="get">
-                        <!-- Departamento -->
-                        <select name="departamento_monitor">
-                            <option value="">Departamento</option>
-                            {% for dpto in departamentos %}
-                                <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_monitor == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
-                                    {{ dpto.dpto_nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    
-                        <!-- Usuario -->
-                        <input type="text" name="usuario_monitor" placeholder="Buscar Responsable" value="{{ request.GET.usuario_monitor|default_if_none:'' }}">
-                    
-                        <!-- Botones -->
-                        <button type="submit">Filtrar</button>
-                        <a href="{% url 'equipos' %}" class="clear-btn">Limpiar filtros</a>
-                    </form>
-                    
-                </div>
-                <div class="c6">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Equipo</th>
-                                <th>Numero de Serie</th>
-                                <th>Departamento</th>
-                                <th>Usuario</th>
-                                <th>Marca del Monitor</th>
-                                <th>Pulgadas del Monitor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for monitor in monitores %}
-                            <tr>
-                                <td>{{ monitor.eq_id }}</td>
-                                <td>{{ monitor.eq_tipe }}</td>
-                                <td>{{ monitor.eq_numdeserie }}</td>
-                                <td>{{ monitor.eq_dpto }}</td>
-                                <td>{{ monitor.eq_usuario }}</td>
-                                <td>{{ monitor.eq_marcamonitor }}</td>
-                                <td>{{ monitor.eq_pulgadamonitor }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <article>
-                    <h3>Mantenimientos</h3>
-                    <div class="cc5">
-                        <div class="search-m">
-                            <form method="get" class="filtro-mantenimientos">
-                                <label>Fecha desde:
-                                    <input type="date" name="fecha_desde_monitor" value="{{ request.GET.fecha_desde_monitor }}">
-                                </label>
-                
-                                <label>Fecha hasta:
-                                    <input type="date" name="fecha_hasta_monitor" value="{{ request.GET.fecha_hasta_monitor }}">
-                                </label>
-                
-                                <label>Fecha exacta:
-                                    <input type="date" name="fecha_exacta_monitor" value="{{ request.GET.fecha_exacta_monitor }}">
-                                </label>
-                
-                                <label>Tipo de mantenimiento:
-                                    <select name="tipo_mantenimiento_monitor">
-                                        <option value="">-- Todos --</option>
-                                        <option value="Preventivo" {% if request.GET.tipo_mantenimiento_monitor == "Preventivo" %}selected{% endif %}>Preventivo</option>
-                                        <option value="Correctivo" {% if request.GET.tipo_mantenimiento_monitor == "Correctivo" %}selected{% endif %}>Correctivo</option>
-                                    </select>
-                                </label>
-                
-                                <label>Responsable:
-                                    <input type="text" name="responsable_monitor" value="{{ request.GET.responsable_monitor }}" placeholder="Nombre (parcial)">
-                                </label>
-                
-                                <label>ID del equipo:
-                                    <input type="number" name="equipo_id_monitor" value="{{ request.GET.equipo_id_monitor }}" placeholder="ID">
-                                </label>
-                
-                                <button type="submit">Filtrar</button>
-                                <a href="{% url 'equipos' %}" class="limpiar-filtros">Limpiar</a>
-                            </form>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Equipo</th>
-                                    <th>Responsable</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for mm in mantenimientos_monitores %}
-                                <tr>
-                                    <td>{{ mm.m_id }}</td>
-                                    <td>{{ mm.m_fecha }}</td>
-                                    <td>{{ mm.m_mt }}</td>
-                                    <td>{{ mm.m_eq }}</td>
-                                    <td>{{ mm.m_responsable }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </article>
-            </div>
-        </section>
+        <div class="cc3">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde: <input type="date" name="fecha_desde_imp" value="{{ request.GET.fecha_desde_imp }}"></label>
+              <label>Fecha hasta: <input type="date" name="fecha_hasta_imp" value="{{ request.GET.fecha_hasta_imp }}"></label>
+              <label>Fecha exacta: <input type="date" name="fecha_exacta_imp" value="{{ request.GET.fecha_exacta_imp }}"></label>
 
-    </main>
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento_imp">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento_imp == "Preventivo" %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento_imp == "Correctivo" %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable_imp" value="{{ request.GET.responsable_imp }}" placeholder="Nombre (parcial)">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id_imp" value="{{ request.GET.equipo_id_imp }}" placeholder="ID">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mi in mantenimientos_impresoras %}
+                <tr>
+                  <td>{{ mi.m_id }}</td>
+                  <td>{{ mi.m_fecha }}</td>
+                  <td>{{ mi.m_mt }}</td>
+                  <td>{{ mi.m_eq }}</td>
+                  <td>{{ mi.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== -->
+  <!-- 4) OTROS -->
+  <!-- ===================== -->
+  <section class="s4">
+    <div class="otros" id="otros">
+      <div class="section-head">
+        <h2 class="section-title">
+          Otros
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=otros" title="Agregar otro equipo">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
+
+      <div class="search">
+        <form method="get">
+          <select name="tipo_equipo_otros">
+            <option value="">Tipo de Equipo</option>
+            <option value="Router" {% if request.GET.tipo_equipo_otros == "Router" %}selected{% endif %}>Router</option>
+            <option value="DVR" {% if request.GET.tipo_equipo_otros == "DVR" %}selected{% endif %}>DVR</option>
+            <option value="Scaner" {% if request.GET.tipo_equipo_otros == "Scaner" %}selected{% endif %}>Scaner</option>
+            <option value="Laser" {% if request.GET.tipo_equipo_otros == "Laser" %}selected{% endif %}>Laser</option>
+          </select>
+
+          <select name="departamento_otros">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_otros == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <input type="text" name="usuario_otros" placeholder="Buscar Responsable" value="{{ request.GET.usuario_otros|default_if_none:'' }}">
+
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
+
+      <div class="c4" role="region" aria-label="Tabla otros" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipo</th>
+              <th>Numero de Serie</th>
+              <th>Departamento</th>
+              <th>Usuario</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Disco Duro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for otro in otros %}
+              <tr>
+                <td>{{ otro.eq_id }}</td>
+                <td>{{ otro.eq_tipe }}</td>
+                <td>{{ otro.eq_numdeserie }}</td>
+                <td>{{ otro.eq_dpto }}</td>
+                <td>{{ otro.eq_usuario }}</td>
+                <td>{{ otro.eq_marca }}</td>
+                <td>{{ otro.eq_modelo }}</td>
+                <td>{{ otro.eq_discoduro }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8">-</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <article>
+        <h3>Mantenimientos</h3>
+
+        <div class="cc4">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde:
+                <input type="date" name="fecha_desde_otros" value="{{ request.GET.fecha_desde_otros }}">
+              </label>
+
+              <label>Fecha hasta:
+                <input type="date" name="fecha_hasta_otros" value="{{ request.GET.fecha_hasta_otros }}">
+              </label>
+
+              <label>Fecha exacta:
+                <input type="date" name="fecha_exacta_otros" value="{{ request.GET.fecha_exacta_otros }}">
+              </label>
+
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento_otros">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento_otros == 'Preventivo' %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento_otros == 'Correctivo' %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable_otros" placeholder="Nombre (parcial)" value="{{ request.GET.responsable_otros }}">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id_otros" placeholder="ID" value="{{ request.GET.equipo_id_otros }}">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mo in mantenimientos_otros %}
+                <tr>
+                  <td>{{ mo.m_id }}</td>
+                  <td>{{ mo.m_fecha }}</td>
+                  <td>{{ mo.m_mt }}</td>
+                  <td>{{ mo.m_eq }}</td>
+                  <td>{{ mo.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== -->
+  <!-- 5) COSAS DE SERVIDOR -->
+  <!-- ===================== -->
+  <section class="s5">
+    <div class="servidor" id="cs">
+      <div class="section-head">
+        <h2 class="section-title">
+          Cosas de Servidor
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=servidor" title="Agregar item servidor">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
+
+      <div class="search">
+        <form method="get">
+          <select name="tipo_equipo_servidor">
+            <option value="">Tipo de Equipo</option>
+            <option value="switch" {% if request.GET.tipo_equipo_servidor == "switch" %}selected{% endif %}>Switch</option>
+            <option value="rack" {% if request.GET.tipo_equipo_servidor == "rack" %}selected{% endif %}>Rack</option>
+            <option value="servidor" {% if request.GET.tipo_equipo_servidor == "servidor" %}selected{% endif %}>Servidor</option>
+          </select>
+
+          <select name="departamento_servidor">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_servidor == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <input type="text" name="usuario_servidor" placeholder="Buscar Usuario" value="{{ request.GET.usuario_servidor|default_if_none:'' }}">
+
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
+
+      <div class="c5" role="region" aria-label="Tabla servidor" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipo</th>
+              <th>Numero de Serie</th>
+              <th>Departamento</th>
+              <th>Usuario</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Disco Duro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cs in cosas_servidores %}
+              <tr>
+                <td>{{ cs.eq_id }}</td>
+                <td>{{ cs.eq_tipe }}</td>
+                <td>{{ cs.eq_numdeserie }}</td>
+                <td>{{ cs.eq_dpto }}</td>
+                <td>{{ cs.eq_usuario }}</td>
+                <td>{{ cs.eq_marca }}</td>
+                <td>{{ cs.eq_modelo }}</td>
+                <td>{{ cs.eq_discoduro }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8">-</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <article>
+        <h3>Mantenimientos</h3>
+
+        <div class="cc5">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde:
+                <input type="date" name="fecha_desde_srv" value="{{ request.GET.fecha_desde_srv }}">
+              </label>
+
+              <label>Fecha hasta:
+                <input type="date" name="fecha_hasta_srv" value="{{ request.GET.fecha_hasta_srv }}">
+              </label>
+
+              <label>Fecha exacta:
+                <input type="date" name="fecha_exacta_srv" value="{{ request.GET.fecha_exacta_srv }}">
+              </label>
+
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento_srv">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento_srv == "Preventivo" %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento_srv == "Correctivo" %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable_srv" value="{{ request.GET.responsable_srv }}" placeholder="Nombre (parcial)">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id_srv" value="{{ request.GET.equipo_id_srv }}" placeholder="ID">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ms in mantenimientos_servidores %}
+                <tr>
+                  <td>{{ ms.m_id }}</td>
+                  <td>{{ ms.m_fecha }}</td>
+                  <td>{{ ms.m_mt }}</td>
+                  <td>{{ ms.m_eq }}</td>
+                  <td>{{ ms.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== -->
+  <!-- 6) MONITORES -->
+  <!-- ===================== -->
+  <section class="s6">
+    <div class="monitores" id="monitores">
+      <div class="section-head">
+        <h2 class="section-title">
+          Monitores
+          <a class="section-add" href="{% url 'nuevo_equipo' %}?form=monitor" title="Agregar monitor">
+            <span class="material-symbols-outlined">add_circle</span>
+          </a>
+        </h2>
+        <a class="to-top" href="#up" title="Volver arriba">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </a>
+      </div>
+
+      <div class="search">
+        <form method="get">
+          <select name="departamento_monitor">
+            <option value="">Departamento</option>
+            {% for dpto in departamentos %}
+              <option value="{{ dpto.dpto_id }}" {% if request.GET.departamento_monitor == dpto.dpto_id|stringformat:"s" %}selected{% endif %}>
+                {{ dpto.dpto_nombre }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <input type="text" name="usuario_monitor" placeholder="Buscar Responsable" value="{{ request.GET.usuario_monitor|default_if_none:'' }}">
+
+          <button type="submit">
+            <span class="material-symbols-outlined">search</span>
+            Filtrar
+          </button>
+          <a href="{% url 'equipos' %}" class="clear-btn">
+            <span class="material-symbols-outlined">restart_alt</span>
+            Limpiar filtros
+          </a>
+        </form>
+      </div>
+
+      <div class="c6" role="region" aria-label="Tabla monitores" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Equipo</th>
+              <th>Numero de Serie</th>
+              <th>Departamento</th>
+              <th>Usuario</th>
+              <th>Marca del Monitor</th>
+              <th>Pulgadas del Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for monitor in monitores %}
+              <tr>
+                <td>{{ monitor.eq_id }}</td>
+                <td>{{ monitor.eq_tipe }}</td>
+                <td>{{ monitor.eq_numdeserie }}</td>
+                <td>{{ monitor.eq_dpto }}</td>
+                <td>{{ monitor.eq_usuario }}</td>
+                <td>{{ monitor.eq_marcamonitor }}</td>
+                <td>{{ monitor.eq_pulgadamonitor }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7">-</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <article>
+        <h3>Mantenimientos</h3>
+
+        <div class="cc5">
+          <div class="search-m">
+            <form method="get" class="filtro-mantenimientos">
+              <label>Fecha desde:
+                <input type="date" name="fecha_desde_monitor" value="{{ request.GET.fecha_desde_monitor }}">
+              </label>
+
+              <label>Fecha hasta:
+                <input type="date" name="fecha_hasta_monitor" value="{{ request.GET.fecha_hasta_monitor }}">
+              </label>
+
+              <label>Fecha exacta:
+                <input type="date" name="fecha_exacta_monitor" value="{{ request.GET.fecha_exacta_monitor }}">
+              </label>
+
+              <label>Tipo de mantenimiento:
+                <select name="tipo_mantenimiento_monitor">
+                  <option value="">-- Todos --</option>
+                  <option value="Preventivo" {% if request.GET.tipo_mantenimiento_monitor == "Preventivo" %}selected{% endif %}>Preventivo</option>
+                  <option value="Correctivo" {% if request.GET.tipo_mantenimiento_monitor == "Correctivo" %}selected{% endif %}>Correctivo</option>
+                </select>
+              </label>
+
+              <label>Responsable:
+                <input type="text" name="responsable_monitor" value="{{ request.GET.responsable_monitor }}" placeholder="Nombre (parcial)">
+              </label>
+
+              <label>ID del equipo:
+                <input type="number" name="equipo_id_monitor" value="{{ request.GET.equipo_id_monitor }}" placeholder="ID">
+              </label>
+
+              <button type="submit">
+                <span class="material-symbols-outlined">search</span>
+                Filtrar
+              </button>
+              <a href="{% url 'equipos' %}" class="limpiar-filtros">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Limpiar
+              </a>
+            </form>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mm in mantenimientos_monitores %}
+                <tr>
+                  <td>{{ mm.m_id }}</td>
+                  <td>{{ mm.m_fecha }}</td>
+                  <td>{{ mm.m_mt }}</td>
+                  <td>{{ mm.m_eq }}</td>
+                  <td>{{ mm.m_responsable }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5">-</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
+  // Drag-to-scroll horizontal para la tabla grande (c1)
   const scrollContainers = document.querySelectorAll('.c1');
 
   scrollContainers.forEach(container => {
@@ -817,12 +1027,9 @@
       if (!isDown) return;
       e.preventDefault();
       const x = e.pageX - container.offsetLeft;
-      const walk = (x - startX) * 1.5; // podés ajustar velocidad
+      const walk = (x - startX) * 1.5;
       container.scrollLeft = scrollLeft - walk;
     });
   });
 </script>
-
-
-</body>
-</html>
+{% endblock %}

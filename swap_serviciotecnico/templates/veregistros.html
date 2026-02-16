@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     {% load static %}
+    {% load humanize %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SWAP | Ver Trabajos Cargados</title>
@@ -63,7 +64,7 @@
         <!-- Guardado masivo (POST) -->
         <form method="post" action="{% url 'editar_trabajos_bulk' %}">
             {% csrf_token %}
-            <!-- preserva la URL de retorno con filtros -->
+            <!-- preserva la URL de retorno con filtros + page -->
             <input type="hidden" name="next" value="?{{ request.GET.urlencode }}">
 
             <!-- Botón de guardar arriba de la tabla -->
@@ -93,7 +94,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% load humanize %}
                         {% for trabajo in trabajos_realizados %}
                         <tr>
                             <td data-label="Sel.">
@@ -133,11 +133,49 @@
                                 </select>
                             </td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="12" style="padding: 14px; text-align:center;">
+                                No hay registros con esos filtros.
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </form>
+
+        <!-- PAGINACIÓN -->
+        {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginación">
+            <div class="pagination__info">
+                Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong>
+                · Total: <strong>{{ page_obj.paginator.count }}</strong>
+            </div>
+
+            <div class="pagination__controls">
+                {% if page_obj.has_previous %}
+                    <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page=1">« Primera</a>
+                    <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ page_obj.previous_page_number }}">‹ Anterior</a>
+                {% else %}
+                    <span class="pagination__btn pagination__btn--disabled">« Primera</span>
+                    <span class="pagination__btn pagination__btn--disabled">‹ Anterior</span>
+                {% endif %}
+
+                <span class="pagination__current">
+                    {{ page_obj.number }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente ›</a>
+                    <a class="pagination__btn" href="?{% if querystring_sin_page %}{{ querystring_sin_page }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Última »</a>
+                {% else %}
+                    <span class="pagination__btn pagination__btn--disabled">Siguiente ›</span>
+                    <span class="pagination__btn pagination__btn--disabled">Última »</span>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
     </div>
 </section>
 </main>

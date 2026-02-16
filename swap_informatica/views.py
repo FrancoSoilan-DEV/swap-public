@@ -1,4 +1,27 @@
+import openpyxl
+from openpyxl.styles import Font, Border, Side, PatternFill, Alignment, NamedStyle
+from openpyxl.formatting.rule import CellIsRule
+import json
+from datetime import timedelta, datetime, date
+
+from django.db import IntegrityError, transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.timezone import now
+from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.dateparse import parse_date
+from django.http import HttpResponse
+from django.db.models.functions import ExtractMonth
+from django.views.decorators.http import require_POST
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
+from django.core.paginator import Paginator
+
+from .utils import crear_mantenimiento_desde_calendario
 from .forms import *
 from swap_home.models import *
 from swap_informatica.models import *
@@ -6,20 +29,7 @@ from swap_porteria.models import *
 from swap_serviciotecnico.models import *
 from swap_tecnico.models import *
 from swap_tthh.models import *
-from datetime import timedelta
-from django.utils.timezone import now
-from django.db.models import Q
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.http import JsonResponse
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils.dateparse import parse_date
-from django.http import HttpResponse
-import openpyxl
-from django.db.models.functions import ExtractMonth
-from django.views.decorators.http import require_POST
-from .utils import crear_mantenimiento_desde_calendario
+
 
 
 # --- Proteger de otros Usuarios Logeados ---
@@ -28,52 +38,30 @@ def is_swap_informatica(user):
 
 
 # ==================== VISTA PRINCIPAL ====================
-@login_required
-@user_passes_test(is_swap_informatica)
-def informatica(request):
-    tarea = Tareas.objects.filter(Q(tarea_dpto__dpto_nombre="Informatica") | Q(tarea_dpto__dpto_nombre="General"))
-    tarea_dia = Tareadia.objects.all()
-    tarea_estado = Tareaestado.objects.exclude(te_estado__iexact="General")
-    agregar_form = TareaForm()
-    eliminar_form = EliminarTareaForm()
+class InformaticaDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'informatica.html'
+    
+    def test_func(self):
+        return is_swap_informatica(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Aquí puedes agregar métricas, contadores, etc si quieres
+        return context
 
-    if request.method == "POST":
-        if "agregar_tarea" in request.POST:
-            agregar_form = TareaForm(request.POST)  
-            if agregar_form.is_valid():
-                tarea = agregar_form.save(commit=False)
-                departamento_informatica = Departamentos.objects.get(dpto_nombre="Informatica")
-                tarea.tarea_dpto = departamento_informatica
-                tarea.save()
-                return redirect("informatica")
-        elif "eliminar_tarea" in request.POST:
-            eliminar_form = EliminarTareaForm(request.POST)
-            if eliminar_form.is_valid():
-                tarea = eliminar_form.cleaned_data["tarea_titulo"]
-                tarea.delete()
-                return redirect("informatica")
-
-    return render(request, 'informatica.html', {
-        'tarea': tarea,
-        'dia': tarea_dia,
-        'estado': tarea_estado,
-        'agregar_form': agregar_form,
-        'eliminar_form': eliminar_form,
-    })
-
-@login_required
-@user_passes_test(is_swap_informatica)
-def actualizar_estado(request, tarea_id):
-    if request.method == "POST":
-        tarea = get_object_or_404(Tareas, pk=tarea_id)
-        # Obtener el nuevo estado desde el formulario
-        nuevo_estado = request.POST.get("estado")
-        # Buscar el estado en la base de datos
-        estado_obj = get_object_or_404(Tareaestado, te_estado=nuevo_estado)
-        # Actualizar la tarea con el nuevo estado
-        tarea.tarea_te = estado_obj
-        tarea.save()
-    return redirect("informatica")  # Redirige a la misma página después de actualizar
+# @login_required
+# @user_passes_test(is_swap_informatica)
+# def actualizar_estado(request, tarea_id):
+#     if request.method == "POST":
+#         tarea = get_object_or_404(Tareas, pk=tarea_id)
+#         # Obtener el nuevo estado desde el formulario
+#         nuevo_estado = request.POST.get("estado")
+#         # Buscar el estado en la base de datos
+#         estado_obj = get_object_or_404(Tareaestado, te_estado=nuevo_estado)
+#         # Actualizar la tarea con el nuevo estado
+#         tarea.tarea_te = estado_obj
+#         tarea.save()
+#     return redirect("informatica")  # Redirige a la misma página después de actualizar
 # ==================== VISTA PRINCIPAL ====================
 
 
@@ -109,314 +97,659 @@ def backups(request):
         'form3': form3,
     })
 
-# ACTUALIZAR ESTADO BACKUP SEMANAL
+
+
+def week_start_of(date_obj: datetime.date) -> datetime.date:
+    """Lunes ISO de la semana para una fecha."""
+    return date_obj - datetime.timedelta(days=date_obj.weekday())
+
+
 @login_required
 @user_passes_test(is_swap_informatica)
-def actualizar_estado_bk(request, bp_id):
-    if request.method == "POST":
-        bp = get_object_or_404(Backupsproceso, pk=bp_id)
+def backups_semanales(request):
+    """
+    ÚNICA VISTA (un endpoint):
+    - GET: muestra programación semanal y checklist de guardado
+    - POST: acciones por 'action':
+        * update_estado
+        * add_programado
+        * guardar_realizados
 
-        nuevo_estado = request.POST.get("bkestado")
+    Reglas:
+    - Reset semanal persistente: primera visita de una nueva semana hace reset a Pendiente⏳
+    - Guardar hechos: 1 registro por (bp, week_start) -> NO duplica en la semana
+    - bh_fecha = fecha real del día que guardas
+    - Estado Finalizado✅ se mantiene durante la semana (hasta el reset)
+    """
 
-        estado_obj = get_object_or_404(Backupsestado, be_estado=nuevo_estado)
+    hoy = timezone.localdate()
+    week_start = week_start_of(hoy)
+    week_end = week_start + datetime.timedelta(days=6)
 
-        bp.bp_be = estado_obj
-        bp.save()
-    return redirect("backups")
+    # =========================
+    # 1) RESET SEMANAL PERSISTENTE
+    # =========================
+    with transaction.atomic():
+        control = BackupsSemanaControl.objects.select_for_update().first()
 
-#   AÑADIR BACKUPS SEMANALES
-@login_required
-@user_passes_test(is_swap_informatica)
-def add_backup(request):
-    if request.method == "POST":
-        form = BackupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("backups")
-    return redirect("backups")
-
-# DARLE/ELIMINAR UN BACKUP A UN FUNCIONARIO CON EQUIPO
-@login_required
-@user_passes_test(is_swap_informatica)
-def add_bk(request):
-    if request.method == "POST":
-        form2 = BackupsProcesoForm(request.POST)
-        if form2.is_valid():
-            form2.save()
-            return redirect("backups")
+        # Primera vez: crea control con la semana actual, sin resetear nada
+        if not control:
+            BackupsSemanaControl.objects.create(last_week_start=week_start)
         else:
-            return redirect("backups")
-    else:
-        form2 = BackupsProcesoForm(request.POST)
-    return redirect("backups")
+            # Si cambió la semana, resetea
+            if control.last_week_start < week_start:
+                estado_pendiente = get_object_or_404(Backupsestado, be_estado="Pendiente⏳")
+
+                # Resetea activos + también los que estén NULL
+                Backupsproceso.objects.filter(bp_be__isnull=True).update(bp_be=estado_pendiente)
+                Backupsproceso.objects.exclude(bp_be__be_estado__icontains="inactivo").update(bp_be=estado_pendiente)
+
+                control.last_week_start = week_start
+                control.save(update_fields=["last_week_start"])
+
+                messages.success(request, "🔄 Nueva semana iniciada: todos los backups vuelven a Pendiente⏳.")
+
+    # =========================
+    # 2) POST ACTIONS
+    # =========================
+    if request.method == "POST":
+        action = (request.POST.get("action") or "").strip()
+
+        # ---- A) Cambiar estado ----
+        if action == "update_estado":
+            bp_id = request.POST.get("bp_id")
+            nuevo_estado = request.POST.get("bkestado")
+
+            if not bp_id or not nuevo_estado:
+                messages.error(request, "❌ Faltan datos para actualizar el estado.")
+                return redirect("backups-semanales")
+
+            bp = get_object_or_404(Backupsproceso, pk=bp_id)
+            estado_obj = get_object_or_404(Backupsestado, be_estado=nuevo_estado)
+
+            bp.bp_be = estado_obj
+            bp.save(update_fields=["bp_be"])
+
+            messages.success(request, f"✅ Estado actualizado a {nuevo_estado}.")
+            return redirect("backups-semanales")
+
+        # ---- B) Agregar programado ----
+        if action == "add_programado":
+            form = BackupForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "✅ Backup semanal agregado correctamente.")
+            else:
+                messages.error(request, "❌ Error al agregar backup semanal.")
+            return redirect("backups-semanales")
+
+        # ---- C) Guardar realizados (NO duplica por semana) ----
+        if action == "guardar_realizados":
+            bp_ids = request.POST.getlist("backups_realizados")
+
+            if not bp_ids:
+                messages.warning(request, "⚠️ No seleccionaste ningún backup.")
+                return redirect("backups-semanales")
+
+            estado_finalizado = get_object_or_404(Backupsestado, be_estado="Finalizado✅")
+
+            guardados = 0
+            ya_existian = 0
+
+            with transaction.atomic():
+                # Carga en bulk para evitar N queries
+                procesos = (
+                    Backupsproceso.objects
+                    .select_for_update()
+                    .filter(bp_id__in=bp_ids)
+                )
+                procesos_por_id = {p.bp_id: p for p in procesos}
+
+                for raw_id in bp_ids:
+                    try:
+                        bp_id_int = int(raw_id)
+                    except (TypeError, ValueError):
+                        continue
+
+                    bp = procesos_por_id.get(bp_id_int)
+                    if not bp:
+                        continue
+
+                    # Inserta y si ya existe, no duplica (UniqueConstraint)
+                    try:
+                        Backupshechos.objects.create(
+                            bh_bp=bp,
+                            bh_fecha=hoy,
+                            bh_week_start=week_start,
+                        )
+                        guardados += 1
+                    except IntegrityError:
+                        ya_existian += 1
+
+                    # Mantener finalizado durante la semana
+                    bp.bp_be = estado_finalizado
+                    bp.save(update_fields=["bp_be"])
+
+            if guardados:
+                messages.success(request, f"✅ {guardados} guardado(s) como hechos el {hoy.strftime('%d/%m/%Y')}.")
+            if ya_existian:
+                messages.info(request, f"📌 {ya_existian} ya estaban guardados esta semana (no se duplicaron).")
+
+            return redirect("backups-semanales")
+
+        messages.error(request, "❌ Acción no válida.")
+        return redirect("backups-semanales")
+
+    # =========================
+    # 3) GET DATA (render)
+    # =========================
+    bkdia = Backupsdia.objects.all().order_by("bd_id")
+    bkestado = Backupsestado.objects.exclude(be_estado__icontains="inactivo")
+
+    bkproceso_qs = (
+        Backupsproceso.objects
+        .select_related("bp_bd", "bp_b", "bp_be", "bp_b__b_fce")
+        .exclude(bp_be__be_estado__icontains="inactivo")
+        .order_by("bp_bd__bd_id", "bp_b__b_nombre")
+    )
+
+    # Hechos de hoy
+    hechos_hoy = (
+        Backupshechos.objects
+        .filter(bh_fecha=hoy)
+        .select_related("bh_bp", "bh_bp__bp_bd", "bh_bp__bp_b", "bh_bp__bp_b__b_fce")
+        .order_by("bh_bp__bp_bd__bd_id")
+    )
+
+    # Hechos de la semana
+    hechos_semana_ids = set(
+        Backupshechos.objects
+        .filter(bh_week_start=week_start)
+        .values_list("bh_bp_id", flat=True)
+    )
+
+    # Agrupar backups por día (para no hacer doble loop en template)
+    proceso_por_dia = {d.bd_dia: [] for d in bkdia}
+    for p in bkproceso_qs:
+        proceso_por_dia.setdefault(p.bp_bd.bd_dia, []).append(p)
+
+    context = {
+        "hoy": hoy,
+        "week_start": week_start,
+        "week_end": week_end,
+
+        "bkdia": bkdia,
+        "bkestado": bkestado,
+
+        "bkproceso": bkproceso_qs,                 # por si quieres métricas
+        "proceso_por_dia": proceso_por_dia,        # <-- usado por el template
+
+        "hechos_hoy": hechos_hoy,
+        "hechos_semana_ids": hechos_semana_ids,
+
+        "form": BackupForm(),
+    }
+    return render(request, "backups/backups_semanales.html", context)
+
+
+
+# ACTUALIZAR ESTADO BACKUP SEMANAL
+# @login_required
+# @user_passes_test(is_swap_informatica)
+# def actualizar_estado_bk(request, bp_id):
+#     if request.method == "POST":
+#         bp = get_object_or_404(Backupsproceso, pk=bp_id)
+
+#         nuevo_estado = request.POST.get("bkestado")
+
+#         estado_obj = get_object_or_404(Backupsestado, be_estado=nuevo_estado)
+
+#         bp.bp_be = estado_obj
+#         bp.save()
+#     return redirect("backups")
+
+# #   AÑADIR BACKUPS SEMANALES
+# @login_required
+# @user_passes_test(is_swap_informatica)
+# def add_backup(request):
+#     if request.method == "POST":
+#         form = BackupForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("backups")
+#     return redirect("backups")
+
+
+
+# # DARLE/ELIMINAR UN BACKUP A UN FUNCIONARIO CON EQUIPO
 
 @login_required
 @user_passes_test(is_swap_informatica)
-def delete_bk(request):
+def bk_asignacion(request):
+    """
+    Gestión de Backups:
+    - Listado de backups activos (paginado)
+    - Listado de funcionarios con equipo SIN backup (paginado)
+    - Form para asignar backup
+    - Form para desactivar backup
+    """
+
+    # =========================
+    # 1) LISTADO DE BACKUPS ACTIVOS (PAGINADO)
+    # =========================
+    backups_qs = (
+        Backups.objects
+        .filter(b_estado="activo")
+        .select_related("b_fce", "b_disco")
+        .order_by("-b_id")
+    )
+
+    page_backups = request.GET.get("page", 1)
+    paginator_backups = Paginator(backups_qs, 10)
+    backups = paginator_backups.get_page(page_backups)
+
+    # =========================
+    # 2) FUNCIONARIOS CON EQUIPO SIN BACKUP (CONTEO REAL + PAGINACIÓN)
+    # =========================
+    fce_con_backup_ids = (
+        Backups.objects
+        .filter(b_estado="activo")
+        .values_list("b_fce_id", flat=True)
+        .distinct()
+    )
+
+    fce_sin_backup_qs = (
+        Funcionarioconequipo.objects
+        .filter(fce_estado="activo")
+        .exclude(fce_id__in=fce_con_backup_ids)
+        .select_related("fce_fun")
+        .order_by("fce_fun")  # si quieres por nombre real, cámbialo al campo exacto
+    )
+
+    total_sin_backup = fce_sin_backup_qs.count()
+
+    page_sin = request.GET.get("page_sin", 1)
+    paginator_sin = Paginator(fce_sin_backup_qs, 10)
+    funcionarios_sin_backup = paginator_sin.get_page(page_sin)
+
+    # =========================
+    # 3) FORMULARIOS
+    # =========================
+    form2 = BackupsProcesoForm()
+
+    # para el select de "Desactivar Backup": necesitamos TODOS (o al menos activos)
+    # pero NO debe depender del paginator "backups" (solo trae 10)
+    backups_activos_all = backups_qs.only("b_id", "b_nombre", "b_fce_id", "b_disco_id")
+
+    # =========================
+    # 4) POST: ASIGNAR / DESACTIVAR
+    # =========================
     if request.method == "POST":
-        bk_id = request.POST.get("bk_id")
-        bk = get_object_or_404(Backups, pk=bk_id)
-        try:
-            bk.b_estado = "inactivo"
-            bk.save()
-        except:
-            return redirect("backups")
-        return redirect("backups")
-    return redirect("backups")
+        if "add_bk" in request.POST:
+            form2 = BackupsProcesoForm(request.POST)
+            if form2.is_valid():
+                obj = form2.save(commit=False)
+                # fuerza estado activo si tu form no lo hace
+                obj.b_estado = "activo"
+                obj.save()
+                messages.success(request, "✅ Backup asignado exitosamente")
+                return redirect("bk-asignacion")
+            else:
+                messages.error(request, "❌ Error al asignar backup. Verifica los datos.")
+
+        elif "delete_bk" in request.POST:
+            bk_id = request.POST.get("bk_id")
+            bk = get_object_or_404(Backups, pk=bk_id)
+            try:
+                bk.b_estado = "inactivo"
+                bk.save(update_fields=["b_estado"])
+                messages.success(request, "✅ Backup desactivado exitosamente")
+            except Exception:
+                messages.error(request, "❌ Error al desactivar el backup")
+            return redirect("bk-asignacion")
+
+    # =========================
+    # 5) CONTEXT
+    # =========================
+    context = {
+        "backups": backups,
+        "paginator_backups": paginator_backups,
+
+        "funcionarios_sin_backup": funcionarios_sin_backup,
+        "paginator_sin": paginator_sin,
+        "total_sin_backup": total_sin_backup,
+
+        "form2": form2,
+        "backups_activos_all": backups_activos_all,
+    }
+
+    return render(request, "backups/gestion_backups.html", context)
+
+
+
+
+
+
 # DARLE/ELIMINAR UN BACKUP A UN FUNCIONARIO CON EQUIPO
 
 # AÑADIR/ELIMINAR FUNCIONARIO CON EQUIPO
-@login_required
-@user_passes_test(is_swap_informatica)
-def add_fce(request):
-    if request.method == "POST":
-        form3 = fceForm(request.POST, request.FILES)
-        if form3.is_valid():
-            form3.save()
-        else:
-            return redirect("backups")
-    else:
-        form3 = fceForm(request.POST, request.FILES)
-    return redirect("backups")
+
 
 @login_required
 @user_passes_test(is_swap_informatica)
-def delete_fce(request):
+def bk_configuracion(request):
+    """Configuración de Equipos - Funcionarios con Equipo y Funcionarios con paginación"""
+    
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    
+    # Obtener datos
+    fce_list = Funcionarioconequipo.objects.filter(fce_estado='activo').order_by('fce_fun')
+    funcionarios_list = Funcionarios.objects.filter(fun_estado='activo').order_by('fun_id')
+    
+    # Paginación para Funcionarios con Equipo
+    page_fce = request.GET.get('page_fce', 1)
+    paginator_fce = Paginator(fce_list, 10)  # 10 items por página
+    try:
+        fce = paginator_fce.page(page_fce)
+    except PageNotAnInteger:
+        fce = paginator_fce.page(1)
+    except EmptyPage:
+        fce = paginator_fce.page(paginator_fce.num_pages)
+    
+    # Paginación para Funcionarios
+    page_func = request.GET.get('page_func', 1)
+    paginator_func = Paginator(funcionarios_list, 10)  # 10 items por página
+    try:
+        funcionarios = paginator_func.page(page_func)
+    except PageNotAnInteger:
+        funcionarios = paginator_func.page(1)
+    except EmptyPage:
+        funcionarios = paginator_func.page(paginator_func.num_pages)
+    
+    # Forms
+    form3 = fceForm()
+    
+    # Procesar formularios
     if request.method == "POST":
-        fce_id = request.POST.get("fce_id")
-        fce = get_object_or_404(Funcionarioconequipo, pk=fce_id)
-        try:
-            fce.fce_estado = "inactivo"
-            fce.save()
-        except:
-            return redirect("backups")
-        return redirect("backups")
-    return redirect("backups")
+        if "add_fce" in request.POST:
+            form3 = fceForm(request.POST, request.FILES)
+            if form3.is_valid():
+                form3.save()
+                messages.success(request, '✅ Funcionario con Equipo agregado exitosamente')
+                return redirect('config-equipos')
+            else:
+                messages.error(request, '❌ Error al agregar. Verifica los datos.')
+        
+        elif "delete_fce" in request.POST:
+            fce_id = request.POST.get("fce_id")
+            fce_obj = get_object_or_404(Funcionarioconequipo, pk=fce_id)
+            try:
+                fce_obj.fce_estado = "inactivo"
+                fce_obj.save()
+                messages.success(request, '✅ Registro desactivado exitosamente')
+            except:
+                messages.error(request, '❌ Error al desactivar el registro')
+            return redirect('config-equipos')
+    
+    context = {
+        'fce': fce,
+        'funcionarios': funcionarios,
+        'form3': form3,
+        'paginator_fce': paginator_fce,
+        'paginator_func': paginator_func,
+    }
+    return render(request, 'backups/configuracion_de_equipos.html', context)
+
 
 # EXXCEEEELLL
+
+
 @login_required
 @user_passes_test(is_swap_informatica)
 def exportar_excel_backups(request):
-    fecha_filtro = request.GET.get('fecha', '').strip()
-    fecha_desde = request.GET.get('fecha_desde', '').strip()
-    fecha_hasta = request.GET.get('fecha_hasta', '').strip()
-    backup_filtro = request.GET.get('backup', '').strip()
+    # =========================
+    # 1) FILTROS (IGNORA PAGINACIÓN)
+    # =========================
+    fecha_filtro  = (request.GET.get("fecha") or "").strip()
+    fecha_desde   = (request.GET.get("fecha_desde") or "").strip()
+    fecha_hasta   = (request.GET.get("fecha_hasta") or "").strip()
+    backup_filtro = (request.GET.get("backup") or "").strip()
 
-    if backup_filtro.isdigit():
-        backup_filtro = int(backup_filtro)
-    else:
-        backup_filtro = None
+    backup_id = int(backup_filtro) if backup_filtro.isdigit() else None
 
     filtros = Q()
 
     if fecha_filtro:
-        filtros &= Q(bh_fecha=fecha_filtro)
+        d = parse_date(fecha_filtro)
+        if d:
+            filtros &= Q(bh_fecha=d)
     else:
         if fecha_desde:
-            filtros &= Q(bh_fecha__gte=parse_date(fecha_desde))
+            d = parse_date(fecha_desde)
+            if d:
+                filtros &= Q(bh_fecha__gte=d)
         if fecha_hasta:
-            filtros &= Q(bh_fecha__lte=parse_date(fecha_hasta))
+            d = parse_date(fecha_hasta)
+            if d:
+                filtros &= Q(bh_fecha__lte=d)
 
-    if backup_filtro is not None:
-        filtros &= Q(bh_bp__bp_b_id=backup_filtro)
+    if backup_id is not None:
+        filtros &= Q(bh_bp__bp_b_id=backup_id)
 
-    backups = Backupshechos.objects.filter(filtros).order_by('-bh_fecha')
+    # ✅ trae TODOS los registros filtrados (sin paginación)
+    qs = Backupshechos.objects.filter(filtros).order_by("-bh_fecha", "-bh_id")
 
-    # Crear el Excel
+    # =========================
+    # 2) EXCEL
+    # =========================
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Backups"
 
-    # ====================
-    # ESTILOS AVANZADOS
-    # ====================
-    from openpyxl.styles import (
-        Font, Border, Side, 
-        PatternFill, Alignment,
-        NamedStyle
-    )
-    
-    # Estilo para el encabezado
-    header_style = NamedStyle(name="header_style")
-    header_style.font = Font(
-        name='Arial',
-        size=12,
-        bold=True,
-        color="FFFFFF"  # Texto blanco
-    )
-    header_style.fill = PatternFill(
-        start_color="4F81BD",  # Azul corporativo
-        end_color="4F81BD",
-        fill_type="solid"
-    )
+    # =========================
+    # 3) ESTILOS
+    # =========================
+    def add_style(style: NamedStyle):
+        existing = {s.name for s in wb.named_styles if hasattr(s, "name")}
+        if style.name not in existing:
+            wb.add_named_style(style)
+
+    # Header
+    header_style = NamedStyle(name="header_style_bk")
+    header_style.font = Font(name="Arial", size=12, bold=True, color="FFFFFF")
+    header_style.fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
     header_style.border = Border(
-        left=Side(style='medium'),
-        right=Side(style='medium'),
-        top=Side(style='medium'),
-        bottom=Side(style='medium')
+        left=Side(style="medium"),
+        right=Side(style="medium"),
+        top=Side(style="medium"),
+        bottom=Side(style="medium"),
     )
-    header_style.alignment = Alignment(
-        horizontal='center',
-        vertical='center',
-        wrap_text=True
-    )
-    
-    # Estilo para celdas de datos
-    data_style = NamedStyle(name="data_style")
-    data_style.font = Font(
-        name='Calibri',
-        size=11,
-        color="000000"
-    )
+    header_style.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    # Data normal
+    data_style = NamedStyle(name="data_style_bk")
+    data_style.font = Font(name="Calibri", size=11, color="000000")
     data_style.border = Border(
-        left=Side(style='thin'),
-        right=Side(style='thin'),
-        top=Side(style='thin'),
-        bottom=Side(style='thin')
+        left=Side(style="thin"),
+        right=Side(style="thin"),
+        top=Side(style="thin"),
+        bottom=Side(style="thin"),
     )
-    data_style.alignment = Alignment(
-        vertical='center'
-    )
-    
-    # Estilo alterno para filas (banding)
-    alternate_style = NamedStyle(name="alternate_style")
-    alternate_style.fill = PatternFill(
-        start_color="DCE6F1",  # Azul muy claro
-        end_color="DCE6F1",
-        fill_type="solid"
-    )
-    alternate_style.font = Font(
-        name='Calibri',
-        size=11
-    )
+    data_style.alignment = Alignment(vertical="center")
+
+    # Data alternado
+    alternate_style = NamedStyle(name="alternate_style_bk")
+    alternate_style.fill = PatternFill(start_color="DCE6F1", end_color="DCE6F1", fill_type="solid")
+    alternate_style.font = Font(name="Calibri", size=11, color="000000")
     alternate_style.border = data_style.border
     alternate_style.alignment = data_style.alignment
-    
-    # Añadir estilos al workbook
-    wb.add_named_style(header_style)
-    wb.add_named_style(data_style)
-    wb.add_named_style(alternate_style)
-    
-    # ====================
-    # ENCABEZADOS
-    # ====================
-    headers = ["ID", "Fecha", "Backup"]
+
+    # ✅ Estilos de FECHA (CLAVE: incluyen number_format y no se pisan)
+    data_date_style = NamedStyle(name="data_date_style_bk")
+    data_date_style.font = data_style.font
+    data_date_style.border = data_style.border
+    data_date_style.alignment = data_style.alignment
+    data_date_style.number_format = "dd/mm/yyyy"
+
+    alternate_date_style = NamedStyle(name="alternate_date_style_bk")
+    alternate_date_style.fill = alternate_style.fill
+    alternate_date_style.font = alternate_style.font
+    alternate_date_style.border = alternate_style.border
+    alternate_date_style.alignment = alternate_style.alignment
+    alternate_date_style.number_format = "dd/mm/yyyy"
+
+    for st in (header_style, data_style, alternate_style, data_date_style, alternate_date_style):
+        add_style(st)
+
+    # =========================
+    # 4) ENCABEZADOS
+    # =========================
+    headers = ["ID", "Fecha (backup)", "Backup"]
     ws.append(headers)
-    
-    # Aplicar estilo a los encabezados
-    for col in range(1, len(headers) + 1):
-        cell = ws.cell(row=1, column=col)
-        cell.style = header_style
-        # Congelar encabezados
-        ws.freeze_panes = "A2"
-    
-    # ====================
-    # DATOS
-    # ====================
-    for row_num, b in enumerate(backups, start=2):
-        ws.cell(row=row_num, column=1, value=b.bh_id)
-        ws.cell(row=row_num, column=2, 
-               value=b.bh_fecha.strftime('%d/%m/%Y') if b.bh_fecha else '')
-        ws.cell(row=row_num, column=3, value=str(b.bh_bp))
-        
-        # Aplicar estilos alternados
-        for col in range(1, len(headers) + 1):
-            cell = ws.cell(row=row_num, column=col)
-            if row_num % 2 == 0:
-                cell.style = data_style
-            else:
-                cell.style = alternate_style
-    
-    # ====================
-    # FORMATO AVANZADO
-    # ====================
-    # Ajustar anchos de columnas con límites
-    column_widths = {
-        'A': 10,  # ID
-        'B': 15,  # Fecha
-        'C': 40   # Backup
-    }
-    
-    for col, width in column_widths.items():
-        ws.column_dimensions[col].width = width
-    
-    # Añadir filtros
-    ws.auto_filter.ref = f"A1:C{len(backups)+1}"
-    
-    # Añadir formato condicional para fechas futuras (opcional)
-    from openpyxl.formatting.rule import CellIsRule
+    for col in range(1, 4):
+        ws.cell(row=1, column=col).style = header_style
+
+    ws.freeze_panes = "A2"
+
+    # =========================
+    # 5) DATOS
+    # =========================
+    def as_date(value):
+        if not value:
+            return None
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, date):
+            return value
+        if isinstance(value, str):
+            return parse_date(value)
+        return None
+
+    # Evaluamos una vez (también evita qs.count() extra)
+    rows = list(qs)
+
+    for i, b in enumerate(rows, start=2):
+        even = (i % 2 == 0)
+
+        # ID
+        c_id = ws.cell(row=i, column=1, value=b.bh_id)
+        c_id.style = data_style if even else alternate_style
+
+        # Fecha real del backup (bh_fecha)
+        fecha_real = as_date(b.bh_fecha)
+        c_date = ws.cell(row=i, column=2, value=fecha_real)
+        c_date.style = data_date_style if even else alternate_date_style
+        # (opcional) refuerzo: si hay fecha, marcar como tipo fecha
+        if fecha_real is not None:
+            c_date.data_type = "d"
+
+        # Backup
+        c_bk = ws.cell(row=i, column=3, value=str(b.bh_bp) if b.bh_bp else "(sin relación)")
+        c_bk.style = data_style if even else alternate_style
+
+    # =========================
+    # 6) FORMATO / AUTO FILTER
+    # =========================
+    ws.column_dimensions["A"].width = 10
+    ws.column_dimensions["B"].width = 18
+    ws.column_dimensions["C"].width = 60
+
+    last_row = len(rows) + 1
+    ws.auto_filter.ref = f"A1:C{max(last_row, 2)}"
+
+    # ✅ Condicional solo si querés marcar FUTURAS
     future_date_rule = CellIsRule(
-        operator='lessThan',
-        formula=['TODAY()'],
+        operator="greaterThan",
+        formula=["TODAY()"],
         stopIfTrue=True,
-        font=Font(color="FF0000", italic=True)  # Rojo para fechas futuras
+        font=Font(color="FF0000", italic=True),
     )
-    ws.conditional_formatting.add(f'B2:B{len(backups)+1}', future_date_rule)
-    
-    # Crear respuesta
-    # Respuesta HTTP CORRECTA
+    ws.conditional_formatting.add(f"B2:B{max(last_row, 2)}", future_date_rule)
+
+    # =========================
+    # 7) RESPUESTA
+    # =========================
     response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response['Content-Disposition'] = 'attachment; filename="backups_report.xlsx"'
+    response["Content-Disposition"] = 'attachment; filename="backups_report.xlsx"'
     wb.save(response)
     return response
+
+
+
+
+
+
+
 
 # lleva a otra pagina de backups hechos
 @login_required
 @user_passes_test(is_swap_informatica)
-def bkhechos(request):
-    # Limpiar filtros
-    if 'limpiar' in request.GET:
-        return redirect('bk-hechos')
+def backups_hechos(request):
+    # ===== POST: eliminar =====
+    if request.method == "POST":
+        delete_ids = request.POST.getlist("delete_ids")
+        if delete_ids:
+            Backupshechos.objects.filter(bh_id__in=delete_ids).delete()
 
-    fecha_filtro = request.GET.get('fecha', '').strip()
-    fecha_desde = request.GET.get('fecha_desde', '').strip()
-    fecha_hasta = request.GET.get('fecha_hasta', '').strip()
-    backup_filtro = request.GET.get('backup', '').strip()
+        # Mantener filtros/página al volver
+        redirect_url = request.POST.get("redirect_to") or "bk-hechos"
+        return redirect(redirect_url)
 
-    # Validar backup
-    if backup_filtro.isdigit():
-        backup_filtro = int(backup_filtro)
-    else:
-        backup_filtro = None
+    # ===== GET: limpiar =====
+    if "limpiar" in request.GET:
+        return redirect("bk-hechos")
+
+    # ===== GET: filtros =====
+    fecha_filtro  = (request.GET.get("fecha") or "").strip()
+    fecha_desde   = (request.GET.get("fecha_desde") or "").strip()
+    fecha_hasta   = (request.GET.get("fecha_hasta") or "").strip()
+    backup_filtro = (request.GET.get("backup") or "").strip()
+
+    backup_id = int(backup_filtro) if backup_filtro.isdigit() else None
 
     filtros = Q()
 
-    # Si se especifica fecha exacta, tiene prioridad
+    # Fecha exacta tiene prioridad
     if fecha_filtro:
-        filtros &= Q(bh_fecha=fecha_filtro)
+        filtros &= Q(bh_fecha=parse_date(fecha_filtro))
     else:
         if fecha_desde:
             filtros &= Q(bh_fecha__gte=parse_date(fecha_desde))
         if fecha_hasta:
             filtros &= Q(bh_fecha__lte=parse_date(fecha_hasta))
 
-    # Filtro por backup
-    if backup_filtro is not None:
-        filtros &= Q(bh_bp__bp_b_id=backup_filtro)
+    if backup_id is not None:
+        filtros &= Q(bh_bp__bp_b_id=backup_id)
 
-    bkdone = Backupshechos.objects.filter(filtros).order_by('-bh_fecha')
-    backups = Backups.objects.all()
+    # Query base
+    qs = Backupshechos.objects.filter(filtros).order_by("-bh_fecha", "-bh_id")
 
-    return render(request, "bkhechos.html", {
-        'bkdone': bkdone,
-        'backups': backups,
-        'fecha_filtro': fecha_filtro,
-        'fecha_desde': fecha_desde,
-        'fecha_hasta': fecha_hasta,
-        'backup_filtro': str(backup_filtro) if backup_filtro is not None else '',
+    # Paginación (ajusta a tu gusto)
+    per_page = 25
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get("page") or 1
+    page_obj = paginator.get_page(page_number)
+
+    # Esto para el select del filtro
+    backups = Backups.objects.all().order_by("b_id")
+
+    return render(request, "backups/backups_hechos.html", {
+        # 👇 ahora iteras page_obj, no qs
+        "page_obj": page_obj,
+        "bkdone": page_obj.object_list,  # por compatibilidad si ya lo usas
+        "backups": backups,
+
+        "fecha_filtro": fecha_filtro,
+        "fecha_desde": fecha_desde,
+        "fecha_hasta": fecha_hasta,
+        "backup_filtro": str(backup_id) if backup_id is not None else "",
+
+        "per_page": per_page,
     })
 
-@csrf_exempt
-@login_required
-@user_passes_test(is_swap_informatica)
-def eliminar_backups(request):
-    if request.method == "POST":
-        delete_ids = request.POST.getlist('delete_ids')
-        if delete_ids:
-            Backupshechos.objects.filter(bh_id__in=delete_ids).delete()
-    return redirect('bk-hechos')
+
 
 # ayuda a agregar los backupshechos
 #@login_required

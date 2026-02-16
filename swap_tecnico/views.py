@@ -1,4 +1,10 @@
+
 from django.shortcuts import render,redirect
+from datetime import datetime
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView
+
 from swap_home.models import *
 from swap_informatica.models import *
 from swap_porteria.models import *
@@ -6,8 +12,6 @@ from swap_serviciotecnico.models import *
 from swap_tecnico.models import *
 from swap_tthh.models import *
 from .forms import *
-from datetime import datetime
-from django.contrib.auth.decorators import login_required, user_passes_test
 # Create your views here.
 
 # --- Proteger de otros Usuarios Logeados ---
@@ -62,39 +66,72 @@ def cargar_trabajo(request):
     return render(request, "cargar_trabajo.html", {"form": form})
 
 # Se ve los trabajos realizados
-@login_required
-@user_passes_test(is_swap_tecnico)
-def verct(request):
-    user = request.user
-    nombre_tecnico = f"{user.first_name} {user.last_name}"
-    primer_nombre = user.first_name.split(" ")[0]
-    primer_apellido = user.last_name.split(" ")[0]
-    nombre_simple = f"{primer_nombre} {primer_apellido}"
-    # Parámetros de fecha
-    fecha = request.GET.get("fecha")
-    fecha_desde = request.GET.get("fecha_desde")
-    fecha_hasta = request.GET.get("fecha_hasta")
+class VerCTListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name = "verct.html"
+    context_object_name = "trabajos"
+    paginate_by = 25  # ajusta a gusto
 
-    # Base queryset filtrado por el técnico actual
-    trabajos = Tecnicos.objects.filter(tec_nombre=nombre_tecnico)
+    def test_func(self):
+        return is_swap_tecnico(self.request.user)
 
-    # Aplicar filtros de fecha
-    if fecha:
-        trabajos = trabajos.filter(tec_fecha=fecha)
+    def _nombre_tecnico(self):
+        user = self.request.user
+        nombre_tecnico = f"{(user.first_name or '').strip()} {(user.last_name or '').strip()}".strip()
+        primer_nombre = (user.first_name or "").split(" ")[0].strip()
+        primer_apellido = (user.last_name or "").split(" ")[0].strip()
+        nombre_simple = f"{primer_nombre} {primer_apellido}".strip()
+        return nombre_tecnico, nombre_simple
 
-    if fecha_desde:
-        trabajos = trabajos.filter(tec_fecha__gte=fecha_desde)
+    def get_queryset(self):
+        nombre_tecnico, nombre_simple = self._nombre_tecnico()
 
-    if fecha_hasta:
-        trabajos = trabajos.filter(tec_fecha__lte=fecha_hasta)
+        # Base queryset: primero intenta match exacto (más rápido)
+        qs = Tecnicos.objects.all()
+        if nombre_tecnico:
+            qs_exact = qs.filter(tec_nombre=nombre_tecnico)
+            qs = qs_exact if qs_exact.exists() else qs.filter(tec_nombre__icontains=nombre_simple)
+        else:
+            # si el user no tiene nombre/apellido, no devolvemos nada
+            return Tecnicos.objects.none()
 
-    return render(request, "verct.html", {
-        "trabajos": trabajos,
-        "nombre_tecnico": nombre_tecnico,
-        "fecha_actual": fecha or "",
-        "fecha_desde": fecha_desde or "",
-        "fecha_hasta": fecha_hasta or "",
-        "nombre_simple":nombre_simple,
-    })
+        # filtros de fecha
+        fecha = (self.request.GET.get("fecha") or "").strip()
+        fecha_desde = (self.request.GET.get("fecha_desde") or "").strip()
+        fecha_hasta = (self.request.GET.get("fecha_hasta") or "").strip()
+
+        # prioridad: fecha exacta > rango
+        if fecha:
+            qs = qs.filter(tec_fecha=fecha)
+        else:
+            if fecha_desde:
+                qs = qs.filter(tec_fecha__gte=fecha_desde)
+            if fecha_hasta:
+                qs = qs.filter(tec_fecha__lte=fecha_hasta)
+
+        # orden estable
+        return qs.order_by("-tec_fecha", "-tec_id")
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        nombre_tecnico, nombre_simple = self._nombre_tecnico()
+
+        ctx["nombre_tecnico"] = nombre_tecnico
+        ctx["nombre_simple"] = nombre_simple
+
+        # valores actuales (para mantener inputs)
+        ctx["fecha_actual"] = (self.request.GET.get("fecha") or "").strip()
+        ctx["fecha_desde"] = (self.request.GET.get("fecha_desde") or "").strip()
+        ctx["fecha_hasta"] = (self.request.GET.get("fecha_hasta") or "").strip()
+
+        # para construir links de paginación conservando filtros
+        q = self.request.GET.copy()
+        q.pop("page", None)
+        ctx["querystring_sin_page"] = q.urlencode()
+
+        return ctx
+
+    
+    
+    
     
     

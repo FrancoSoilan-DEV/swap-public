@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Configuración de Equipos | Backups{% endblock %}
+{% block page_icon %}settings{% endblock %}
+{% block page_title %}Configuración de Equipos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/backups/configuracion_de_equipos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="config-equipos">
+    <!-- Hero Section - 100% Responsive -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="material-symbols-outlined">devices</span>
+                <span>Gestión de Equipos</span>
+            </div>
+            <h1>Configuración de Equipos</h1>
+            <p>Administra los funcionarios, sus equipos y asignaciones</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-number" id="totalEquipos">0</span>
+                <span class="stat-label">Equipos Activos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalFuncionarios">0</span>
+                <span class="stat-label">Funcionarios</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Warning (solo se ve en móvil) -->
+    <div class="mobile-hint">
+        <span class="material-symbols-outlined">swap_horiz</span>
+        <span>Desliza horizontalmente para ver más columnas</span>
+    </div>
+
+    <!-- Grid Principal - Responsive -->
+    <div class="responsive-grid">
+        <!-- Columna Izquierda: Tablas -->
+        <div class="grid-left">
+            <!-- Funcionarios con Equipo - Card -->
+            <div class="data-card">
+                <div class="card-header">
+                    <div class="header-title">
+                        <span class="material-symbols-outlined">devices</span>
+                        <h2>Funcionarios con Equipo</h2>
+                    </div>
+                    <div class="header-actions">
+                        <span class="badge" id="equiposCount">{{ fce.paginator.count }}</span>
+                    </div>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="search-box">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="searchEquipos" placeholder="Buscar por funcionario, equipo, IP..." class="filter-input">
+                        <button type="button" class="clear-search" id="clearSearchEquipos">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla Responsive -->
+                <div class="table-responsive">
+                    <table class="modern-table" id="equiposTable">
+                        <thead>
+                            <tr>
+                                <th>Funcionario</th>
+                                <th>Equipo</th>
+                                <th class="hide-mobile">Nombre Equipo</th>
+                                
+                                <th>IP</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody id="equiposTableBody">
+                            {% for func in fce %}
+                            <tr>
+                                <td>
+                                    <div class="cell-with-icon">
+                                        <span class="material-symbols-outlined">person</span>
+                                        <span class="truncate-text">{{ func.fce_fun|truncatechars:25 }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="equipo-tag">{{ func.fce_equipo }}</span>
+                                </td>
+                                <td class="hide-mobile">{{ func.fce_nombre_equipo|default:"-" }}</td>
+                                
+                                <td>
+                                    <code class="ip-badge">{{ func.fce_ip|default:"-" }}</code>
+                                </td>
+                                
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-row">
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <span class="material-symbols-outlined">info</span>
+                                        <p>No hay equipos registrados</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if fce.paginator.num_pages > 1 %}
+                <div class="pagination-section">
+                    <div class="pagination-info">
+                        Mostrando {{ fce.start_index }} - {{ fce.end_index }} de {{ fce.paginator.count }} equipos
+                    </div>
+                    <div class="pagination-controls">
+                        {% if fce.has_previous %}
+                            <a href="?page_fce=1&page_func={{ funcionarios.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">first_page</span>
+                            </a>
+                            <a href="?page_fce={{ fce.previous_page_number }}&page_func={{ funcionarios.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">chevron_left</span>
+                            </a>
+                        {% endif %}
+                        
+                        <span class="page-numbers">
+                            {% for i in fce.paginator.page_range %}
+                                {% if fce.number == i %}
+                                    <span class="page-number active">{{ i }}</span>
+                                {% elif i > fce.number|add:'-3' and i < fce.number|add:'3' %}
+                                    <a href="?page_fce={{ i }}&page_func={{ funcionarios.number }}" class="page-number">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        
+                        {% if fce.has_next %}
+                            <a href="?page_fce={{ fce.next_page_number }}&page_func={{ funcionarios.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">chevron_right</span>
+                            </a>
+                            <a href="?page_fce={{ fce.paginator.num_pages }}&page_func={{ funcionarios.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">last_page</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Funcionarios - Card -->
+            <div class="data-card">
+                <div class="card-header">
+                    <div class="header-title">
+                        <span class="material-symbols-outlined">group</span>
+                        <h2>Funcionarios</h2>
+                    </div>
+                    <div class="header-actions">
+                        <span class="badge" id="funcionariosCount">{{ funcionarios.paginator.count }}</span>
+                    </div>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="search-box">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="searchFuncionarios" placeholder="Buscar por nombre o departamento..." class="filter-input">
+                        <button type="button" class="clear-search" id="clearSearchFuncionarios">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla Responsive -->
+                <div class="table-responsive">
+                    <table class="modern-table compact" id="funcionariosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Funcionario</th>
+                                <th class="hide-mobile">Departamento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="funcionariosTableBody">
+                            {% for funcionario in funcionarios %}
+                            <tr>
+                                <td class="id-col">#{{ funcionario.fun_id }}</td>
+                                <td>
+                                    <div class="cell-with-icon">
+                                        <span class="material-symbols-outlined">badge</span>
+                                        <span class="truncate-text">{{ funcionario.fun_nombres_apellidos|truncatechars:30 }}</span>
+                                    </div>
+                                </td>
+                                <td class="hide-mobile">{{ funcionario.fun_dpto|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-row">
+                                <td colspan="3">
+                                    <div class="empty-state">
+                                        <span class="material-symbols-outlined">info</span>
+                                        <p>No hay funcionarios registrados</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if funcionarios.paginator.num_pages > 1 %}
+                <div class="pagination-section">
+                    <div class="pagination-info">
+                        Mostrando {{ funcionarios.start_index }} - {{ funcionarios.end_index }} de {{ funcionarios.paginator.count }} funcionarios
+                    </div>
+                    <div class="pagination-controls">
+                        {% if funcionarios.has_previous %}
+                            <a href="?page_func=1&page_fce={{ fce.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">first_page</span>
+                            </a>
+                            <a href="?page_func={{ funcionarios.previous_page_number }}&page_fce={{ fce.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">chevron_left</span>
+                            </a>
+                        {% endif %}
+                        
+                        <span class="page-numbers">
+                            {% for i in funcionarios.paginator.page_range %}
+                                {% if funcionarios.number == i %}
+                                    <span class="page-number active">{{ i }}</span>
+                                {% elif i > funcionarios.number|add:'-3' and i < funcionarios.number|add:'3' %}
+                                    <a href="?page_func={{ i }}&page_fce={{ fce.number }}" class="page-number">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        
+                        {% if funcionarios.has_next %}
+                            <a href="?page_func={{ funcionarios.next_page_number }}&page_fce={{ fce.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">chevron_right</span>
+                            </a>
+                            <a href="?page_func={{ funcionarios.paginator.num_pages }}&page_fce={{ fce.number }}" class="page-btn">
+                                <span class="material-symbols-outlined">last_page</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Forms - Responsive -->
+        <div class="grid-right">
+            <!-- Añadir Funcionario con Equipo -->
+            <div class="form-card">
+                <div class="card-header">
+                    <div class="header-title">
+                        <span class="material-symbols-outlined">person_add</span>
+                        <h2>Nuevo Funcionario con Equipo</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'config-equipos' %}" class="modern-form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_fce" value="1">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">person</span>
+                                    Funcionario
+                                </label>
+                                {{ form3.fce_fun }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">computer</span>
+                                    Tipo de Equipo
+                                </label>
+                                {{ form3.fce_equipo }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">badge</span>
+                                    Nombre Equipo
+                                </label>
+                                {{ form3.fce_nombre_equipo }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">assignment_ind</span>
+                                    Nombre SATI
+                                </label>
+                                {{ form3.fce_nombre_sati }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">pin</span>
+                                    Serie SATI
+                                </label>
+                                {{ form3.fce_serie_sati }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <span class="material-symbols-outlined">network_intelligence</span>
+                                    Dirección IP
+                                </label>
+                                {{ form3.fce_ip }}
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>
+                                    <span class="material-symbols-outlined">description</span>
+                                    Observaciones
+                                </label>
+                                {{ form3.fce_observaciones }}
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>
+                                    <span class="material-symbols-outlined">image</span>
+                                    Imagen del Equipo
+                                </label>
+                                {{ form3.fce_ruta_imagen }}
+                            </div>
+
+                            <input type="hidden" name="fce_estado" value="activo">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-symbols-outlined">save</span>
+                                Guardar Equipo
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <span class="material-symbols-outlined">restart_alt</span>
+                                Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Eliminar/Desactivar Registro -->
+            <div class="form-card danger">
+                <div class="card-header">
+                    <div class="header-title">
+                        <span class="material-symbols-outlined">person_remove</span>
+                        <h2>Desactivar Registro</h2>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'config-equipos' %}" class="modern-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_fce" value="1">
+                        
+                        <div class="form-group">
+                            <label>
+                                <span class="material-symbols-outlined">search</span>
+                                Seleccionar Registro
+                            </label>
+                            <select name="fce_id" class="form-select" required>
+                                <option value="" disabled selected>-- Selecciona un registro --</option>
+                                {% for func_equipo in fce %}
+                                    <option value="{{ func_equipo.fce_id }}">
+                                        {{ func_equipo.fce_fun }} - {{ func_equipo.fce_equipo }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="help-text">El registro pasará a estado "inactivo"</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de desactivar este registro?')">
+                                <span class="material-symbols-outlined">delete</span>
+                                Desactivar Registro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data for JavaScript -->
+<script>
+    window.equiposData = [
+        {% for func in fce %}
+        {
+            id: {{ func.fce_id }},
+            funcionario: "{{ func.fce_fun|escapejs }}",
+            equipo: "{{ func.fce_equipo|escapejs }}",
+            nombre_equipo: "{{ func.fce_nombre_equipo|default:''|escapejs }}",
+            nombre_sati: "{{ func.fce_nombre_sati|default:''|escapejs }}",
+            ip: "{{ func.fce_ip|default:''|escapejs }}",
+            serie: "{{ func.fce_serie_sati|default:''|escapejs }}",
+            observaciones: "{{ func.fce_observaciones|default:''|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    window.funcionariosData = [
+        {% for func in funcionarios %}
+        {
+            id: {{ func.fun_id }},
+            nombre: "{{ func.fun_nombres_apellidos|escapejs }}",
+            departamento: "{{ func.fun_dpto|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    window.totalEquipos = {{ fce.paginator.count }};
+    window.totalFuncionarios = {{ funcionarios.paginator.count }};
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/backups/configuracion_de_equipos.js' %}"></script>
+{% endblock %}
