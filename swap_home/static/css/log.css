@@ -43,7 +43,7 @@ body main {
   z-index: -1; /* Lo enviamos atrás para no afectar a .d1 */
   border-radius: inherit; /* Hereda el border-radius del padre */
 }
-.container .d1 {
+/* .container .d1 {
   width: 100px;
   height: 100px;
   background: rgba(255, 225, 255, 0.2);
@@ -85,7 +85,7 @@ body main {
   -webkit-backdrop-filter: blur(4.5px);
           backdrop-filter: blur(4.5px);
   z-index: 1;
-}
+} */
 .container h1 {
   text-align: center;
   font-size: 1.75rem;
