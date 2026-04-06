@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
+from django.utils import timezone
 
 from swap_home.models import *
 from swap_informatica.models import *
@@ -16,12 +17,23 @@ from .forms import *
 
 # --- Proteger de otros Usuarios Logeados ---
 def is_swap_tecnico(user):
-    return user.groups.filter(name='Tecnico').exists()
+    if not user.groups.filter(name='Tecnico').exists():
+        return False
 
+    now = timezone.localtime()
+
+    # Bloquear desde el día 11 hasta el 14 inclusive
+    if 11 <= now.day <= 14:
+        return False
+
+    return True
+
+def acces_denied(request):
+    return render(request, 'acces_denied.html')
 
 # Vista Principal
 @login_required
-@user_passes_test(is_swap_tecnico)
+@user_passes_test(is_swap_tecnico, login_url='acces_denied')
 def tecnico(request):
     tarea = Tareas.objects.filter(tarea_dpto__dpto_nombre="General")
     tarea_dia = Tareadia.objects.filter(td_dia="General")
@@ -33,7 +45,7 @@ def tecnico(request):
     
 # Cargacion de la trabajacion
 @login_required
-@user_passes_test(is_swap_tecnico)
+@user_passes_test(is_swap_tecnico, login_url='acces_denied')
 def cargar_trabajo(request):
     if request.method == 'POST':
         form = TecnicoForm(request.POST)
@@ -73,6 +85,9 @@ class VerCTListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def test_func(self):
         return is_swap_tecnico(self.request.user)
+
+    def handle_no_permission(self):
+        return redirect("acces_denied")
 
     def _nombre_tecnico(self):
         user = self.request.user

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Acceso Restringido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 40px 28px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+        }
+
+        .icono {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .mensaje {
+            background: #fff5f0;
+            border-left: 4px solid #ff6b4a;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .fechas {
+            font-size: 18px;
+            font-weight: 700;
+            color: #d43f1d;
+            margin-bottom: 12px;
+        }
+
+        .descripcion {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .gestion {
+            background: #f7fafc;
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 8px;
+        }
+
+        .gestion p {
+            font-size: 16px;
+            color: #2c5282;
+            font-weight: 500;
+        }
+
+        .contacto {
+            background: #edf2f7;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .contacto p {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .contacto span {
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+
+        hr {
+            margin: 24px 0 16px;
+            border: none;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .footer {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .fechas {
+                font-size: 16px;
+            }
+            
+            .descripcion {
+                font-size: 14px;
+            }
+            
+            .icono {
+                font-size: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="icono">🚫🔧</div>
+            <h1>Acceso Denegado</h1>
+            
+            <div class="mensaje">
+                <div class="fechas">
+                    📅 Del 11 al 14 de cada mes
+                </div>
+                <div class="descripcion">
+                    El acceso al sistema está restringido desde el <strong>día 11 de cada mes a las 00:00hs</strong> 
+                    hasta el <strong>día 14 de cada mes a las 23:59hs</strong>.
+                </div>
+            </div>
+            
+            <div class="gestion">
+                <p>📋 En caso de precisar gestiones,</p>
+                <div class="contacto">
+                    <p>📞 comuníquese con su <span>superior directo</span> 👤</p>
+                </div>
+            </div>
+            
+            <hr>
+            <div class="footer">
+                ⏰ Los pagos se realizan el día 15 · Periodo de cierre administrativo
+            </div>
+        </div>
+    </div>
+</body>
+</html>

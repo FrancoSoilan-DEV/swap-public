@@ -6,4 +6,5 @@ urlpatterns = [
     path("", views.tecnico, name="tecnico"),
     path("cargar/", views.cargar_trabajo, name="ct"),
     path("ver/", VerCTListView.as_view(), name="verct"),
+    path('acceso-denegado/', views.acces_denied, name='acces_denied'),
 ]
