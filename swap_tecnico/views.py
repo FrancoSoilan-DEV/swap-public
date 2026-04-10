@@ -23,7 +23,7 @@ def is_swap_tecnico(user):
     now = timezone.localtime()
 
     # Bloquear desde el día 11 hasta el 14 inclusive
-    if 10 <= now.day <= 14:
+    if 11 <= now.day <= 14:
         return False
 
     return True
