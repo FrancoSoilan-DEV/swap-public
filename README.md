@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > ## First command you should remember
 >
-> After starting the Docker containers, run this command:
+> After starting the Docker containers(docker compose up --build), run this command:
 >
 > ```bash
 > docker compose exec web sh scripts/docker-init.sh
@@ -720,7 +720,7 @@ El sistema incluye módulos para:
 
 ## Comando más importante
 
-Después de levantar Docker, inicializa el proyecto con:
+Después de levantar Docker(docker compose up --build), inicializa el proyecto con:
 
 ```bash
 docker compose exec web sh scripts/docker-init.sh

@@ -2,8 +2,9 @@ import openpyxl
 from openpyxl.styles import Font, Border, Side, PatternFill, Alignment, NamedStyle
 from openpyxl.formatting.rule import CellIsRule
 import json
-from datetime import timedelta, datetime, date
 
+from datetime import timedelta, datetime, date
+from django.db.models.functions import ExtractMonth
 from django.db import IntegrityError, transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
@@ -49,19 +50,7 @@ class InformaticaDashboardView(LoginRequiredMixin, UserPassesTestMixin, Template
         # Aquí puedes agregar métricas, contadores, etc si quieres
         return context
 
-# @login_required
-# @user_passes_test(is_swap_informatica)
-# def actualizar_estado(request, tarea_id):
-#     if request.method == "POST":
-#         tarea = get_object_or_404(Tareas, pk=tarea_id)
-#         # Obtener el nuevo estado desde el formulario
-#         nuevo_estado = request.POST.get("estado")
-#         # Buscar el estado en la base de datos
-#         estado_obj = get_object_or_404(Tareaestado, te_estado=nuevo_estado)
-#         # Actualizar la tarea con el nuevo estado
-#         tarea.tarea_te = estado_obj
-#         tarea.save()
-#     return redirect("informatica")  # Redirige a la misma página después de actualizar
+
 # ==================== VISTA PRINCIPAL ====================
 
 
@@ -106,20 +95,7 @@ def week_start_of(date_obj):
 @login_required
 @user_passes_test(is_swap_informatica)
 def backups_semanales(request):
-    """
-    ÚNICA VISTA (un endpoint):
-    - GET: muestra programación semanal y checklist de guardado
-    - POST: acciones por 'action':
-        * update_estado
-        * add_programado
-        * guardar_realizados
-
-    Reglas:
-    - Reset semanal persistente: primera visita de una nueva semana hace reset a Pendiente⏳
-    - Guardar hechos: 1 registro por (bp, week_start) -> NO duplica en la semana
-    - bh_fecha = fecha real del día que guardas
-    - Estado Finalizado✅ se mantiene durante la semana (hasta el reset)
-    """
+    
 
     hoy = timezone.localdate()
     week_start = week_start_of(hoy)
@@ -306,35 +282,6 @@ def backups_semanales(request):
 
 
 
-# ACTUALIZAR ESTADO BACKUP SEMANAL
-# @login_required
-# @user_passes_test(is_swap_informatica)
-# def actualizar_estado_bk(request, bp_id):
-#     if request.method == "POST":
-#         bp = get_object_or_404(Backupsproceso, pk=bp_id)
-
-#         nuevo_estado = request.POST.get("bkestado")
-
-#         estado_obj = get_object_or_404(Backupsestado, be_estado=nuevo_estado)
-
-#         bp.bp_be = estado_obj
-#         bp.save()
-#     return redirect("backups")
-
-# #   AÑADIR BACKUPS SEMANALES
-# @login_required
-# @user_passes_test(is_swap_informatica)
-# def add_backup(request):
-#     if request.method == "POST":
-#         form = BackupForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect("backups")
-#     return redirect("backups")
-
-
-
-# # DARLE/ELIMINAR UN BACKUP A UN FUNCIONARIO CON EQUIPO
 
 @login_required
 @user_passes_test(is_swap_informatica)
@@ -1314,7 +1261,7 @@ def NuevoEquipo(request):
 
 # ========== MANTENIMIENTO ====================
 # MANTENIMIENTO
-from django.db.models.functions import ExtractMonth
+
 
 @login_required
 @user_passes_test(is_swap_informatica)

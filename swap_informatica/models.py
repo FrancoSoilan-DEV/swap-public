@@ -1,5 +1,6 @@
 from django.db import models
 from swap_tthh.models import *
+
 # Create your models here.
 # ===============================================================================================================================
 # Informatica
@@ -176,32 +177,8 @@ class InventarioinformaticaEstado(models.Model):
     def __str__(self):
         return f"{self.iie_nombre}"
 
-# class Equipos(models.Model):
-#     eq_id = models.SmallAutoField(primary_key=True)
-#     eq_tipe = models.ForeignKey('Tipoequipo', models.DO_NOTHING,verbose_name="Tipo de Equipo")
-#     eq_numdeserie = models.CharField(max_length=45, verbose_name="Numero de Serie")
-#     eq_dpto = models.ForeignKey(Departamentos, models.DO_NOTHING, verbose_name="Departamento")
-#     eq_usuario = models.CharField(max_length=60, blank=True, null=True, verbose_name="Usuario")
-#     eq_contrasenna = models.CharField(max_length=45, blank=True, null=True, verbose_name="Contraseña")
-#     eq_marca = models.CharField(max_length=45, blank=True, null=True, verbose_name="Marca")
-#     eq_modelo = models.CharField(max_length=45, blank=True, null=True, verbose_name="Modelo")
-#     eq_marcamonitor = models.CharField(max_length=45, blank=True, null=True, verbose_name="Marca del Monitor")
-#     eq_pulgadamonitor = models.CharField(max_length=45, blank=True, null=True, verbose_name="Pulgadas del Monitor")
-#     eq_placamadre = models.CharField(max_length=45, blank=True, null=True, verbose_name="Placa Madre")
-#     eq_grafica = models.CharField(max_length=45, blank=True, null=True, verbose_name="Tarjeta Grafica")
-#     eq_discoduro = models.CharField(max_length=45, blank=True, null=True, verbose_name="Disco Duro")
-#     eq_lectordisco = models.CharField(max_length=45, blank=True, null=True, verbose_name="Lector de Disco")
-#     eq_audio = models.CharField(max_length=45, blank=True, null=True, verbose_name="Audio")
-#     eq_sistemop = models.CharField(max_length=45, blank=True, null=True, verbose_name="Sistema Operativo")
-#     class Meta:
-#         #managed = False
-#         db_table = 'equipos'
-#         verbose_name = "Equipo"
-#         verbose_name_plural = "Equipos"
-#         ordering = ["eq_tipe"]
-#     def __str__(self):
-#         return  f"{self.eq_id} {self.eq_tipe} {self.eq_usuario} {self.eq_dpto}"
-from django.db import models
+
+
 
 class Equipos(models.Model):
     eq_id = models.SmallAutoField(primary_key=True)

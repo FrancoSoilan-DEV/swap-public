@@ -8,6 +8,7 @@ from openpyxl.styles import (
 )
 from openpyxl.styles import GradientFill
 
+from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import transaction
@@ -99,8 +100,7 @@ def editar_trabajos_bulk(request):
     return redirect("veregistro")
 
 
-# ver los registros ingresados por los trabajodores
-from datetime import datetime
+
 
 class VerRegistroListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "veregistros.html"
@@ -167,7 +167,7 @@ class VerRegistroListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 
-from django.shortcuts import redirect, get_object_or_404
+
 # se realiza cambios correspondientes (estados u monto)
 @login_required
 @user_passes_test(is_swap_serviciotecnico)

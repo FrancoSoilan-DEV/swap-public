@@ -4,8 +4,7 @@ from swap_tthh.models import *
 # Create your models here.
 # ===============================================================================================================================
 # ===============================================================================================================================
-from django.contrib.auth.models import User  # Importás el modelo User
-# Servicio Tecnico
+from django.contrib.auth.models import User 
     
 
 
