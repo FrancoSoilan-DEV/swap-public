@@ -1,9 +1,34 @@
-# SWAP Public
+<div align="center">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=120&color=gradient&reversal=true&text=Django%20SWAP&fontColor=ffffff&fontSize=40&fontAlignY=35&desc=Internal%20Management%20System%20%7C%20Docker%20%7C%20PostgreSQL&descAlignY=55&descSize=18" />
+</div>
+
+<div align="center">
+
+# Django SWAP
+
+**Docker-ready Django internal management system for business operations, role-based modules, inventory, backups, gatehouse records, technical service, Excel exports, and PDF reports.**
+
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Django](https://img.shields.io/badge/Django-5-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io)
+[![Gunicorn](https://img.shields.io/badge/Gunicorn-ready-499848?style=for-the-badge)](https://gunicorn.org)
+
+</div>
+
+---
 
 > [!IMPORTANT]
 > ## First command you should remember
 >
-> After starting the Docker containers(docker compose up --build), run this command:
+> After starting the Docker containers:
+>
+> ```bash
+> docker compose up --build
+> ```
+>
+> Run this command:
 >
 > ```bash
 > docker compose exec web sh scripts/docker-init.sh
@@ -25,11 +50,11 @@
 
 # English
 
-## About SWAP
+## About Django SWAP
 
-**SWAP** is a Django-based internal management system designed to organize and control several operational areas of a company.
+**Django SWAP** is a Django-based internal management system designed to organize and control several operational areas of a company.
 
-This public version is prepared to run locally with Docker without affecting the production repository or the production database.
+This public version is prepared to run locally with Docker without affecting the production repository or production database.
 
 The system includes modules for:
 
@@ -49,6 +74,17 @@ The system includes modules for:
 - Technical work registration.
 - Excel exports.
 - PDF exports.
+
+---
+
+## Public repository
+
+- Repository: https://github.com/FrancoSoilan-DEV/Django-swap
+- Clone URL:
+
+```bash
+git clone https://github.com/FrancoSoilan-DEV/Django-swap.git
+```
 
 ---
 
@@ -90,7 +126,7 @@ The initialization script applies migrations, loads required base data, and coll
 ## Project structure
 
 ```text
-SWAP-PUBLIC/
+Django-swap/
 │
 ├── swap/
 │   ├── settings.py
@@ -343,8 +379,8 @@ The `data/` directory is used by Docker volumes for local PostgreSQL and Redis d
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-cd YOUR-REPOSITORY
+git clone https://github.com/FrancoSoilan-DEV/Django-swap.git
+cd Django-swap
 ```
 
 ### 2. Create the `.env` file
@@ -691,9 +727,9 @@ That is normal. The seed command uses `get_or_create`, so it will not duplicate 
 
 # Español
 
-## Acerca de SWAP
+## Acerca de Django SWAP
 
-**SWAP** es un sistema interno de gestión desarrollado con Django. Está diseñado para organizar y controlar distintas áreas operativas de una empresa.
+**Django SWAP** es un sistema interno de gestión desarrollado con Django. Está diseñado para organizar y controlar distintas áreas operativas de una empresa.
 
 Esta versión pública está preparada para correr localmente con Docker sin afectar el repositorio de producción ni la base de datos real de producción.
 
@@ -720,16 +756,16 @@ El sistema incluye módulos para:
 
 ## Comando más importante
 
-Después de levantar Docker(docker compose up --build), inicializa el proyecto con:
-
-```bash
-docker compose exec web sh scripts/docker-init.sh
-```
-
-Este comando debe ejecutarse después de:
+Después de levantar Docker:
 
 ```bash
 docker compose up --build
+```
+
+Inicializa el proyecto con:
+
+```bash
+docker compose exec web sh scripts/docker-init.sh
 ```
 
 El script de inicialización aplica migraciones, carga datos iniciales obligatorios y recolecta archivos estáticos.
@@ -756,7 +792,7 @@ El script de inicialización aplica migraciones, carga datos iniciales obligator
 ## Estructura del proyecto
 
 ```text
-SWAP-PUBLIC/
+Django-swap/
 │
 ├── swap/
 │   ├── settings.py
@@ -953,64 +989,13 @@ DJANGO_SERVICIO_TECNICO_PASSWORD=servicio123
 
 ---
 
-## `.env.example` recomendado
-
-Puedes subir este archivo al repositorio público:
-
-```env
-DEBUG=True
-SECRET_KEY=change-me
-ALLOWED_HOSTS=127.0.0.1,localhost,0.0.0.0
-
-POSTGRES_DB=swap_public
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=admin
-
-DATABASE_URL=postgres://postgres:admin@db:5432/swap_public
-
-DJANGO_ADMIN_PASSWORD=admin123
-DJANGO_TTHH_PASSWORD=tthh123
-DJANGO_INFORMATICA_PASSWORD=informatica123
-DJANGO_PORTERIA_PASSWORD=porteria123
-DJANGO_TECNICO_PASSWORD=tecnico123
-DJANGO_SERVICIO_TECNICO_PASSWORD=servicio123
-```
-
----
-
-## `.gitignore` recomendado
-
-Asegúrate de incluir:
-
-```gitignore
-.env
-data/
-staticfiles/
-media/
-*.sqlite3
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-venv/
-env/
-.venv/
-.idea/
-.vscode/
-```
-
-La carpeta `data/` se usa para guardar los datos locales de PostgreSQL y Redis en Docker.
-
----
-
 ## Ejecutar el proyecto con Docker
 
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU-USUARIO/TU-REPOSITORIO.git
-cd TU-REPOSITORIO
+git clone https://github.com/FrancoSoilan-DEV/Django-swap.git
+cd Django-swap
 ```
 
 ### 2. Crear el archivo `.env`
@@ -1357,10 +1342,20 @@ Eso es normal. El comando seed usa `get_or_create`, por lo que no debería dupli
 
 ## Final note
 
-This project is a public, Docker-ready version of SWAP. It is intended for local testing, demonstration, learning, and further development without touching the production environment.
+This project is a public, Docker-ready version of Django SWAP. It is intended for local testing, demonstration, learning, and further development without touching the production environment.
 
 ---
 
 ## Nota final
 
-Este proyecto es una versión pública de SWAP preparada para Docker. Está pensada para pruebas locales, demostración, aprendizaje y desarrollo sin tocar el entorno de producción.
+Este proyecto es una versión pública de Django SWAP preparada para Docker. Está pensada para pruebas locales, demostración, aprendizaje y desarrollo sin tocar el entorno de producción.
+
+---
+
+<div align="center">
+  <h3>Built with Django, PostgreSQL, Docker, Redis, and real operational workflows.</h3>
+</div>
+
+<div align="center">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=100&color=gradient&section=footer" />
+</div>
